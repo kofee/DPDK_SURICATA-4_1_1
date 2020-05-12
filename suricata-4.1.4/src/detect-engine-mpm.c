@@ -103,7 +103,7 @@ void DetectAppLayerMpmRegister2(const char *name,
         InspectionBufferGetDataPtr GetData,
         AppProto alproto, int tx_min_progress)
 {
-    SCLogDebug("registering %s/%d/%d/%p/%p/%u/%d", name, direction, priority,
+
             PrefilterRegister, GetData, alproto, tx_min_progress);
 
     if (PrefilterRegister == PrefilterGenericMpmRegister && GetData == NULL) {
@@ -153,7 +153,7 @@ void DetectAppLayerMpmRegister(const char *name,
         int (*PrefilterRegister)(DetectEngineCtx *de_ctx,
             SigGroupHead *sgh, MpmCtx *mpm_ctx))
 {
-    SCLogDebug("registering %s/%d/%d/%p",
+
             name, direction, priority, PrefilterRegister);
 
     DetectBufferTypeSupportsMpm(name);
@@ -190,7 +190,7 @@ void DetectAppLayerMpmRegisterByParentId(DetectEngineCtx *de_ctx,
         const int id, const int parent_id,
         DetectEngineTransforms *transforms)
 {
-    SCLogDebug("registering %d/%d", id, parent_id);
+
 
     DetectMpmAppLayerRegistery *t = de_ctx->app_mpms_list;
     while (t) {
@@ -215,7 +215,7 @@ void DetectAppLayerMpmRegisterByParentId(DetectEngineCtx *de_ctx,
 
             SupportFastPatternForSigMatchList(am->sm_list, am->priority);
             t->next = am;
-            SCLogDebug("copied mpm registration for %s id %u "
+
                     "with parent %u and GetData %p",
                     t->name, id, parent_id, am->v2.GetData);
             t = am;
@@ -248,7 +248,7 @@ void DetectMpmInitializeAppMpms(DetectEngineCtx *de_ctx)
         list = list->next;
     }
     de_ctx->app_mpms_list_cnt = g_app_mpms_list_cnt;
-    SCLogDebug("mpm: de_ctx app_mpms_list %p %u",
+
             de_ctx->app_mpms_list, de_ctx->app_mpms_list_cnt);
 }
 
@@ -287,7 +287,7 @@ void DetectMpmSetupAppMpms(DetectEngineCtx *de_ctx)
             am->sgh_mpm_context = MpmFactoryRegisterMpmCtxProfile(de_ctx, am->reg->name);
         }
 
-        SCLogDebug("AppLayer MPM %s: %u", am->reg->name, am->sgh_mpm_context);
+
 
         list = list->next;
     }
@@ -427,7 +427,7 @@ int SignatureHasPacketContent(const Signature *s)
     if ((s->init_data != NULL && s->init_data->smlists[DETECT_SM_LIST_PMATCH] == NULL) ||
         (s->init_data == NULL && s->sm_arrays[DETECT_SM_LIST_PMATCH] == NULL))
     {
-        SCLogDebug("no mpm");
+
         SCReturnInt(0);
     }
 
@@ -463,7 +463,7 @@ int SignatureHasStreamContent(const Signature *s)
     if ((s->init_data != NULL && s->init_data->smlists[DETECT_SM_LIST_PMATCH] == NULL) ||
         (s->init_data == NULL && s->sm_arrays[DETECT_SM_LIST_PMATCH] == NULL))
     {
-        SCLogDebug("no mpm");
+
         SCReturnInt(0);
     }
 
@@ -535,24 +535,24 @@ void PacketPatternCleanup(DetectEngineThreadCtx *det_ctx)
 
 void PatternMatchDestroy(MpmCtx *mpm_ctx, uint16_t mpm_matcher)
 {
-    SCLogDebug("mpm_ctx %p, mpm_matcher %"PRIu16"", mpm_ctx, mpm_matcher);
+
     mpm_table[mpm_matcher].DestroyCtx(mpm_ctx);
 }
 
 void PatternMatchThreadPrint(MpmThreadCtx *mpm_thread_ctx, uint16_t mpm_matcher)
 {
-    SCLogDebug("mpm_thread_ctx %p, mpm_matcher %"PRIu16" defunct", mpm_thread_ctx, mpm_matcher);
+
     //mpm_table[mpm_matcher].PrintThreadCtx(mpm_thread_ctx);
 }
 void PatternMatchThreadDestroy(MpmThreadCtx *mpm_thread_ctx, uint16_t mpm_matcher)
 {
-    SCLogDebug("mpm_thread_ctx %p, mpm_matcher %"PRIu16"", mpm_thread_ctx, mpm_matcher);
+
     if (mpm_table[mpm_matcher].DestroyThreadCtx != NULL)
         mpm_table[mpm_matcher].DestroyThreadCtx(NULL, mpm_thread_ctx);
 }
 void PatternMatchThreadPrepare(MpmThreadCtx *mpm_thread_ctx, uint16_t mpm_matcher)
 {
-    SCLogDebug("mpm_thread_ctx %p, type %"PRIu16, mpm_thread_ctx, mpm_matcher);
+
     MpmInitThreadCtx(mpm_thread_ctx, mpm_matcher);
 }
 
@@ -700,7 +700,7 @@ static SigMatch *GetMpmForList(const Signature *s, const int list, SigMatch *mpm
                 if (data1->content_len > data2->content_len)
                     mpm_sm = sm;
             } else {
-                SCLogDebug("sticking with mpm_sm");
+
             }
         }
     }
@@ -883,7 +883,7 @@ static void MpmStoreFreeFunc(void *ptr)
     if (ms != NULL) {
         if (ms->mpm_ctx != NULL && !ms->mpm_ctx->global)
         {
-            SCLogDebug("destroying mpm_ctx %p", ms->mpm_ctx);
+
             mpm_table[ms->mpm_ctx->mpm_type].DestroyCtx(ms->mpm_ctx);
             SCFree(ms->mpm_ctx);
         }
@@ -979,7 +979,7 @@ void MpmStoreReportStats(const DetectEngineCtx *de_ctx)
                 if (ms->sm_list == am->reg->sm_list &&
                     ms->direction == am->reg->direction)
                 {
-                    SCLogDebug("%s %s: %u patterns. Min %u, Max %u. Ctx %p",
+
                             am->reg->name,
                             am->reg->direction == SIG_FLAG_TOSERVER ? "toserver":"toclient",
                             ms->mpm_ctx->pattern_cnt,
@@ -1085,7 +1085,7 @@ static void MpmStoreSetup(const DetectEngineCtx *de_ctx, MpmStore *ms)
             if (list != ms->sm_list)
                 continue;
 
-            SCLogDebug("adding %u", s->id);
+
 
             const DetectContentData *cd = (DetectContentData *)s->init_data->mpm_sm->ctx;
 
@@ -1099,7 +1099,7 @@ static void MpmStoreSetup(const DetectEngineCtx *de_ctx, MpmStore *ms)
                 !(DETECT_CONTENT_MPM_IS_CONCLUSIVE(cd)))
             {
                 skip = 1;
-                SCLogDebug("not adding negated mpm as it's not 'single'");
+
             }
 
             if (!skip) {
@@ -1267,7 +1267,7 @@ static MpmStore *MpmStorePrepareBufferAppLayer(DetectEngineCtx *de_ctx,
     uint8_t sids_array[max_sid];
     memset(sids_array, 0x00, max_sid);
 
-    SCLogDebug("handling %s direction %s for list %d", am->reg->name,
+
             am->reg->direction == SIG_FLAG_TOSERVER ? "toserver" : "toclient",
             am->reg->sm_list);
 
@@ -1298,12 +1298,12 @@ static MpmStore *MpmStorePrepareBufferAppLayer(DetectEngineCtx *de_ctx,
 
     MpmStore lookup = { sids_array, max_sid, am->reg->direction,
         MPMB_MAX, am->reg->sm_list, 0, NULL};
-    SCLogDebug("am->direction %d am->sm_list %d",
+
             am->reg->direction, am->reg->sm_list);
 
     MpmStore *result = MpmStoreLookup(de_ctx, &lookup);
     if (result == NULL) {
-        SCLogDebug("new unique mpm for %s %s: %u patterns",
+
                 am->reg->name,
                 am->reg->direction == SIG_FLAG_TOSERVER ? "toserver" : "toclient",
                 cnt);
@@ -1329,7 +1329,7 @@ static MpmStore *MpmStorePrepareBufferAppLayer(DetectEngineCtx *de_ctx,
         MpmStoreAdd(de_ctx, copy);
         return copy;
     } else {
-        SCLogDebug("using existing mpm %p", result);
+
         return result;
     }
     return NULL;
@@ -1347,11 +1347,11 @@ static void SetRawReassemblyFlag(DetectEngineCtx *de_ctx, SigGroupHead *sgh)
 
         if (SignatureHasStreamContent(s) == 1) {
             sgh->flags |= SIG_GROUP_HEAD_HAVERAWSTREAM;
-            SCLogDebug("rule group %p has SIG_GROUP_HEAD_HAVERAWSTREAM set", sgh);
+
             return;
         }
     }
-    SCLogDebug("rule group %p does NOT have SIG_GROUP_HEAD_HAVERAWSTREAM set", sgh);
+
 }
 
 /** \brief Prepare the pattern matcher ctx in a sig group head.
@@ -1428,9 +1428,9 @@ int PatternMatchPrepareGroup(DetectEngineCtx *de_ctx, SigGroupHead *sh)
             if (mpm_store != NULL) {
                 sh->init->app_mpms[a->reg->id] = mpm_store->mpm_ctx;
 
-                SCLogDebug("a->reg->PrefilterRegister %p mpm_store->mpm_ctx %p",
+
                         a->reg->PrefilterRegister, mpm_store->mpm_ctx);
-                SCLogDebug("a %p a->reg->name %s a->reg->PrefilterRegisterWithListId %p "
+
                         "mpm_store->mpm_ctx %p", a, a->reg->name,
                         a->reg->v2.PrefilterRegisterWithListId, mpm_store->mpm_ctx);
 
@@ -1440,11 +1440,11 @@ int PatternMatchPrepareGroup(DetectEngineCtx *de_ctx, SigGroupHead *sh)
                     BUG_ON(a->reg->v2.PrefilterRegisterWithListId(de_ctx,
                                 sh, mpm_store->mpm_ctx,
                                 a->reg, a->reg->sm_list) != 0);
-                    SCLogDebug("mpm %s %d set up", a->reg->name, a->reg->sm_list);
+
                 }
                 else if (a->reg->PrefilterRegister && mpm_store->mpm_ctx) {
                     BUG_ON(a->reg->PrefilterRegister(de_ctx, sh, mpm_store->mpm_ctx) != 0);
-                    SCLogDebug("mpm %s %d set up", a->reg->name, a->reg->sm_list);
+
                 }
             }
         }

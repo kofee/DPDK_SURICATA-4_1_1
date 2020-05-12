@@ -177,7 +177,7 @@ static inline int SCSigGetFlowbitsType(Signature *sig)
         flowbits_user_type = DETECT_FLOWBITS_TYPE_SET_READ;
     }
 
-    SCLogDebug("Sig %s typeval %d", sig->msg, flowbits_user_type);
+
 
     return flowbits_user_type;
 }
@@ -238,7 +238,7 @@ static inline int SCSigGetFlowintType(Signature *sig)
         flowint_user_type = DETECT_FLOWINT_TYPE_SET_READ;
     }
 
-    SCLogDebug("Sig %s typeval %d", sig->msg, flowint_user_type);
+
 
     return flowint_user_type;
 }
@@ -427,7 +427,7 @@ static inline int SCSigGetXbitsType(Signature *sig, enum VarTypes type)
         xbits_user_type = DETECT_XBITS_TYPE_SET_READ;
     }
 
-    SCLogDebug("Sig %s typeval %d", sig->msg, xbits_user_type);
+
 
     return xbits_user_type;
 }
@@ -727,7 +727,7 @@ void SCSigOrderSignatures(DetectEngineCtx *de_ctx)
     SCSigSignatureWrapper *sigw_list = NULL;
 
     int i = 0;
-    SCLogDebug("ordering signatures in memory");
+
 
     sig = de_ctx->sig_list;
     while (sig != NULL) {
@@ -743,7 +743,7 @@ void SCSigOrderSignatures(DetectEngineCtx *de_ctx)
     /* Sort the list */
     sigw_list = SCSigOrder(sigw_list, de_ctx->sc_sig_order_funcs);
 
-    SCLogDebug("Total Signatures to be processed by the"
+
            "sigordering module: %d", i);
 
     /* Recreate the sig list in order */
@@ -766,7 +766,7 @@ void SCSigOrderSignatures(DetectEngineCtx *de_ctx)
         SCFree(sigw_to_free);
     }
 
-    SCLogDebug("total signatures reordered by the sigordering module: %d", i);
+
 }
 
 /**
@@ -782,7 +782,7 @@ void SCSigOrderSignatures(DetectEngineCtx *de_ctx)
  */
 void SCSigRegisterSignatureOrderingFuncs(DetectEngineCtx *de_ctx)
 {
-    SCLogDebug("registering signature ordering functions");
+
 
     SCSigRegisterSignatureOrderingFunc(de_ctx, SCSigOrderByActionCompare);
     SCSigRegisterSignatureOrderingFunc(de_ctx, SCSigOrderByFlowbitsCompare);

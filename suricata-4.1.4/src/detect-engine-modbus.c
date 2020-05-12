@@ -214,7 +214,7 @@ int DetectEngineInspectModbus(ThreadVars            *tv,
     int ret = 0;
 
     if (modbus == NULL) {
-        SCLogDebug("no modbus state, no match");
+
         SCReturnInt(0);
     }
 
@@ -231,11 +231,11 @@ int DetectEngineInspectModbus(ThreadVars            *tv,
             if (modbus->function != MODBUS_FUNC_NONE) {
                 if (modbus->function == tx->function) {
                     if (modbus->subfunction != NULL) {
-                        SCLogDebug("looking for Modbus server function %d and subfunction %d",
+
                                    modbus->function, *(modbus->subfunction));
                         ret = (*(modbus->subfunction) == (tx->subFunction))? 1 : 0;
                     } else {
-                        SCLogDebug("looking for Modbus server function %d", modbus->function);
+
                         ret = 1;
                     }
                 } else {
@@ -243,7 +243,7 @@ int DetectEngineInspectModbus(ThreadVars            *tv,
                 }
             }
         } else {
-            SCLogDebug("looking for Modbus category function %d", modbus->category);
+
             ret = (tx->category & modbus->category)? 1 : 0;
         }
     } else {
@@ -259,7 +259,7 @@ int DetectEngineInspectModbus(ThreadVars            *tv,
                         ret = DetectEngineInspectModbusData(tx, modbus->address->min, modbus->data);
                     }
                 } else {
-                    SCLogDebug("looking for Modbus access type %d and function type %d", access, function);
+
                     ret = 1;
                 }
             } else {

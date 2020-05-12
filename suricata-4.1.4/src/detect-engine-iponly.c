@@ -113,14 +113,14 @@ static int IPOnlyCIDRItemParseSingle(IPOnlyCIDRItem *dd, const char *str)
     while (*str != '\0' && *str == ' ')
         str++;
 
-    SCLogDebug("str %s", str);
+
     strlcpy(buf, str, sizeof(buf));
     ip = buf;
 
     /* first handle 'any' */
     if (strcasecmp(str, "any") == 0) {
         /* if any, insert 0.0.0.0/0 and ::/0 as well */
-        SCLogDebug("adding 0.0.0.0/0 and ::/0 as we\'re handling \'any\'");
+
 
         IPOnlyCIDRItemParseSingle(dd, "0.0.0.0/0");
         BUG_ON(dd->family == 0);
@@ -132,7 +132,7 @@ static int IPOnlyCIDRItemParseSingle(IPOnlyCIDRItem *dd, const char *str)
         IPOnlyCIDRItemParseSingle(dd->next, "::/0");
         BUG_ON(dd->family == 0);
 
-        SCLogDebug("address is \'any\'");
+
         return 0;
     }
 
@@ -295,7 +295,7 @@ error:
  */
 static int IPOnlyCIDRItemSetup(IPOnlyCIDRItem *gh, char *s)
 {
-    SCLogDebug("gh %p, s %s", gh, s);
+
 
     /* parse the address */
     if (IPOnlyCIDRItemParseSingle(gh, s) == -1) {
@@ -372,16 +372,16 @@ static IPOnlyCIDRItem *IPOnlyCIDRItemInsert(IPOnlyCIDRItem *head,
 
     /* The first element */
     if (head == NULL) {
-        SCLogDebug("Head is NULL to insert item (%p)",item);
+
         return item;
     }
 
     if (item == NULL) {
-        SCLogDebug("Item is NULL");
+
         return head;
     }
 
-    SCLogDebug("Inserting item(%p)->netmask %u head %p", item, item->netmask, head);
+
 
     prev = item;
     while (prev != NULL) {
@@ -390,10 +390,10 @@ static IPOnlyCIDRItem *IPOnlyCIDRItemInsert(IPOnlyCIDRItem *head,
         /* Separate from the item list */
         prev->next = NULL;
 
-        //SCLogDebug("Before:");
+        //
         //IPOnlyCIDRListPrint(head);
         head = IPOnlyCIDRItemInsertReal(head, prev);
-        //SCLogDebug("After:");
+        //
         //IPOnlyCIDRListPrint(head);
         prev = it;
     }
@@ -413,7 +413,7 @@ void IPOnlyCIDRListFree(IPOnlyCIDRItem *tmphead)
     IPOnlyCIDRItem *it, *next = NULL;
 
     if (tmphead == NULL) {
-        SCLogDebug("temphead is NULL");
+
         return;
     }
 
@@ -423,7 +423,7 @@ void IPOnlyCIDRListFree(IPOnlyCIDRItem *tmphead)
     while (it != NULL) {
         i++;
         SCFree(it);
-        SCLogDebug("Item(%p) %"PRIu32" removed", it, i);
+
         it = next;
 
         if (next != NULL)
@@ -458,7 +458,7 @@ static void IPOnlyCIDRListPrint(IPOnlyCIDRItem *tmphead)
 
     while (tmphead != NULL) {
         i++;
-        SCLogDebug("Item %"PRIu32" has netmask %"PRIu16" negated:"
+
                    " %s; IP: %s; signum: %"PRIu16, i, tmphead->netmask,
                    (tmphead->negated) ? "yes":"no",
                    inet_ntoa(*(struct in_addr*)&tmphead->ip[0]),
@@ -520,7 +520,7 @@ static SigNumArray *SigNumArrayNew(DetectEngineCtx *de_ctx,
     memset(new->array, 0, io_ctx->max_idx / 8 + 1);
     new->size = io_ctx->max_idx / 8 + 1;
 
-    SCLogDebug("max idx= %u", io_ctx->max_idx);
+
 
     return new;
 }
@@ -596,7 +596,7 @@ static IPOnlyCIDRItem *IPOnlyCIDRListParse2(const DetectEngineCtx *de_ctx,
     IPOnlyCIDRItem *subhead;
     head = subhead = NULL;
 
-    SCLogDebug("s %s negate %s", s, negate ? "true" : "false");
+
 
     for (u = 0, x = 0; u < size && x < sizeof(address); u++) {
         address[x] = s[u];
@@ -760,14 +760,14 @@ error:
 static int IPOnlyCIDRListParse(const DetectEngineCtx *de_ctx,
                                IPOnlyCIDRItem **gh, char *str)
 {
-    SCLogDebug("gh %p, str %s", gh, str);
+
 
     if (gh == NULL)
         goto error;
 
     *gh = IPOnlyCIDRListParse2(de_ctx, str, 0);
     if (*gh == NULL) {
-        SCLogDebug("DetectAddressParse2 returned null");
+
         goto error;
     }
 
@@ -792,7 +792,7 @@ error:
 int IPOnlySigParseAddress(const DetectEngineCtx *de_ctx,
                           Signature *s, const char *addrstr, char flag)
 {
-    SCLogDebug("Address Group \"%s\" to be parsed now", addrstr);
+
     IPOnlyCIDRItem *tmp = NULL;
 
     /* pass on to the address(list) parser */
@@ -1007,7 +1007,7 @@ void IPOnlyMatchPacket(ThreadVars *tv,
 
     uint32_t u;
     for (u = 0; u < src->size; u++) {
-        SCLogDebug("And %"PRIu8" & %"PRIu8, src->array[u], dst->array[u]);
+
 
         /* The final results will be at io_tctx */
         io_tctx->sig_match_array[u] = dst->array[u] & src->array[u];
@@ -1025,16 +1025,16 @@ void IPOnlyMatchPacket(ThreadVars *tv,
                     Signature *s = de_ctx->sig_array[u * 8 + i];
 
                     if ((s->proto.flags & DETECT_PROTO_IPV4) && !PKT_IS_IPV4(p)) {
-                        SCLogDebug("ip version didn't match");
+
                         continue;
                     }
                     if ((s->proto.flags & DETECT_PROTO_IPV6) && !PKT_IS_IPV6(p)) {
-                        SCLogDebug("ip version didn't match");
+
                         continue;
                     }
 
                     if (DetectProtoContainsProto(&s->proto, IP_GET_IPPROTO(p)) == 0) {
-                        SCLogDebug("proto didn't match");
+
                         continue;
                     }
 
@@ -1046,7 +1046,7 @@ void IPOnlyMatchPacket(ThreadVars *tv,
 
                             DetectPort *dport = DetectPortLookupGroup(s->dp,p->dp);
                             if (dport == NULL) {
-                                SCLogDebug("dport didn't match.");
+
                                 continue;
                             }
                         }
@@ -1056,12 +1056,12 @@ void IPOnlyMatchPacket(ThreadVars *tv,
 
                             DetectPort *sport = DetectPortLookupGroup(s->sp,p->sp);
                             if (sport == NULL) {
-                                SCLogDebug("sport didn't match.");
+
                                 continue;
                             }
                         }
                     } else if ((s->flags & (SIG_FLAG_DP_ANY|SIG_FLAG_SP_ANY)) != (SIG_FLAG_DP_ANY|SIG_FLAG_SP_ANY)) {
-                        SCLogDebug("port-less protocol and sig needs ports");
+
                         continue;
                     }
 
@@ -1069,14 +1069,14 @@ void IPOnlyMatchPacket(ThreadVars *tv,
                         continue;
                     }
 
-                    SCLogDebug("Signum %"PRIu16" match (sid: %"PRIu16", msg: %s)",
+
                                u * 8 + i, s->id, s->msg);
 
                     if (s->sm_arrays[DETECT_SM_LIST_POSTMATCH] != NULL) {
                         KEYWORD_PROFILING_SET_LIST(det_ctx, DETECT_SM_LIST_POSTMATCH);
                         SigMatchData *smd = s->sm_arrays[DETECT_SM_LIST_POSTMATCH];
 
-                        SCLogDebug("running match functions, sm %p", smd);
+
 
                         if (smd != NULL) {
                             while (1) {
@@ -1114,7 +1114,7 @@ void IPOnlyMatchPacket(ThreadVars *tv,
  */
 void IPOnlyPrepare(DetectEngineCtx *de_ctx)
 {
-    SCLogDebug("Preparing Final Lists");
+
 
     /*
        IPOnlyCIDRListPrint((de_ctx->io_ctx).ip_src);
@@ -1128,8 +1128,8 @@ void IPOnlyPrepare(DetectEngineCtx *de_ctx)
     for (src = (de_ctx->io_ctx).ip_src; src != NULL; ) {
         if (src->family == AF_INET) {
         /*
-            SCLogDebug("To IPv4");
-            SCLogDebug("Item has netmask %"PRIu16" negated: %s; IP: %s; "
+
+
                        "signum: %"PRIu16, src->netmask,
                         (src->negated) ? "yes":"no",
                         inet_ntoa( *(struct in_addr*)&src->ip[0]),
@@ -1146,7 +1146,7 @@ void IPOnlyPrepare(DetectEngineCtx *de_ctx)
                                                   (de_ctx->io_ctx).tree_ipv4src,
                                                   src->netmask, &user_data);
             if (user_data == NULL) {
-                SCLogDebug("Exact match not found");
+
 
                 /** Not found, look if there's a subnet of this range with
                  * bigger netmask */
@@ -1154,7 +1154,7 @@ void IPOnlyPrepare(DetectEngineCtx *de_ctx)
                                                    (de_ctx->io_ctx).tree_ipv4src,
                                                    &user_data);
                 if (user_data == NULL) {
-                    SCLogDebug("best match not found");
+
 
                     /* Not found, insert a new one */
                     SigNumArray *sna = SigNumArrayNew(de_ctx, &de_ctx->io_ctx);
@@ -1181,7 +1181,7 @@ void IPOnlyPrepare(DetectEngineCtx *de_ctx)
                         SCLogError(SC_ERR_IPONLY_RADIX, "Error inserting in the "
                                                         "src ipv4 radix tree");
                 } else {
-                    SCLogDebug("Best match found");
+
 
                     /* Found, copy the sig num table, add this signum and insert */
                     SigNumArray *sna = NULL;
@@ -1215,7 +1215,7 @@ void IPOnlyPrepare(DetectEngineCtx *de_ctx)
                     }
                 }
             } else {
-                SCLogDebug("Exact match found");
+
 
                 /* it's already inserted. Update it */
                 SigNumArray *sna = (SigNumArray *)user_data;
@@ -1231,7 +1231,7 @@ void IPOnlyPrepare(DetectEngineCtx *de_ctx)
                     sna->array[src->signum / 8] |= tmp;
             }
         } else if (src->family == AF_INET6) {
-            SCLogDebug("To IPv6");
+
 
             void *user_data = NULL;
             if (src->netmask == 128)
@@ -1317,14 +1317,14 @@ void IPOnlyPrepare(DetectEngineCtx *de_ctx)
         SCFree(tmpaux);
     }
 
-    SCLogDebug("dsts:");
+
 
     /* Prepare Dst radix trees */
     for (dst = (de_ctx->io_ctx).ip_dst; dst != NULL; ) {
         if (dst->family == AF_INET) {
 
-            SCLogDebug("To IPv4");
-            SCLogDebug("Item has netmask %"PRIu16" negated: %s; IP: %s; signum:"
+
+
                        " %"PRIu16"", dst->netmask, (dst->negated)?"yes":"no",
                        inet_ntoa(*(struct in_addr*)&dst->ip[0]), dst->signum);
 
@@ -1340,7 +1340,7 @@ void IPOnlyPrepare(DetectEngineCtx *de_ctx)
                                                   &user_data);
 
             if (user_data == NULL) {
-                SCLogDebug("Exact match not found");
+
 
                 /**
                  * Not found, look if there's a subnet of this range
@@ -1350,7 +1350,7 @@ void IPOnlyPrepare(DetectEngineCtx *de_ctx)
                                                    (de_ctx->io_ctx).tree_ipv4dst,
                                                    &user_data);
                 if (user_data == NULL) {
-                    SCLogDebug("Best match not found");
+
 
                     /** Not found, insert a new one */
                     SigNumArray *sna = SigNumArrayNew(de_ctx, &de_ctx->io_ctx);
@@ -1376,7 +1376,7 @@ void IPOnlyPrepare(DetectEngineCtx *de_ctx)
                         SCLogError(SC_ERR_IPONLY_RADIX, "Error inserting in the dst "
                                    "ipv4 radix tree");
                 } else {
-                    SCLogDebug("Best match found");
+
 
                     /* Found, copy the sig num table, add this signum and insert */
                     SigNumArray *sna = NULL;
@@ -1404,7 +1404,7 @@ void IPOnlyPrepare(DetectEngineCtx *de_ctx)
                                    "ipv4 radix tree");
                 }
             } else {
-                SCLogDebug("Exact match found");
+
 
                 /* it's already inserted. Update it */
                 SigNumArray *sna = (SigNumArray *)user_data;
@@ -1419,7 +1419,7 @@ void IPOnlyPrepare(DetectEngineCtx *de_ctx)
                     sna->array[dst->signum / 8] |= tmp;
             }
         } else if (dst->family == AF_INET6) {
-            SCLogDebug("To IPv6");
+
 
             void *user_data = NULL;
             if (dst->netmask == 128)
@@ -1509,17 +1509,17 @@ void IPOnlyPrepare(DetectEngineCtx *de_ctx)
     }
 
     /* print all the trees: for debuggin it might print too much info
-    SCLogDebug("Radix tree src ipv4:");
-    SCRadixPrintTree((de_ctx->io_ctx).tree_ipv4src);
-    SCLogDebug("Radix tree src ipv6:");
-    SCRadixPrintTree((de_ctx->io_ctx).tree_ipv6src);
-    SCLogDebug("__________________");
 
-    SCLogDebug("Radix tree dst ipv4:");
+    SCRadixPrintTree((de_ctx->io_ctx).tree_ipv4src);
+
+    SCRadixPrintTree((de_ctx->io_ctx).tree_ipv6src);
+
+
+
     SCRadixPrintTree((de_ctx->io_ctx).tree_ipv4dst);
-    SCLogDebug("Radix tree dst ipv6:");
+
     SCRadixPrintTree((de_ctx->io_ctx).tree_ipv6dst);
-    SCLogDebug("__________________");
+
     */
 }
 

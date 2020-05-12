@@ -139,7 +139,7 @@ int DetectEngineInspectHttpHRH(ThreadVars *tv,
         htp_header_t *h = NULL;
         h = (htp_header_t *)htp_table_get_c(tx->request_headers, "Host");
         if (h == NULL) {
-            SCLogDebug("HTTP host header not present in this request");
+
             goto end;
         }
         hname = (uint8_t *)bstr_ptr(h->value);

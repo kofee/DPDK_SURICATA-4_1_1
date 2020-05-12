@@ -57,26 +57,26 @@ static InspectionBuffer *FiledataGetDataCallback(DetectEngineThreadCtx *det_ctx,
     // TODO this is unused, is that right?
     //const uint32_t content_inspect_window = de_ctx->filedata_config[f->alproto].content_inspect_window;
 
-    SCLogDebug("content_limit %u, content_inspect_min_size %u",
+
                 content_limit, content_inspect_min_size);
 
-    SCLogDebug("file %p size %"PRIu64", state %d", cur_file, file_size, cur_file->state);
+
 
     /* no new data */
     if (cur_file->content_inspected == file_size) {
-        SCLogDebug("no new data");
+
         return NULL;
     }
 
     if (file_size == 0) {
-        SCLogDebug("no data to inspect for this transaction");
+
         return NULL;
     }
 
     if ((content_limit == 0 || file_size < content_limit) &&
         file_size < content_inspect_min_size &&
         !(flow_flags & STREAM_EOF) && !(cur_file->state > FILE_STATE_OPENED)) {
-        SCLogDebug("we still haven't seen the entire content. "
+
                    "Let's defer content inspection till we see the "
                    "entire content.");
         return NULL;
@@ -94,9 +94,9 @@ static InspectionBuffer *FiledataGetDataCallback(DetectEngineThreadCtx *det_ctx,
 
     /* update inspected tracker */
     cur_file->content_inspected = file_size;
-    SCLogDebug("content_inspected %"PRIu64, cur_file->content_inspected);
 
-    SCLogDebug("file_data buffer %p, data %p len %u offset %"PRIu64,
+
+
         buffer, buffer->inspect, buffer->inspect_len, buffer->inspect_offset);
 
     SCReturnPtr(buffer, "InspectionBuffer");

@@ -71,7 +71,7 @@ static HtpBody *GetResponseBody(htp_tx_t *tx)
 {
     HtpTxUserData *htud = (HtpTxUserData *)htp_tx_get_user_data(tx);
     if (htud == NULL) {
-        SCLogDebug("no htud");
+
         return NULL;
     }
 
@@ -100,17 +100,17 @@ InspectionBuffer *HttpServerBodyGetDataCallback(DetectEngineThreadCtx *det_ctx,
 
     /* no new data */
     if (body->body_inspected == body->content_len_so_far) {
-        SCLogDebug("no new data");
+
         return NULL;
     }
 
     HtpBodyChunk *cur = body->first;
     if (cur == NULL) {
-        SCLogDebug("No http chunks to inspect for this transacation");
+
         return NULL;
     }
 
-    SCLogDebug("response.body_limit %u response_body.content_len_so_far %"PRIu64
+
                ", response.inspect_min_size %"PRIu32", EOF %s, progress > body? %s",
               htp_state->cfg->response.body_limit,
               body->content_len_so_far,
@@ -126,7 +126,7 @@ InspectionBuffer *HttpServerBodyGetDataCallback(DetectEngineThreadCtx *det_ctx,
             body->content_len_so_far < htp_state->cfg->response.inspect_min_size &&
             !(AppLayerParserGetStateProgress(IPPROTO_TCP, ALPROTO_HTTP, tx, flags) > HTP_RESPONSE_BODY) &&
             !(flags & STREAM_EOF)) {
-            SCLogDebug("we still haven't seen the entire response body.  "
+
                        "Let's defer body inspection till we see the "
                        "entire body.");
             return NULL;
@@ -143,7 +143,7 @@ InspectionBuffer *HttpServerBodyGetDataCallback(DetectEngineThreadCtx *det_ctx,
     if (body->body_inspected > htp_state->cfg->response.inspect_min_size) {
         BUG_ON(body->content_len_so_far < body->body_inspected);
         uint64_t inspect_win = body->content_len_so_far - body->body_inspected;
-        SCLogDebug("inspect_win %"PRIu64, inspect_win);
+
         if (inspect_win < htp_state->cfg->response.inspect_window) {
             uint64_t inspect_short = htp_state->cfg->response.inspect_window - inspect_win;
             if (body->body_inspected < inspect_short)
@@ -181,7 +181,7 @@ InspectionBuffer *HttpServerBodyGetDataCallback(DetectEngineThreadCtx *det_ctx,
     /* move inspected tracker to end of the data. HtpBodyPrune will consider
      * the window sizes when freeing data */
     body->body_inspected = body->content_len_so_far;
-    SCLogDebug("body->body_inspected now: %"PRIu64, body->body_inspected);
+
 
     SCReturnPtr(buffer, "InspectionBuffer");
 }
@@ -234,7 +234,7 @@ static int RunTest(struct TestSteps *steps, const char *sig, const char *yaml)
     f.flags |= FLOW_IPV4;
     f.alproto = ALPROTO_HTTP;
 
-    SCLogDebug("sig %s", sig);
+
     DetectEngineAppendSig(de_ctx, (char *)sig);
 
     de_ctx->flags |= DE_QUIET;
@@ -248,7 +248,7 @@ static int RunTest(struct TestSteps *steps, const char *sig, const char *yaml)
     struct TestSteps *b = steps;
     i = 0;
     while (b->input != NULL) {
-        SCLogDebug("chunk %p %d", b, i);
+
         p = UTHBuildPacket(NULL, 0, IPPROTO_TCP);
         if (p == NULL)
             goto end;

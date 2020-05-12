@@ -110,7 +110,7 @@ static int RunTest (struct TestSteps *steps, const char *sig, const char *yaml)
     f.flags |= FLOW_IPV4;
     f.alproto = ALPROTO_HTTP;
 
-    SCLogDebug("sig %s", sig);
+
     Signature *s = DetectEngineAppendSig(de_ctx, (char *)sig);
     FAIL_IF_NULL(s);
 
@@ -121,7 +121,7 @@ static int RunTest (struct TestSteps *steps, const char *sig, const char *yaml)
     struct TestSteps *b = steps;
     int i = 0;
     while (b->input != NULL) {
-        SCLogDebug("chunk %p %d", b, i);
+
         Packet *p = UTHBuildPacket(NULL, 0, IPPROTO_TCP);
         FAIL_IF_NULL(p);
         p->flow = &f;

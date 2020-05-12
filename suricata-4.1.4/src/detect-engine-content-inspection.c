@@ -126,7 +126,7 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
     if (smd->type == DETECT_CONTENT) {
 
         DetectContentData *cd = (DetectContentData *)smd->ctx;
-        SCLogDebug("inspecting content %"PRIu32" buffer_len %"PRIu32, cd->id, buffer_len);
+
 
         /* we might have already have this content matched by the mpm.
          * (if there is any other reason why we'd want to avoid checking
@@ -151,7 +151,7 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
         do {
             if ((cd->flags & DETECT_CONTENT_DISTANCE) ||
                 (cd->flags & DETECT_CONTENT_WITHIN)) {
-                SCLogDebug("det_ctx->buffer_offset %"PRIu32, det_ctx->buffer_offset);
+
 
                 offset = prev_buffer_offset;
                 depth = buffer_len;
@@ -166,7 +166,7 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
                     else
                         offset += distance;
 
-                    SCLogDebug("cd->distance %"PRIi32", offset %"PRIu32", depth %"PRIu32,
+
                                distance, offset, depth);
                 }
 
@@ -180,7 +180,7 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
                             depth = prev_buffer_offset + cd->within + distance;
                         }
 
-                        SCLogDebug("cd->within %"PRIi32", det_ctx->buffer_offset %"PRIu32", depth %"PRIu32,
+
                                    cd->within, prev_buffer_offset, depth);
                     }
 
@@ -205,7 +205,7 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
                             depth = prev_buffer_offset + cd->depth;
                         }
 
-                        SCLogDebug("cd->depth %"PRIu32", depth %"PRIu32, cd->depth, depth);
+
                     }
                 }
 
@@ -215,7 +215,7 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
                 } else {
                     if (cd->offset > offset) {
                         offset = cd->offset;
-                        SCLogDebug("setting offset %"PRIu32, offset);
+
                     }
                 }
             } else { /* implied no relative matches */
@@ -248,11 +248,11 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
 
             /* update offset with prev_offset if we're searching for
              * matches after the first occurence. */
-            SCLogDebug("offset %"PRIu32", prev_offset %"PRIu32, offset, prev_offset);
+
             if (prev_offset != 0)
                 offset = prev_offset;
 
-            SCLogDebug("offset %"PRIu32", depth %"PRIu32, offset, depth);
+
 
             if (depth > buffer_len)
                 depth = buffer_len;
@@ -270,12 +270,12 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
             uint8_t *sbuffer = buffer + offset;
             uint32_t sbuffer_len = depth - offset;
             uint32_t match_offset = 0;
-            SCLogDebug("sbuffer_len %"PRIu32, sbuffer_len);
+
 #ifdef DEBUG
             BUG_ON(sbuffer_len > buffer_len);
 #endif
             if (cd->flags & DETECT_CONTENT_ENDS_WITH && depth < buffer_len) {
-                SCLogDebug("depth < buffer_len while DETECT_CONTENT_ENDS_WITH is set. Can't possibly match.");
+
                 found = NULL;
             } else if (cd->content_len > sbuffer_len) {
                 found = NULL;
@@ -287,7 +287,7 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
 
             /* next we evaluate the result in combination with the
              * negation flag. */
-            SCLogDebug("found %p cd negated %s", found, cd->flags & DETECT_CONTENT_NEGATED ? "true" : "false");
+
 
             if (found == NULL && !(cd->flags & DETECT_CONTENT_NEGATED)) {
                 if ((cd->flags & (DETECT_CONTENT_DISTANCE|DETECT_CONTENT_WITHIN)) == 0) {
@@ -299,7 +299,7 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
             } else if (found == NULL && (cd->flags & DETECT_CONTENT_NEGATED)) {
                 goto match;
             } else if (found != NULL && (cd->flags & DETECT_CONTENT_NEGATED)) {
-                SCLogDebug("content %"PRIu32" matched at offset %"PRIu32", but negated so no match", cd->id, match_offset);
+
                 /* don't bother carrying recursive matches now, for preceding
                  * relative keywords */
                 if (DETECT_CONTENT_IS_SINGLE(cd))
@@ -307,7 +307,7 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
                 goto no_match;
             } else {
                 match_offset = (uint32_t)((found - buffer) + cd->content_len);
-                SCLogDebug("content %"PRIu32" matched at offset %"PRIu32"", cd->id, match_offset);
+
                 det_ctx->buffer_offset = match_offset;
 
                 if ((cd->flags & DETECT_CONTENT_ENDS_WITH) == 0 || match_offset == buffer_len) {
@@ -326,7 +326,7 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
                         goto match;
                     }
 
-                    SCLogDebug("content %"PRIu32, cd->id);
+
                     KEYWORD_PROFILING_END(det_ctx, smd->type, 1);
 
                     /* see if the next buffer keywords match. If not, we will
@@ -338,31 +338,31 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
                     if (r == 1) {
                         SCReturnInt(1);
                     }
-                    SCLogDebug("no match for 'next sm'");
+
 
                     if (det_ctx->discontinue_matching) {
-                        SCLogDebug("'next sm' said to discontinue this right now");
+
                         goto no_match;
                     }
 
                     /* no match and no reason to look for another instance */
                     if ((cd->flags & DETECT_CONTENT_WITHIN_NEXT) == 0) {
-                        SCLogDebug("'next sm' does not depend on me, so we can give up");
+
                         det_ctx->discontinue_matching = 1;
                         goto no_match;
                     }
 
-                    SCLogDebug("'next sm' depends on me %p, lets see what we can do (flags %u)", cd, cd->flags);
+
                 }
                 /* set the previous match offset to the start of this match + 1 */
                 prev_offset = (match_offset - (cd->content_len - 1));
-                SCLogDebug("trying to see if there is another match after prev_offset %"PRIu32, prev_offset);
+
             }
 
         } while(1);
 
     } else if (smd->type == DETECT_ISDATAAT) {
-        SCLogDebug("inspecting isdataat");
+
 
         const DetectIsdataatData *id = (DetectIsdataatData *)smd->ctx;
         uint32_t dataat = id->dataat;
@@ -370,36 +370,36 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
             uint64_t be_value = det_ctx->bj_values[dataat];
             if (be_value >= 100000000) {
                 if ((id->flags & ISDATAAT_NEGATED) == 0) {
-                    SCLogDebug("extracted value %"PRIu64" very big: no match", be_value);
+
                     goto no_match;
                 }
-                SCLogDebug("extracted value way %"PRIu64" very big: match", be_value);
+
                 goto match;
             }
             dataat = (uint32_t)be_value;
-            SCLogDebug("isdataat: using value %u from byte_extract local_id %u", dataat, id->dataat);
+
         }
 
         if (id->flags & ISDATAAT_RELATIVE) {
             if (det_ctx->buffer_offset + dataat > buffer_len) {
-                SCLogDebug("det_ctx->buffer_offset + dataat %"PRIu32" > %"PRIu32, det_ctx->buffer_offset + dataat, buffer_len);
+
                 if (id->flags & ISDATAAT_NEGATED)
                     goto match;
                 goto no_match;
             } else {
-                SCLogDebug("relative isdataat match");
+
                 if (id->flags & ISDATAAT_NEGATED)
                     goto no_match;
                 goto match;
             }
         } else {
             if (dataat < buffer_len) {
-                SCLogDebug("absolute isdataat match");
+
                 if (id->flags & ISDATAAT_NEGATED)
                     goto no_match;
                 goto match;
             } else {
-                SCLogDebug("absolute isdataat mismatch, id->isdataat %"PRIu32", buffer_len %"PRIu32"", dataat, buffer_len);
+
                 if (id->flags & ISDATAAT_NEGATED)
                     goto match;
                 goto no_match;
@@ -407,7 +407,7 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
         }
 
     } else if (smd->type == DETECT_PCRE) {
-        SCLogDebug("inspecting pcre");
+
         DetectPcreData *pe = (DetectPcreData *)smd->ctx;
         uint32_t prev_buffer_offset = det_ctx->buffer_offset;
         uint32_t prev_offset = 0;
@@ -425,7 +425,7 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
             }
 
             if (!(pe->flags & DETECT_PCRE_RELATIVE_NEXT)) {
-                SCLogDebug("no relative match coming up, so this is a match");
+
                 goto match;
             }
             KEYWORD_PROFILING_END(det_ctx, smd->type, 1);
@@ -546,7 +546,7 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
         goto match;
 
     } else if (smd->type == DETECT_AL_URILEN) {
-        SCLogDebug("inspecting uri len");
+
 
         int r = 0;
         DetectUrilenData *urilend = (DetectUrilenData *) smd->ctx;
@@ -582,15 +582,15 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
 #ifdef HAVE_LUA
     }
     else if (smd->type == DETECT_LUA) {
-        SCLogDebug("lua starting");
+
 
         if (DetectLuaMatchBuffer(det_ctx, s, smd, buffer, buffer_len,
                     det_ctx->buffer_offset, f) != 1)
         {
-            SCLogDebug("lua no_match");
+
             goto no_match;
         }
-        SCLogDebug("lua match");
+
         goto match;
 #endif /* HAVE_LUA */
     } else if (smd->type == DETECT_BASE64_DECODE) {
@@ -604,7 +604,7 @@ int DetectEngineContentInspection(DetectEngineCtx *de_ctx, DetectEngineThreadCtx
             }
         }
     } else {
-        SCLogDebug("sm->type %u", smd->type);
+
 #ifdef DEBUG
         BUG_ON(1);
 #endif

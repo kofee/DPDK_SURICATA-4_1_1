@@ -320,7 +320,7 @@ static void AppendStreamInspectEngine(Signature *s, SigMatchData *stream, int di
         exit(EXIT_FAILURE);
     }
     if (SigMatchListSMBelongsTo(s, s->init_data->mpm_sm) == DETECT_SM_LIST_PMATCH) {
-        SCLogDebug("stream is mpm");
+
         prepend = true;
         new_engine->mpm = true;
     }
@@ -350,7 +350,7 @@ static void AppendStreamInspectEngine(Signature *s, SigMatchData *stream, int di
         a->next = new_engine;
         new_engine->id = id;
     }
-    SCLogDebug("sid %u: engine %p/%u added", s->id, new_engine, new_engine->id);
+
 }
 
 /**
@@ -376,7 +376,7 @@ int DetectEngineAppInspectionEngine2Signature(DetectEngineCtx *de_ctx, Signature
             continue;
 
         ptrs[i] = SigMatchList2DataArray(s->init_data->smlists[i]);
-        SCLogDebug("ptrs[%d] is set", i);
+
     }
 
     bool head_is_mpm = false;
@@ -391,7 +391,7 @@ int DetectEngineAppInspectionEngine2Signature(DetectEngineCtx *de_ctx, Signature
         if (ptrs[t->sm_list] == NULL)
             goto next;
 
-        SCLogDebug("ptrs[%d] is set", t->sm_list);
+
 
         if (t->alproto == ALPROTO_UNKNOWN) {
             /* special case, inspect engine applies to all protocols */
@@ -410,7 +410,7 @@ int DetectEngineAppInspectionEngine2Signature(DetectEngineCtx *de_ctx, Signature
             exit(EXIT_FAILURE);
         }
         if (mpm_list == t->sm_list) {
-            SCLogDebug("%s is mpm", DetectBufferTypeGetNameById(de_ctx, t->sm_list));
+
             prepend = true;
             head_is_mpm = true;
             new_engine->mpm = true;
@@ -423,14 +423,14 @@ int DetectEngineAppInspectionEngine2Signature(DetectEngineCtx *de_ctx, Signature
         new_engine->Callback = t->Callback;
         new_engine->progress = t->progress;
         new_engine->v2 = t->v2;
-        SCLogDebug("sm_list %d new_engine->v2 %p/%p/%p",
+
                 new_engine->sm_list, new_engine->v2.Callback,
                 new_engine->v2.GetData, new_engine->v2.transforms);
 
         if (s->app_inspect == NULL) {
             s->app_inspect = new_engine;
             if (new_engine->sm_list == files_id) {
-                SCLogDebug("sid %u: engine %p/%u is FILE ENGINE", s->id, new_engine, new_engine->id);
+
                 new_engine->id = DE_STATE_ID_FILE_INSPECT;
             } else {
                 new_engine->id = DE_STATE_FLAG_BASE; /* id is used as flag in stateful detect */
@@ -441,7 +441,7 @@ int DetectEngineAppInspectionEngine2Signature(DetectEngineCtx *de_ctx, Signature
             new_engine->next = s->app_inspect;
             s->app_inspect = new_engine;
             if (new_engine->sm_list == files_id) {
-                SCLogDebug("sid %u: engine %p/%u is FILE ENGINE", s->id, new_engine, new_engine->id);
+
                 new_engine->id = DE_STATE_ID_FILE_INSPECT;
             } else {
                 new_engine->id = ++last_id;
@@ -460,14 +460,14 @@ int DetectEngineAppInspectionEngine2Signature(DetectEngineCtx *de_ctx, Signature
             new_engine->next = a->next;
             a->next = new_engine;
             if (new_engine->sm_list == files_id) {
-                SCLogDebug("sid %u: engine %p/%u is FILE ENGINE", s->id, new_engine, new_engine->id);
+
                 new_engine->id = DE_STATE_ID_FILE_INSPECT;
             } else {
                 new_engine->id = ++last_id;
             }
         }
 
-        SCLogDebug("sid %u: engine %p/%u added", s->id, new_engine, new_engine->id);
+
 
         s->init_data->init_flags |= SIG_FLAG_INIT_STATE_MATCH;
 next:
@@ -497,7 +497,7 @@ next:
 #ifdef DEBUG
     const DetectEngineAppInspectionEngine *iter = s->app_inspect;
     while (iter) {
-        SCLogDebug("%u: engine %s id %u progress %d %s", s->id,
+
                 DetectBufferTypeGetNameById(de_ctx, iter->sm_list), iter->id,
                 iter->progress,
                 iter->sm_list == mpm_list ? "MPM":"");
@@ -641,7 +641,7 @@ static int DetectBufferTypeAdd(const char *string)
     map->id = g_buffer_type_id++;
 
     BUG_ON(HashListTableAdd(g_buffer_type_hash, (void *)map, 0) != 0);
-    SCLogDebug("buffer %s registered with id %d", map->string, map->id);
+
     return map->id;
 }
 
@@ -674,7 +674,7 @@ void DetectBufferTypeSupportsPacket(const char *name)
     DetectBufferType *exists = DetectBufferTypeLookupByName(name);
     BUG_ON(!exists);
     exists->packet = TRUE;
-    SCLogDebug("%p %s -- %d supports packet inspection", exists, name, exists->id);
+
 }
 
 void DetectBufferTypeSupportsMpm(const char *name)
@@ -684,7 +684,7 @@ void DetectBufferTypeSupportsMpm(const char *name)
     DetectBufferType *exists = DetectBufferTypeLookupByName(name);
     BUG_ON(!exists);
     exists->mpm = TRUE;
-    SCLogDebug("%p %s -- %d supports mpm", exists, name, exists->id);
+
 }
 
 void DetectBufferTypeSupportsTransformations(const char *name)
@@ -694,7 +694,7 @@ void DetectBufferTypeSupportsTransformations(const char *name)
     DetectBufferType *exists = DetectBufferTypeLookupByName(name);
     BUG_ON(!exists);
     exists->supports_transforms = true;
-    SCLogDebug("%p %s -- %d supports transformations", exists, name, exists->id);
+
 }
 
 int DetectBufferTypeGetByName(const char *name)
@@ -757,7 +757,6 @@ bool DetectBufferTypeSupportsPacketGetById(const DetectEngineCtx *de_ctx, const 
     const DetectBufferType *map = DetectBufferTypeGetById(de_ctx, id);
     if (map == NULL)
         return FALSE;
-    SCLogDebug("map %p id %d packet? %d", map, id, map->packet);
     return map->packet;
 }
 
@@ -766,7 +765,6 @@ bool DetectBufferTypeSupportsMpmGetById(const DetectEngineCtx *de_ctx, const int
     const DetectBufferType *map = DetectBufferTypeGetById(de_ctx, id);
     if (map == NULL)
         return FALSE;
-    SCLogDebug("map %p id %d mpm? %d", map, id, map->mpm);
     return map->mpm;
 }
 
@@ -827,14 +825,14 @@ int DetectBufferGetActiveList(DetectEngineCtx *de_ctx, Signature *s)
     BUG_ON(s->init_data == NULL);
 
     if (s->init_data->list && s->init_data->transform_cnt) {
-        SCLogDebug("buffer %d has transform(s) registered: %d",
+
                 s->init_data->list, s->init_data->transforms[0]);
         int new_list = DetectBufferTypeGetByIdTransforms(de_ctx, s->init_data->list,
                 s->init_data->transforms, s->init_data->transform_cnt);
         if (new_list == -1) {
             return -1;
         }
-        SCLogDebug("new_list %d", new_list);
+
         s->init_data->list = new_list;
         s->init_data->list_set = false;
         // reset transforms now that we've set up the list
@@ -889,15 +887,15 @@ InspectionBuffer *InspectionBufferMultipleForListGet(InspectionBufferMultipleFor
         uint32_t old_size = fb->size;
         uint32_t new_size = local_id + 1;
         uint32_t grow_by = new_size - old_size;
-        SCLogDebug("size is %u, need %u, so growing by %u", old_size, new_size, grow_by);
 
-        SCLogDebug("fb->inspection_buffers %p", fb->inspection_buffers);
+
+
         void *ptr = SCRealloc(fb->inspection_buffers, (local_id + 1) * sizeof(InspectionBuffer));
         if (ptr == NULL)
             return NULL;
 
         InspectionBuffer *to_zero = (InspectionBuffer *)ptr + old_size;
-        SCLogDebug("ptr %p to_zero %p", ptr, to_zero);
+
         memset((uint8_t *)to_zero, 0, (grow_by * sizeof(InspectionBuffer)));
         fb->inspection_buffers = ptr;
         fb->size = new_size;
@@ -905,7 +903,7 @@ InspectionBuffer *InspectionBufferMultipleForListGet(InspectionBufferMultipleFor
 
     fb->max = MAX(fb->max, local_id);
     InspectionBuffer *buffer = &fb->inspection_buffers[local_id];
-    SCLogDebug("using file_data buffer %p", buffer);
+
     return buffer;
 }
 
@@ -987,7 +985,7 @@ void InspectionBufferApplyTransforms(InspectionBuffer *buffer,
                 break;
             BUG_ON(sigmatch_table[id].Transform == NULL);
             sigmatch_table[id].Transform(buffer);
-            SCLogDebug("applied transform %s", sigmatch_table[id].name);
+
         }
     }
 }
@@ -1000,14 +998,14 @@ static void DetectBufferTypeSetupDetectEngine(DetectEngineCtx *de_ctx)
     de_ctx->buffer_type_map = SCCalloc(size, sizeof(DetectBufferType *));
     BUG_ON(!de_ctx->buffer_type_map);
     de_ctx->buffer_type_map_elements = size;
-    SCLogDebug("de_ctx->buffer_type_map %p with %u members", de_ctx->buffer_type_map, size);
 
-    SCLogDebug("DETECT_SM_LIST_DYNAMIC_START %u", DETECT_SM_LIST_DYNAMIC_START);
+
+
     HashListTableBucket *b = HashListTableGetListHead(g_buffer_type_hash);
     while (b) {
         DetectBufferType *map = HashListTableGetListData(b);
         de_ctx->buffer_type_map[map->id] = map;
-        SCLogDebug("name %s id %d mpm %s packet %s -- %s. "
+
                 "Callbacks: Setup %p Validate %p", map->string, map->id,
                 map->mpm ? "true" : "false", map->packet ? "true" : "false",
                 map->description, map->SetupCallback, map->ValidateCallback);
@@ -1082,7 +1080,7 @@ int DetectBufferTypeGetByIdTransforms(DetectEngineCtx *de_ctx, const int id,
     DetectBufferType lookup_map = { (char *)base_map->string, NULL, 0, 0, 0, 0, false, NULL, NULL, t };
     DetectBufferType *res = HashListTableLookup(de_ctx->buffer_type_hash, &lookup_map, 0);
 
-    SCLogDebug("res %p", res);
+
     if (res != NULL) {
         return res->id;
     }
@@ -1102,12 +1100,12 @@ int DetectBufferTypeGetByIdTransforms(DetectEngineCtx *de_ctx, const int id,
             map->id, map->parent_id, &map->transforms);
 
     BUG_ON(HashListTableAdd(de_ctx->buffer_type_hash, (void *)map, 0) != 0);
-    SCLogDebug("buffer %s registered with id %d, parent %d", map->string, map->id, map->parent_id);
+
 
     if (map->id >= 0 && (uint32_t)map->id >= de_ctx->buffer_type_map_elements) {
         void *ptr = SCRealloc(de_ctx->buffer_type_map, (map->id + 1) * sizeof(DetectBufferType *));
         BUG_ON(ptr == NULL);
-        SCLogDebug("de_ctx->buffer_type_map resized to %u (was %u)", (map->id + 1), de_ctx->buffer_type_map_elements);
+
         de_ctx->buffer_type_map = ptr;
         de_ctx->buffer_type_map[map->id] = map;
         de_ctx->buffer_type_map_elements = map->id + 1;
@@ -1199,7 +1197,7 @@ int DetectEngineInspectGenericList(ThreadVars *tv,
                                    Flow *f, const uint8_t flags,
                                    void *alstate, void *txv, uint64_t tx_id)
 {
-    SCLogDebug("running match functions, sm %p", smd);
+
     if (smd != NULL) {
         while (1) {
             int match = 0;
@@ -1248,11 +1246,11 @@ int DetectEngineInspectBufferGeneric(
         Flow *f, uint8_t flags, void *alstate, void *txv, uint64_t tx_id)
 {
     const int list_id = engine->sm_list;
-    SCLogDebug("running inspect on %d", list_id);
+
 
     const bool eof = (AppLayerParserGetStateProgress(f->proto, f->alproto, txv, flags) > engine->progress);
 
-    SCLogDebug("list %d mpm? %s transforms %p",
+
             engine->sm_list, engine->mpm ? "true" : "false", engine->v2.transforms);
 
     /* if prefilter didn't already run, we need to consider transformations */
@@ -1449,7 +1447,7 @@ static int DetectEngineReloadThreads(DetectEngineCtx *new_de_ctx)
                 SCMutexUnlock(&tv_root_lock);
                 goto error;
             }
-            SCLogDebug("live rule swap created new det_ctx - %p and de_ctx "
+
                        "- %p\n", new_det_ctx[i], new_de_ctx);
             i++;
             break;
@@ -1476,7 +1474,7 @@ static int DetectEngineReloadThreads(DetectEngineCtx *new_de_ctx)
                 slots = slots->slot_next;
                 continue;
             }
-            SCLogDebug("swapping new det_ctx - %p with older one - %p",
+
                        new_det_ctx[i], SC_ATOMIC_GET(slots->slot_data));
             FlowWorkerReplaceDetectCtx(SC_ATOMIC_GET(slots->slot_data), new_det_ctx[i++]);
             break;
@@ -1488,7 +1486,7 @@ static int DetectEngineReloadThreads(DetectEngineCtx *new_de_ctx)
     /* threads now all have new data, however they may not have started using
      * it and may still use the old data */
 
-    SCLogDebug("Live rule swap has swapped %d old det_ctx's with new ones, "
+
                "along with the new de_ctx", no_of_detect_tvs);
 
     InjectPackets(detect_tvs, new_det_ctx, no_of_detect_tvs);
@@ -1507,7 +1505,7 @@ static int DetectEngineReloadThreads(DetectEngineCtx *new_de_ctx)
         }
         if (break_out)
             break;
-        SCLogDebug("new_det_ctx - %p used by detect engine", new_det_ctx[i]);
+
     }
 
     /* this is to make sure that if someone initiated shutdown during a live
@@ -1540,7 +1538,7 @@ static int DetectEngineReloadThreads(DetectEngineCtx *new_de_ctx)
 
     /* free all the ctxs */
     for (i = 0; i < no_of_detect_tvs; i++) {
-        SCLogDebug("Freeing old_det_ctx - %p used by detect",
+
                    old_det_ctx[i]);
         DetectEngineThreadCtxDeinit(NULL, old_det_ctx[i]);
     }
@@ -1571,7 +1569,7 @@ static DetectEngineCtx *DetectEngineCtxInitReal(enum DetectEngineType type, cons
 
     if (type == DETECT_ENGINE_TYPE_DD_STUB || type == DETECT_ENGINE_TYPE_MT_STUB) {
         de_ctx->version = DetectEngineGetVersion();
-        SCLogDebug("stub %u with version %u", type, de_ctx->version);
+
         return de_ctx;
     }
 
@@ -1580,7 +1578,7 @@ static DetectEngineCtx *DetectEngineCtxInitReal(enum DetectEngineType type, cons
     }
 
     if (ConfGetBool("engine.init-failure-fatal", (int *)&(de_ctx->failure_fatal)) != 1) {
-        SCLogDebug("ConfGetBool could not load the value.");
+
     }
 
     de_ctx->mpm_matcher = PatternMatchDefaultMatcher();
@@ -1591,7 +1589,7 @@ static DetectEngineCtx *DetectEngineCtxInitReal(enum DetectEngineType type, cons
 
     de_ctx->spm_global_thread_ctx = SpmInitGlobalThreadCtx(de_ctx->spm_matcher);
     if (de_ctx->spm_global_thread_ctx == NULL) {
-        SCLogDebug("Unable to alloc SpmGlobalThreadCtx.");
+
         goto error;
     }
 
@@ -1619,7 +1617,7 @@ static DetectEngineCtx *DetectEngineCtxInitReal(enum DetectEngineType type, cons
 
     de_ctx->version = DetectEngineGetVersion();
     VarNameStoreSetupStaging(de_ctx->version);
-    SCLogDebug("dectx with version %u", de_ctx->version);
+
     return de_ctx;
 error:
     if (de_ctx != NULL) {
@@ -1814,9 +1812,9 @@ static int DetectEngineCtxLoadConf(DetectEngineCtx *de_ctx)
             return -1;
         }
 
-        SCLogDebug("Profile for detection engine groups is \"%s\"", de_ctx_profile);
+
     } else {
-        SCLogDebug("Profile for detection engine groups not provided "
+
                    "at suricata.yaml. Using default (\"medium\").");
     }
 
@@ -1960,7 +1958,7 @@ static int DetectEngineCtxLoadConf(DetectEngineCtx *de_ctx)
                     break;
                 }
                 insp_recursion_limit = insp_recursion_limit_node->val;
-                SCLogDebug("Found detect-engine.inspection-recursion-limit - %s:%s",
+
                         insp_recursion_limit_node->name, insp_recursion_limit_node->val);
                 break;
             }
@@ -1977,7 +1975,7 @@ static int DetectEngineCtxLoadConf(DetectEngineCtx *de_ctx)
     if (de_ctx->inspection_recursion_limit == 0)
         de_ctx->inspection_recursion_limit = -1;
 
-    SCLogDebug("de_ctx->inspection_recursion_limit: %d",
+
                de_ctx->inspection_recursion_limit);
 
     /* parse port grouping whitelisting settings */
@@ -2224,7 +2222,7 @@ static TmEcode DetectEngineThreadCtxInitForMT(ThreadVars *tv, DetectEngineThread
         /* set up hash for tenant lookup */
         list = master->list;
         while (list) {
-            SCLogDebug("tenant-id %u", list->tenant_id);
+
             if (list->tenant_id != 0) {
                 DetectEngineThreadCtx *mt_det_ctx = DetectEngineThreadCtxInitForReload(tv, list, 0);
                 if (mt_det_ctx == NULL)
@@ -2247,19 +2245,19 @@ static TmEcode DetectEngineThreadCtxInitForMT(ThreadVars *tv, DetectEngineThread
 
     switch (master->tenant_selector) {
         case TENANT_SELECTOR_UNKNOWN:
-            SCLogDebug("TENANT_SELECTOR_UNKNOWN");
+
             break;
         case TENANT_SELECTOR_VLAN:
             det_ctx->TenantGetId = DetectEngineTentantGetIdFromVlanId;
-            SCLogDebug("TENANT_SELECTOR_VLAN");
+
             break;
         case TENANT_SELECTOR_LIVEDEV:
             det_ctx->TenantGetId = DetectEngineTentantGetIdFromLivedev;
-            SCLogDebug("TENANT_SELECTOR_LIVEDEV");
+
             break;
         case TENANT_SELECTOR_DIRECT:
             det_ctx->TenantGetId = DetectEngineTentantGetIdFromPcap;
-            SCLogDebug("TENANT_SELECTOR_DIRECT");
+
             break;
     }
 
@@ -2499,13 +2497,13 @@ static DetectEngineThreadCtx *DetectEngineThreadCtxInitForReload(
 static void DetectEngineThreadCtxFree(DetectEngineThreadCtx *det_ctx)
 {
 #if  DEBUG
-    SCLogDebug("PACKET PKT_STREAM_ADD: %"PRIu64, det_ctx->pkt_stream_add_cnt);
 
-    SCLogDebug("PAYLOAD MPM %"PRIu64"/%"PRIu64, det_ctx->payload_mpm_cnt, det_ctx->payload_mpm_size);
-    SCLogDebug("STREAM  MPM %"PRIu64"/%"PRIu64, det_ctx->stream_mpm_cnt, det_ctx->stream_mpm_size);
 
-    SCLogDebug("PAYLOAD SIG %"PRIu64"/%"PRIu64, det_ctx->payload_persig_cnt, det_ctx->payload_persig_size);
-    SCLogDebug("STREAM  SIG %"PRIu64"/%"PRIu64, det_ctx->stream_persig_cnt, det_ctx->stream_persig_size);
+
+
+
+
+
 #endif
 
     if (det_ctx->tenant_array != NULL) {
@@ -2776,7 +2774,7 @@ void DetectEngineBumpVersion(void)
     DetectEngineMasterCtx *master = &g_master_de_ctx;
     SCMutexLock(&master->lock);
     master->version++;
-    SCLogDebug("master version now %u", master->version);
+
     SCMutexUnlock(&master->lock);
 }
 
@@ -2792,7 +2790,7 @@ DetectEngineCtx *DetectEngineGetCurrent(void)
             de_ctx->type == DETECT_ENGINE_TYPE_MT_STUB)
         {
             de_ctx->ref_cnt++;
-            SCLogDebug("de_ctx %p ref_cnt %u", de_ctx, de_ctx->ref_cnt);
+
             SCMutexUnlock(&master->lock);
             return de_ctx;
         }
@@ -2866,7 +2864,7 @@ static int DetectEngineMultiTenantLoadTenant(uint32_t tenant_id, const char *fil
                 "context failed.");
         goto error;
     }
-    SCLogDebug("de_ctx %p with prefix %s", de_ctx, de_ctx->config_prefix);
+
 
     de_ctx->type = DETECT_ENGINE_TYPE_TENANT;
     de_ctx->tenant_id = tenant_id;
@@ -2899,7 +2897,7 @@ static int DetectEngineMultiTenantReloadTenant(uint32_t tenant_id, const char *f
     char prefix[64];
     snprintf(prefix, sizeof(prefix), "multi-detect.%d.reload.%d", tenant_id, reload_cnt);
     reload_cnt++;
-    SCLogDebug("prefix %s", prefix);
+
 
     if (ConfYamlLoadFileWithPrefix(filename, prefix) != 0) {
         SCLogError(SC_ERR_INITIALIZATION,"failed to load yaml");
@@ -2918,7 +2916,7 @@ static int DetectEngineMultiTenantReloadTenant(uint32_t tenant_id, const char *f
                 "context failed.");
         goto error;
     }
-    SCLogDebug("de_ctx %p with prefix %s", new_de_ctx, new_de_ctx->config_prefix);
+
 
     new_de_ctx->type = DETECT_ENGINE_TYPE_TENANT;
     new_de_ctx->tenant_id = tenant_id;
@@ -2952,7 +2950,7 @@ static int DetectLoaderFuncLoadTenant(void *vctx, int loader_id)
 {
     TenantLoaderCtx *ctx = (TenantLoaderCtx *)vctx;
 
-    SCLogDebug("loader %d", loader_id);
+
     if (DetectEngineMultiTenantLoadTenant(ctx->tenant_id, ctx->yaml, loader_id) != 0) {
         return -1;
     }
@@ -2975,7 +2973,7 @@ static int DetectLoaderFuncReloadTenant(void *vctx, int loader_id)
 {
     TenantLoaderCtx *ctx = (TenantLoaderCtx *)vctx;
 
-    SCLogDebug("loader_id %d", loader_id);
+
 
     if (DetectEngineMultiTenantReloadTenant(ctx->tenant_id, ctx->yaml, ctx->reload_cnt) != 0) {
         return -1;
@@ -2999,7 +2997,7 @@ static int DetectLoaderSetupReloadTenant(uint32_t tenant_id, const char *yaml, i
     t->yaml = yaml;
     t->reload_cnt = reload_cnt;
 
-    SCLogDebug("loader_id %d", loader_id);
+
 
     return DetectLoaderQueueTask(loader_id, DetectLoaderFuncReloadTenant, t);
 }
@@ -3271,7 +3269,7 @@ int DetectEngineMultiTenantSetup(void)
                             "of %s is invalid", id_node->val);
                     goto bad_tenant;
                 }
-                SCLogDebug("tenant id: %u, %s", tenant_id, yaml_node->val);
+
 
                 /* setup the yaml in this loop so that it's not done by the loader
                  * threads. ConfYamlLoadFileWithPrefix is not thread safe. */
@@ -3303,7 +3301,7 @@ int DetectEngineMultiTenantSetup(void)
         VarNameStoreActivateStaging();
 
     } else {
-        SCLogDebug("multi-detect not enabled (multi tenancy)");
+
     }
     return 0;
 error:
@@ -3342,7 +3340,7 @@ static uint32_t DetectEngineTentantGetIdFromLivedev(const void *ctx, const Packe
     if (ld == NULL || det_ctx == NULL)
         return 0;
 
-    SCLogDebug("using tenant-id %u for packet on device %s", ld->tenant_id, ld->dev);
+
     return ld->tenant_id;
 }
 
@@ -3382,7 +3380,7 @@ static int DetectEngineTentantRegisterSelector(enum DetectEngineTenantSelectors 
 
     master->tenant_selector = selector;
 
-    SCLogDebug("tenant handler %u %u %u registered", selector, tenant_id, traffic_id);
+
     SCMutexUnlock(&master->lock);
     return 0;
 }
@@ -3512,7 +3510,7 @@ int DetectEngineAddToMaster(DetectEngineCtx *de_ctx)
     if (de_ctx == NULL)
         return -1;
 
-    SCLogDebug("adding de_ctx %p to master", de_ctx);
+
 
     DetectEngineMasterCtx *master = &g_master_de_ctx;
     SCMutexLock(&master->lock);
@@ -3566,7 +3564,7 @@ int DetectEngineMoveToFreeList(DetectEngineCtx *de_ctx)
         instance->next = master->free_list;
         master->free_list = instance;
     }
-    SCLogDebug("detect engine %p moved to free list (%u refs)", de_ctx, de_ctx->ref_cnt);
+
 
     SCMutexUnlock(&master->lock);
     return 0;
@@ -3582,7 +3580,7 @@ void DetectEnginePruneFreeList(void)
     while (instance) {
         DetectEngineCtx *next = instance->next;
 
-        SCLogDebug("detect engine %p has %u ref(s)", instance, instance->ref_cnt);
+
 
         if (instance->ref_cnt == 0) {
             if (prev == NULL) {
@@ -3591,7 +3589,7 @@ void DetectEnginePruneFreeList(void)
                 prev->next = next;
             }
 
-            SCLogDebug("freeing detect engine %p", instance);
+
             DetectEngineCtxFree(instance);
             instance = NULL;
         }
@@ -3644,7 +3642,7 @@ int DetectEngineReload(const SCInstance *suri)
     old_de_ctx = DetectEngineGetCurrent();
     if (old_de_ctx == NULL)
         return -1;
-    SCLogDebug("get ref to old_de_ctx %p", old_de_ctx);
+
 
     /* only reload a regular 'normal' and 'delayed detect stub' detect engines */
     if (!(old_de_ctx->type == DETECT_ENGINE_TYPE_NORMAL ||
@@ -3669,7 +3667,7 @@ int DetectEngineReload(const SCInstance *suri)
         DetectEngineDeReference(&old_de_ctx);
         return -1;
     }
-    SCLogDebug("set up new_de_ctx %p", new_de_ctx);
+
 
     /* add to master */
     DetectEngineAddToMaster(new_de_ctx);
@@ -3678,17 +3676,17 @@ int DetectEngineReload(const SCInstance *suri)
     DetectEngineMoveToFreeList(old_de_ctx);
     DetectEngineDeReference(&old_de_ctx);
 
-    SCLogDebug("going to reload the threads to use new_de_ctx %p", new_de_ctx);
+
     /* update the threads */
     DetectEngineReloadThreads(new_de_ctx);
-    SCLogDebug("threads now run new_de_ctx %p", new_de_ctx);
+
 
     /* walk free list, freeing the old_de_ctx */
     DetectEnginePruneFreeList();
 
     DetectEngineBumpVersion();
 
-    SCLogDebug("old_de_ctx should have been freed");
+
 
     SCLogNotice("rule reload complete");
     return 0;
@@ -3726,7 +3724,7 @@ int DetectEngineMTApply(void)
     DetectEngineCtx *stub_de_ctx = NULL;
     DetectEngineCtx *list = master->list;
     for ( ; list != NULL; list = list->next) {
-        SCLogDebug("list %p tenant %u", list, list->tenant_id);
+
 
         if (list->type == DETECT_ENGINE_TYPE_NORMAL ||
             list->type == DETECT_ENGINE_TYPE_MT_STUB ||
@@ -3752,16 +3750,16 @@ int DetectEngineMTApply(void)
     }
 
     /* update the threads */
-    SCLogDebug("MT reload starting");
+
     DetectEngineReloadThreads(stub_de_ctx);
-    SCLogDebug("MT reload done");
+
 
     SCMutexUnlock(&master->lock);
 
     /* walk free list, freeing the old_de_ctx */
     DetectEnginePruneFreeList();
 
-    SCLogDebug("old_de_ctx should have been freed");
+
     return 0;
 }
 

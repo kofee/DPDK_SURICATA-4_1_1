@@ -105,15 +105,15 @@ void DetectPortPrintList(DetectPort *head)
     DetectPort *cur;
     uint16_t cnt = 0;
 
-    SCLogDebug("= list start:");
+
     if (head != NULL) {
         for (cur = head; cur != NULL; cur = cur->next) {
              DetectPortPrint(cur);
              cnt++;
         }
-        SCLogDebug(" ");
+
     }
-    SCLogDebug("= list end (cnt %" PRIu32 ")", cnt);
+
 }
 
 /**
@@ -187,7 +187,7 @@ int DetectPortInsert(DetectEngineCtx *de_ctx, DetectPort **head,
 
             /* if so, handle that */
             if (r == PORT_EQ) {
-                SCLogDebug("PORT_EQ %p %p", cur, new);
+
                 /* exact overlap/match */
                 if (cur != new) {
                     SigGroupHeadCopySigs(de_ctx, new->sh, &cur->sh);
@@ -196,18 +196,18 @@ int DetectPortInsert(DetectEngineCtx *de_ctx, DetectPort **head,
                 }
                 return 1;
             } else if (r == PORT_GT) {
-                SCLogDebug("PORT_GT (cur->next %p)", cur->next);
+
                 /* only add it now if we are bigger than the last
                  * group. Otherwise we'll handle it later. */
                 if (cur->next == NULL) {
-                    SCLogDebug("adding GT");
+
                     /* put in the list */
                     new->prev = cur;
                     cur->next = new;
                     return 1;
                 }
             } else if (r == PORT_LT) {
-                SCLogDebug("PORT_LT");
+
 
                 /* see if we need to insert the ag anywhere */
                 /* put in the list */
@@ -237,8 +237,8 @@ int DetectPortInsert(DetectEngineCtx *de_ctx, DetectPort **head,
                     goto error;
 
                 if (c != NULL) {
-                    SCLogDebug("inserting C (%p)", c);
-                    if (SCLogDebugEnabled()) {
+
+                    if (
                         DetectPortPrint(c);
                     }
                     r = DetectPortInsert(de_ctx, head, c);
@@ -252,7 +252,7 @@ int DetectPortInsert(DetectEngineCtx *de_ctx, DetectPort **head,
 
     /* head is NULL, so get a group and set head to it */
     } else {
-        SCLogDebug("setting new head %p", new);
+
         *head = new;
     }
 
@@ -302,7 +302,7 @@ static int DetectPortCut(DetectEngineCtx *de_ctx, DetectPort *a,
      * part c: a_port2 + 1 <-> b_port2
      */
     if (r == PORT_LE) {
-        SCLogDebug("cut r == PORT_LE");
+
         a->port = a_port1;
         a->port2 = b_port1 - 1;
 
@@ -329,7 +329,7 @@ static int DetectPortCut(DetectEngineCtx *de_ctx, DetectPort *a,
      * part c: b_port2 + 1 <-> a_port2
      */
     } else if (r == PORT_GE) {
-        SCLogDebug("cut r == PORT_GE");
+
         a->port = b_port1;
         a->port2 = a_port1 - 1;
 
@@ -377,9 +377,9 @@ static int DetectPortCut(DetectEngineCtx *de_ctx, DetectPort *a,
      * part c: a_port2 + 1 <-> b_port2
      */
     } else if (r == PORT_ES) {
-        SCLogDebug("cut r == PORT_ES");
+
         if (a_port1 == b_port1) {
-            SCLogDebug("1");
+
             a->port = a_port1;
             a->port2 = a_port2;
 
@@ -390,7 +390,7 @@ static int DetectPortCut(DetectEngineCtx *de_ctx, DetectPort *a,
             SigGroupHeadCopySigs(de_ctx,b->sh,&a->sh);
 
         } else if (a_port2 == b_port2) {
-            SCLogDebug("2");
+
             a->port = b_port1;
             a->port2 = a_port1 - 1;
 
@@ -409,7 +409,7 @@ static int DetectPortCut(DetectEngineCtx *de_ctx, DetectPort *a,
             SigGroupHeadCopySigs(de_ctx,tmp->sh,&a->sh);/* merge old a with b */
             SigGroupHeadClearSigs(tmp->sh); /* clean tmp list */
         } else {
-            SCLogDebug("3");
+
             a->port = b_port1;
             a->port2 = a_port1 - 1;
 
@@ -457,9 +457,9 @@ static int DetectPortCut(DetectEngineCtx *de_ctx, DetectPort *a,
      * part c: b_port2 + 1 <-> a_port2
      */
     } else if (r == PORT_EB) {
-        SCLogDebug("cut r == PORT_EB");
+
         if (a_port1 == b_port1) {
-            SCLogDebug("1");
+
             a->port = b_port1;
             a->port2 = b_port2;
 
@@ -475,7 +475,7 @@ static int DetectPortCut(DetectEngineCtx *de_ctx, DetectPort *a,
             SigGroupHeadClearSigs(tmp->sh);
 
         } else if (a_port2 == b_port2) {
-            SCLogDebug("2");
+
 
             a->port = a_port1;
             a->port2 = b_port1 - 1;
@@ -487,7 +487,7 @@ static int DetectPortCut(DetectEngineCtx *de_ctx, DetectPort *a,
             SigGroupHeadCopySigs(de_ctx,a->sh,&b->sh);
 
         } else {
-            SCLogDebug("3");
+
             a->port = a_port1;
             a->port2 = b_port1 - 1;
 
@@ -594,27 +594,27 @@ int DetectPortCmp(DetectPort *a, DetectPort *b)
 
     /* PORT_EQ */
     if (a_port1 == b_port1 && a_port2 == b_port2) {
-        //SCLogDebug("PORT_EQ");
+        //
         return PORT_EQ;
     /* PORT_ES */
     } else if (a_port1 >= b_port1 && a_port1 <= b_port2 && a_port2 <= b_port2) {
-        //SCLogDebug("PORT_ES");
+        //
         return PORT_ES;
     /* PORT_EB */
     } else if (a_port1 <= b_port1 && a_port2 >= b_port2) {
-        //SCLogDebug("PORT_EB");
+        //
         return PORT_EB;
     } else if (a_port1 < b_port1 && a_port2 < b_port2 && a_port2 >= b_port1) {
-        //SCLogDebug("PORT_LE");
+        //
         return PORT_LE;
     } else if (a_port1 < b_port1 && a_port2 < b_port2) {
-        //SCLogDebug("PORT_LT");
+        //
         return PORT_LT;
     } else if (a_port1 > b_port1 && a_port1 <= b_port2 && a_port2 > b_port2) {
-        //SCLogDebug("PORT_GE");
+        //
         return PORT_GE;
     } else if (a_port1 > b_port2) {
-        //SCLogDebug("PORT_GT");
+        //
         return PORT_GT;
     } else {
         /* should be unreachable */
@@ -716,10 +716,10 @@ void DetectPortPrint(DetectPort *dp)
         return;
 
     if (dp->flags & PORT_FLAG_ANY) {
-        SCLogDebug("=> port %p: ANY", dp);
+
 //        printf("ANY");
     } else {
-        SCLogDebug("=> port %p %" PRIu32 "-%" PRIu32 "", dp, dp->port, dp->port2);
+
 //        printf("%" PRIu32 "-%" PRIu32 "", dp->port, dp->port2);
     }
 }
@@ -743,8 +743,8 @@ DetectPortLookupGroup(DetectPort *dp, uint16_t port)
 
     for ( ; p != NULL; p = p->next) {
         if (DetectPortMatch(p,port) == 1) {
-            //SCLogDebug("match, port %" PRIu32 ", dp ", port);
-            //DetectPortPrint(p); SCLogDebug("");
+            //
+            //DetectPortPrint(p);
             return p;
         }
     }
@@ -871,7 +871,7 @@ static int DetectPortParseInsertString(const DetectEngineCtx *de_ctx,
     int r = 0;
     char port_any = FALSE;
 
-    SCLogDebug("head %p, *head %p, s %s", head, *head, s);
+
 
     /** parse the address */
     ad = PortParse(s);
@@ -909,7 +909,7 @@ static int DetectPortParseInsertString(const DetectEngineCtx *de_ctx,
 
     /** if any, insert 0.0.0.0/0 and ::/0 as well */
     if (r == 1 && port_any == TRUE) {
-        SCLogDebug("inserting 0:65535 as port is \"any\"");
+
 
         ad_any = PortParse("0:65535");
         if (ad_any == NULL)
@@ -967,7 +967,7 @@ static int DetectPortParseDo(const DetectEngineCtx *de_ctx,
     const char *rule_var_port = NULL;
     int r = 0;
 
-    SCLogDebug("head %p, *head %p, negate %d", head, *head, negate);
+
 
     for (u = 0, x = 0; u < size && x < sizeof(address); u++) {
         address[x] = s[u];
@@ -980,7 +980,7 @@ static int DetectPortParseDo(const DetectEngineCtx *de_ctx,
             SCLogError(SC_ERR_NEGATED_VALUE_IN_PORT_RANGE,"Can't have a negated value in a range.");
             return -1;
         } else if (!o_set && s[u] == '!') {
-            SCLogDebug("negation encountered");
+
             n_set = 1;
             x--;
         } else if (s[u] == '[') {
@@ -992,7 +992,7 @@ static int DetectPortParseDo(const DetectEngineCtx *de_ctx,
         } else if (s[u] == ']') {
             if (depth == 1) {
                 address[x - 1] = '\0';
-                SCLogDebug("Parsed port from DetectPortParseDo - %s", address);
+
                 x = 0;
 
                 r = DetectPortParseDo(de_ctx, head, nhead, address, negate? negate: n_set, var_list);
@@ -1046,7 +1046,7 @@ static int DetectPortParseDo(const DetectEngineCtx *de_ctx,
                 SCFree(alloc_rule_var_port);
             } else {
                 address[x - 1] = '\0';
-                SCLogDebug("Parsed port from DetectPortParseDo - %s", address);
+
 
                 if (negate == 0 && n_set == 0) {
                     r = DetectPortParseInsertString(de_ctx, head, address);
@@ -1069,7 +1069,7 @@ static int DetectPortParseDo(const DetectEngineCtx *de_ctx,
             } else {
                 address[x] = '\0';
             }
-            SCLogDebug("%s", address);
+
 
             if (AddVariableToResolveList(var_list, address) == -1) {
                 SCLogError(SC_ERR_INVALID_YAML_CONF_ENTRY, "Found a loop in a port "
@@ -1208,7 +1208,7 @@ static int DetectPortParseMergeNotPorts(const DetectEngineCtx *de_ctx,
      * first.
      */
     if (*head == NULL && *nhead != NULL) {
-        SCLogDebug("inserting 0:65535 into head");
+
         r = DetectPortParseInsertString(de_ctx, head,"0:65535");
         if (r < 0) {
             goto error;
@@ -1233,11 +1233,11 @@ static int DetectPortParseMergeNotPorts(const DetectEngineCtx *de_ctx,
 
     /** step 2: pull the address blocks that match our 'not' blocks */
     for (ag = *nhead; ag != NULL; ag = ag->next) {
-        SCLogDebug("ag %p", ag);
+
         DetectPortPrint(ag);
 
         for (ag2 = *head; ag2 != NULL; ) {
-            SCLogDebug("ag2 %p", ag2);
+
             DetectPortPrint(ag2);
 
             r = DetectPortCmp(ag, ag2);
@@ -1262,7 +1262,7 @@ static int DetectPortParseMergeNotPorts(const DetectEngineCtx *de_ctx,
     }
 
     for (ag2 = *head; ag2 != NULL; ag2 = ag2->next) {
-        SCLogDebug("ag2 %p", ag2);
+
         DetectPortPrint(ag2);
     }
 
@@ -1280,7 +1280,7 @@ error:
 
 int DetectPortTestConfVars(void)
 {
-    SCLogDebug("Testing port conf vars for any misconfigured values");
+
 
     ResolvedVariablesList var_list = TAILQ_HEAD_INITIALIZER(var_list);
 
@@ -1291,7 +1291,7 @@ int DetectPortTestConfVars(void)
 
     ConfNode *seq_node;
     TAILQ_FOREACH(seq_node, &port_vars_node->head, next) {
-        SCLogDebug("Testing %s - %s\n", seq_node->name, seq_node->val);
+
 
         DetectPort *gh =  DetectPortInit();
         if (gh == NULL) {
@@ -1357,7 +1357,7 @@ int DetectPortParse(const DetectEngineCtx *de_ctx,
 {
     int r;
 
-    SCLogDebug("Port string to be parsed - str %s", str);
+
 
     /* negate port list */
     DetectPort *nhead = NULL;
@@ -1366,7 +1366,7 @@ int DetectPortParse(const DetectEngineCtx *de_ctx,
     if (r < 0)
         goto error;
 
-    SCLogDebug("head %p %p, nhead %p", head, *head, nhead);
+
 
     /* merge the 'not' address groups */
     if (DetectPortParseMergeNotPorts(de_ctx, head, &nhead) < 0)
@@ -1489,12 +1489,12 @@ static uint32_t DetectPortHashFunc(HashListTable *ht, void *data, uint16_t datal
     DetectPort *p = (DetectPort *)data;
     uint32_t hash = 0;
 
-    SCLogDebug("hashing sgh %p", p);
+
 
     hash = ((uint32_t)p->port << 16) | p->port2;
 
     hash %= ht->array_size;
-    SCLogDebug("hash %"PRIu32, hash);
+
     return hash;
 }
 
@@ -1622,7 +1622,7 @@ static int PortTestDetectPortAdd(DetectPort **head, DetectPort *dp)
 {
     DetectPort *cur, *prev_cur = NULL;
 
-    //SCLogDebug("DetectPortAdd: adding "); DetectPortPrint(ag); SCLogDebug("");
+    //
 
     if (*head != NULL) {
         for (cur = *head; cur != NULL; cur = cur->next) {
@@ -2315,9 +2315,9 @@ static int PortTestFunctions05(void)
     }
     SigGroupHeadAppendSig(de_ctx, &dp2->sh, &s[1]);
 
-    SCLogDebug("dp1");
+
     DetectPortPrint(dp1);
-    SCLogDebug("dp2");
+
     DetectPortPrint(dp2);
 
     DetectPortInsert(de_ctx, &dp3, dp1);
@@ -2326,7 +2326,7 @@ static int PortTestFunctions05(void)
     if (dp3 == NULL)
         goto end;
 
-    SCLogDebug("dp3");
+
     DetectPort *x = dp3;
     for ( ; x != NULL; x = x->next) {
         DetectPortPrint(x);
@@ -2393,9 +2393,9 @@ static int PortTestFunctions06(void)
     }
     SigGroupHeadAppendSig(de_ctx, &dp2->sh, &s[1]);
 
-    SCLogDebug("dp1");
+
     DetectPortPrint(dp1);
-    SCLogDebug("dp2");
+
     DetectPortPrint(dp2);
 
     DetectPortInsert(de_ctx, &dp3, dp2);
@@ -2404,7 +2404,7 @@ static int PortTestFunctions06(void)
     if (dp3 == NULL)
         goto end;
 
-    SCLogDebug("dp3");
+
     DetectPort *x = dp3;
     for ( ; x != NULL; x = x->next) {
         DetectPortPrint(x);

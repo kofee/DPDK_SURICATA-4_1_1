@@ -41,18 +41,18 @@
  */
 void PrintENIPAL(ENIPTransaction *enip_data)
 {
-    SCLogDebug("============================================");
-    SCLogDebug("ENCAP HEADER cmd 0x%x, length %d, session 0x%x, status 0x%x",
+
+
             enip_data->header.command, enip_data->header.length,
             enip_data->header.session, enip_data->header.status);
-    //SCLogDebug("context 0x%x option 0x%x", enip_data->header.context, enip_data->header.option);
-    SCLogDebug("ENCAP DATA HEADER handle 0x%x, timeout %d, count %d",
+    //
+
             enip_data->encap_data_header.interface_handle,
             enip_data->encap_data_header.timeout,
             enip_data->encap_data_header.item_count);
-    SCLogDebug("ENCAP ADDR ITEM type 0x%x, length %d",
+
             enip_data->encap_addr_item.type, enip_data->encap_addr_item.length);
-    SCLogDebug("ENCAP DATA ITEM type 0x%x, length %d sequence 0x%x",
+
             enip_data->encap_data_item.type, enip_data->encap_data_item.length,
             enip_data->encap_data_item.sequence_count);
 
@@ -61,7 +61,7 @@ void PrintENIPAL(ENIPTransaction *enip_data)
     int count = 0;
     TAILQ_FOREACH(svc, &enip_data->service_list, next)
     {
-        //SCLogDebug("CIP Service #%d : 0x%x", count, svc->service);
+        //
         count++;
     }
 }
@@ -166,15 +166,15 @@ static int CIPServiceMatch(ENIPTransaction *enip_data,
 {
     int count = 1;
     CIPServiceEntry *svc = NULL;
-    //SCLogDebug("CIPServiceMatchAL");
+    //
     TAILQ_FOREACH(svc, &enip_data->service_list, next)
     {
-        SCLogDebug("CIPServiceMatchAL service #%d : 0x%x dir %d",
+
                 count, svc->service,  svc->direction);
 
         if (cipserviced->cipservice == svc->service)
         { // compare service
-            //SCLogDebug("Rule Match for cip service %d",cipserviced->cipservice );
+            //
 
             if (cipserviced->tokens > 1)
             { //if rule params have class and attribute
@@ -196,7 +196,7 @@ static int CIPServiceMatch(ENIPTransaction *enip_data,
             {
                 if (svc->direction == 1) return 0; //don't match responses
 
-                // SCLogDebug("CIPServiceMatchAL found");
+                //
                 return 1;
             }
         }
@@ -230,14 +230,14 @@ int DetectEngineInspectCIP(ThreadVars *tv,
 
     if (cipserviced == NULL)
     {
-        SCLogDebug("no cipservice state, no match");
+
         SCReturnInt(0);
     }
-    //SCLogDebug("DetectEngineInspectCIP %d", cipserviced->cipservice);
+    //
 
     if (CIPServiceMatch(tx, cipserviced) == 1)
     {
-        //SCLogDebug("DetectCIPServiceMatchAL found");
+        //
         SCReturnInt(1);
     }
 
@@ -269,15 +269,15 @@ int DetectEngineInspectENIP(ThreadVars *tv,
 
     if (enipcmdd == NULL)
     {
-        SCLogDebug("no enipcommand state, no match");
+
         SCReturnInt(0);
     }
 
-    //SCLogDebug("DetectEngineInspectENIP %d, %d", enipcmdd->enipcommand, tx->header.command);
+    //
 
     if (enipcmdd->enipcommand == tx->header.command)
     {
-        // SCLogDebug("DetectENIPCommandMatchAL found!");
+        //
         SCReturnInt(1);
     }
 

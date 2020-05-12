@@ -541,7 +541,7 @@ void SigTableRegisterTests(void)
             sigmatch_table[i].RegisterTests();
             g_ut_covered++;
         } else {
-            SCLogDebug("detection plugin %s has no unittest "
+
                    "registration function.", sigmatch_table[i].name);
 
             if (coverage_unittests)

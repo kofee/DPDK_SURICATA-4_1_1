@@ -79,74 +79,74 @@ static int DetectFileInspect(ThreadVars *tv, DetectEngineThreadCtx *det_ctx,
     int match = 0;
     int store_r = 0;
 
-    SCLogDebug("file inspection... %p", ffc);
+
 
     if (ffc != NULL) {
         File *file = ffc->head;
         for (; file != NULL; file = file->next) {
-            SCLogDebug("file");
+
 
             if (file->state == FILE_STATE_NONE) {
-                SCLogDebug("file state FILE_STATE_NONE");
+
                 continue;
             }
 
             if (file->txid < det_ctx->tx_id) {
-                SCLogDebug("file->txid < det_ctx->tx_id == %"PRIu64" < %"PRIu64, file->txid, det_ctx->tx_id);
+
                 continue;
             }
 
             if (file->txid > det_ctx->tx_id) {
-                SCLogDebug("file->txid > det_ctx->tx_id == %"PRIu64" > %"PRIu64, file->txid, det_ctx->tx_id);
+
                 break;
             }
 
             if ((s->file_flags & FILE_SIG_NEED_FILENAME) && file->name == NULL) {
-                SCLogDebug("sig needs filename, but we don't have any");
+
                 r = DETECT_ENGINE_INSPECT_SIG_NO_MATCH;
                 continue;
             }
 
             uint64_t file_size = FileDataSize(file);
             if ((s->file_flags & FILE_SIG_NEED_MAGIC) && file_size == 0) {
-                SCLogDebug("sig needs file content, but we don't have any");
+
                 r = DETECT_ENGINE_INSPECT_SIG_NO_MATCH;
                 continue;
             }
 
             if ((s->file_flags & FILE_SIG_NEED_FILECONTENT) && file_size == 0) {
-                SCLogDebug("sig needs file content, but we don't have any");
+
                 r = DETECT_ENGINE_INSPECT_SIG_NO_MATCH;
                 continue;
             }
 
             if ((s->file_flags & FILE_SIG_NEED_MD5) && (!(file->flags & FILE_MD5))) {
-                SCLogDebug("sig needs file md5, but we don't have any");
+
                 r = DETECT_ENGINE_INSPECT_SIG_NO_MATCH;
                 continue;
             }
 
             if ((s->file_flags & FILE_SIG_NEED_SHA1) && (!(file->flags & FILE_SHA1))) {
-                SCLogDebug("sig needs file sha1, but we don't have any");
+
                 r = DETECT_ENGINE_INSPECT_SIG_NO_MATCH;
                 continue;
             }
 
             if ((s->file_flags & FILE_SIG_NEED_SHA256) && (!(file->flags & FILE_SHA256))) {
-                SCLogDebug("sig needs file sha256, but we don't have any");
+
                 r = DETECT_ENGINE_INSPECT_SIG_NO_MATCH;
                 continue;
             }
 
             if ((s->file_flags & FILE_SIG_NEED_SIZE) && file->state < FILE_STATE_CLOSED) {
-                SCLogDebug("sig needs filesize, but state < FILE_STATE_CLOSED");
+
                 r = DETECT_ENGINE_INSPECT_SIG_NO_MATCH;
                 continue;
             }
 
             /* run the file match functions. */
             while (1) {
-                SCLogDebug("smd %p", smd);
+
 
                 if (sigmatch_table[smd->type].FileMatch != NULL) {
                     KEYWORD_PROFILING_START;
@@ -201,7 +201,7 @@ static int DetectFileInspect(ThreadVars *tv, DetectEngineThreadCtx *det_ctx,
     }
 
     if (r == DETECT_ENGINE_INSPECT_SIG_NO_MATCH && store_r == DETECT_ENGINE_INSPECT_SIG_MATCH) {
-        SCLogDebug("stored MATCH, current file NOMATCH");
+
         SCReturnInt(DETECT_ENGINE_INSPECT_SIG_MATCH_MORE_FILES);
     }
 
@@ -249,13 +249,13 @@ int DetectFileInspectGeneric(ThreadVars *tv,
     if (match == DETECT_ENGINE_INSPECT_SIG_MATCH) {
         r = DETECT_ENGINE_INSPECT_SIG_MATCH;
     } else if (match == DETECT_ENGINE_INSPECT_SIG_CANT_MATCH) {
-        SCLogDebug("sid %u can't match on this transaction", s->id);
+
         r = DETECT_ENGINE_INSPECT_SIG_CANT_MATCH;
     } else if (match == DETECT_ENGINE_INSPECT_SIG_CANT_MATCH_FILESTORE) {
-        SCLogDebug("sid %u can't match on this transaction (filestore sig)", s->id);
+
         r = DETECT_ENGINE_INSPECT_SIG_CANT_MATCH_FILESTORE;
     } else if (match == DETECT_ENGINE_INSPECT_SIG_MATCH_MORE_FILES) {
-        SCLogDebug("match with more files ahead");
+
         r = match;
     }
 
