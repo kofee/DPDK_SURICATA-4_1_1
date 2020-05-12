@@ -98,7 +98,7 @@ void StreamTcpReassembleInitMemuse(void)
 void StreamTcpReassembleIncrMemuse(uint64_t size)
 {
     (void) SC_ATOMIC_ADD(ra_memuse, size);
-    SCLogDebug("REASSEMBLY %"PRIu64", incr %"PRIu64, StreamTcpReassembleMemuseGlobalCounter(), size);
+
     return;
 }
 
@@ -125,7 +125,7 @@ void StreamTcpReassembleDecrMemuse(uint64_t size)
         BUG_ON(postsize > presize);
     }
 #endif
-    SCLogDebug("REASSEMBLY %"PRIu64", decr %"PRIu64, StreamTcpReassembleMemuseGlobalCounter(), size);
+
     return;
 }
 
@@ -269,7 +269,7 @@ static int TcpSegmentPoolInit(void *data, void *initdata)
     SCMutexLock(&segment_pool_memuse_mutex);
     segment_pool_memuse += sizeof(TcpSegment);
     segment_pool_memcnt++;
-    SCLogDebug("segment_pool_memcnt %"PRIu64"", segment_pool_memcnt);
+
     SCMutexUnlock(&segment_pool_memuse_mutex);
 #endif
 
@@ -289,7 +289,7 @@ static void TcpSegmentPoolCleanup(void *ptr)
     SCMutexLock(&segment_pool_memuse_mutex);
     segment_pool_memuse -= sizeof(TcpSegment);
     segment_pool_memcnt--;
-    SCLogDebug("segment_pool_memcnt %"PRIu64"", segment_pool_memcnt);
+
     SCMutexUnlock(&segment_pool_memuse_mutex);
 #endif
 }
@@ -554,12 +554,12 @@ static uint32_t StreamTcpReassembleCheckDepth(TcpSession *ssn, TcpStream *stream
             ssn->reassembly_depth);
 
     if (seg_depth > (uint64_t)ssn->reassembly_depth) {
-        SCLogDebug("STREAMTCP_STREAM_FLAG_DEPTH_REACHED");
+
         stream->flags |= STREAMTCP_STREAM_FLAG_DEPTH_REACHED;
         SCReturnUInt(0);
     }
-    SCLogDebug("NOT STREAMTCP_STREAM_FLAG_DEPTH_REACHED");
-    SCLogDebug("%"PRIu64" <= %u", seg_depth, ssn->reassembly_depth);
+
+
 #if 0
     SCLogDebug("full depth not yet reached: %"PRIu64" <= %"PRIu32,
             (stream->base_seq_offset + stream->base_seq + size),
@@ -615,21 +615,21 @@ int StreamTcpReassembleHandleSegmentHandleData(ThreadVars *tv, TcpReassemblyThre
 
     if ((ssn->flags & STREAMTCP_FLAG_APP_LAYER_DISABLED) &&
         (stream->flags & STREAMTCP_STREAM_FLAG_NEW_RAW_DISABLED)) {
-        SCLogDebug("ssn %p: both app and raw reassembly disabled, not reassembling", ssn);
+
         SCReturnInt(0);
     }
 
     /* If we have reached the defined depth for either of the stream, then stop
        reassembling the TCP session */
     uint32_t size = StreamTcpReassembleCheckDepth(ssn, stream, TCP_GET_SEQ(p), p->payload_len);
-    SCLogDebug("ssn %p: check depth returned %"PRIu32, ssn, size);
+
 
     if (stream->flags & STREAMTCP_STREAM_FLAG_DEPTH_REACHED) {
         /* increment stream depth counter */
         StatsIncr(tv, ra_ctx->counter_tcp_stream_depth);
     }
     if (size == 0) {
-        SCLogDebug("ssn %p: depth reached, not reassembling", ssn);
+
         SCReturnInt(0);
     }
 
@@ -639,7 +639,7 @@ int StreamTcpReassembleHandleSegmentHandleData(ThreadVars *tv, TcpReassemblyThre
 
     TcpSegment *seg = StreamTcpGetSegment(tv, ra_ctx);
     if (seg == NULL) {
-        SCLogDebug("segment_pool is empty");
+
         StreamTcpSetEvent(p, STREAM_REASSEMBLY_NO_SEGMENT);
         SCReturnInt(-1);
     }
@@ -656,7 +656,7 @@ int StreamTcpReassembleHandleSegmentHandleData(ThreadVars *tv, TcpReassemblyThre
     }
 
     if (StreamTcpReassembleInsertSegment(tv, ra_ctx, stream, seg, p, TCP_GET_SEQ(p), p->payload, p->payload_len) != 0) {
-        SCLogDebug("StreamTcpReassembleInsertSegment failed");
+
         SCReturnInt(-1);
     }
     SCReturnInt(0);
@@ -726,7 +726,7 @@ static int StreamTcpReassembleRawCheckLimit(const TcpSession *ssn,
                     "is set, so not expecting any new data segments");
         }
         if (stream->flags & STREAMTCP_STREAM_FLAG_TRIGGER_RAW) {
-            SCLogDebug("reassembling now as STREAMTCP_STREAM_FLAG_TRIGGER_RAW is set");
+
         }
         if (stream->flags & STREAMTCP_STREAM_FLAG_NEW_RAW_DISABLED) {
             SCLogDebug("reassembling now as STREAMTCP_STREAM_FLAG_NEW_RAW_DISABLED is set, "
@@ -831,18 +831,18 @@ int StreamNeedsReassembly(const TcpSession *ssn, uint8_t direction)
             right_edge);
     if (use_raw) {
         if (right_edge > STREAM_RAW_PROGRESS(stream)) {
-            SCLogDebug("%s: STREAM_HAS_UNPROCESSED_SEGMENTS_NEED_ONLY_DETECTION", dirstr);
+
             return STREAM_HAS_UNPROCESSED_SEGMENTS_NEED_ONLY_DETECTION;
         }
     }
     if (use_app) {
         if (right_edge > STREAM_APP_PROGRESS(stream)) {
-            SCLogDebug("%s: STREAM_HAS_UNPROCESSED_SEGMENTS_NEED_ONLY_DETECTION", dirstr);
+
             return STREAM_HAS_UNPROCESSED_SEGMENTS_NEED_ONLY_DETECTION;
         }
     }
 
-    SCLogDebug("%s: STREAM_HAS_UNPROCESSED_SEGMENTS_NONE", dirstr);
+
     return STREAM_HAS_UNPROCESSED_SEGMENTS_NONE;
 }
 
@@ -859,7 +859,7 @@ static uint64_t GetStreamSize(TcpStream *stream)
             size += (uint64_t)TCP_SEG_LEN(seg);
         }
 
-        SCLogDebug("size %"PRIu64", cnt %"PRIu32, size, cnt);
+
         return size;
     }
     return (uint64_t)0;
@@ -874,7 +874,7 @@ static void GetSessionSize(TcpSession *ssn, Packet *p)
 
         //if (size > 900000)
         //    SCLogInfo("size %"PRIu64", packet %"PRIu64, size, p->pcap_cnt);
-        SCLogDebug("size %"PRIu64", packet %"PRIu64, size, p->pcap_cnt);
+
     }
 }
 #endif
@@ -891,7 +891,7 @@ static void GetAppBuffer(TcpStream *stream, const uint8_t **data, uint32_t *data
     uint32_t mydata_len;
 
     if (RB_EMPTY(&stream->sb.sbb_tree)) {
-        SCLogDebug("getting one blob");
+
 
         StreamingBufferGetDataAtOffset(&stream->sb, &mydata, &mydata_len, offset);
 
@@ -922,7 +922,7 @@ static void GetAppBuffer(TcpStream *stream, const uint8_t **data, uint32_t *data
             SCLogDebug("get data from offset %"PRIu64". SBB %"PRIu64"/%u",
                     offset, blk->offset, blk->len);
             StreamingBufferSBBGetDataAtOffset(&stream->sb, blk, data, data_len, offset);
-            SCLogDebug("data %p, data_len %u", *data, *data_len);
+
         } else {
             StreamingBufferSBBGetData(&stream->sb, blk, data, data_len);
         }
@@ -949,8 +949,8 @@ static inline bool CheckGap(TcpSession *ssn, TcpStream *stream, Packet *p)
         const int ackadded = (ssn->state >= TCP_FIN_WAIT1) ? 1 : 0;
         last_ack_abs -= ackadded;
 
-        SCLogDebug("last_ack %u abs %"PRIu64, stream->last_ack, last_ack_abs);
-        SCLogDebug("next_seq %u", stream->next_seq);
+
+
 
         /* if last_ack_abs is beyond the app_progress data that we haven't seen
          * has been ack'd. This looks like a GAP. */
@@ -1001,8 +1001,8 @@ static int ReassembleUpdateAppLayer (ThreadVars *tv,
 {
     uint64_t app_progress = STREAM_APP_PROGRESS(stream);
 
-    SCLogDebug("app progress %"PRIu64, app_progress);
-    SCLogDebug("last_ack %u, base_seq %u", stream->last_ack, stream->base_seq);
+
+
 
     const uint8_t *mydata;
     uint32_t mydata_len;
@@ -1010,7 +1010,7 @@ static int ReassembleUpdateAppLayer (ThreadVars *tv,
     while (1) {
         GetAppBuffer(stream, &mydata, &mydata_len, app_progress);
         if (mydata == NULL && mydata_len > 0 && CheckGap(ssn, stream, p)) {
-            SCLogDebug("sending GAP to app-layer (size: %u)", mydata_len);
+
 
             int r = AppLayerHandleTCPData(tv, ra_ctx, p, p->flow, ssn, stream,
                     NULL, mydata_len,
@@ -1030,7 +1030,7 @@ static int ReassembleUpdateAppLayer (ThreadVars *tv,
             /* Possibly a gap, but no new data. */
             return 0;
         }
-        SCLogDebug("%"PRIu64" got %p/%u", p->pcap_cnt, mydata, mydata_len);
+
         break;
     }
 
@@ -1078,9 +1078,9 @@ static int ReassembleUpdateAppLayer (ThreadVars *tv,
                 app_progress, mydata_len, app_progress + mydata_len);
 
         stream->app_progress_rel += mydata_len;
-        SCLogDebug("app progress now %"PRIu64, STREAM_APP_PROGRESS(stream));
+
     } else {
-        SCLogDebug("NOT UPDATED app progress still %"PRIu64, app_progress);
+
     }
 
     SCReturnInt(0);
@@ -1108,12 +1108,12 @@ int StreamTcpReassembleAppLayer (ThreadVars *tv, TcpReassemblyThreadCtx *ra_ctx,
      * detection. */
     if ((ssn->flags & STREAMTCP_FLAG_APP_LAYER_DISABLED) ||
         (stream->flags & STREAMTCP_STREAM_FLAG_NOREASSEMBLY)) {
-        SCLogDebug("stream no reassembly flag set or app-layer disabled.");
+
         SCReturnInt(0);
     }
 
 #ifdef DEBUG
-    SCLogDebug("stream->seg_tree RB_MIN %p", RB_MIN(TCPSEG, &stream->seg_tree));
+
     GetSessionSize(ssn, p);
 #endif
     /* if no segments are in the list or all are already processed,
@@ -1123,7 +1123,7 @@ int StreamTcpReassembleAppLayer (ThreadVars *tv, TcpReassemblyThreadCtx *ra_ctx,
         /* send an empty EOF msg if we have no segments but TCP state
          * is beyond ESTABLISHED */
         if (ssn->state >= TCP_CLOSING || (p->flags & PKT_PSEUDO_STREAM_END)) {
-            SCLogDebug("sending empty eof message");
+
             /* send EOF to app layer */
             AppLayerHandleTCPData(tv, ra_ctx, p, p->flow, ssn, stream,
                                   NULL, 0,
@@ -1147,7 +1147,7 @@ static int GetRawBuffer(TcpStream *stream, const uint8_t **data, uint32_t *data_
     const uint8_t *mydata;
     uint32_t mydata_len;
     if (RB_EMPTY(&stream->sb.sbb_tree)) {
-        SCLogDebug("getting one blob for offset %"PRIu64, offset);
+
 
         uint64_t roffset = offset;
         if (offset)
@@ -1165,19 +1165,19 @@ static int GetRawBuffer(TcpStream *stream, const uint8_t **data, uint32_t *data_
         if (*iter == NULL) {
             StreamingBufferBlock key = { .offset = offset, .len = 0 };
             *iter = SBB_RB_FIND_INCLUSIVE(&stream->sb.sbb_tree, &key);
-            SCLogDebug("*iter %p", *iter);
+
         }
         if (*iter == NULL) {
-            SCLogDebug("no data");
+
             *data = NULL;
             *data_len = 0;
             *data_offset = 0;
             return 0;
         }
-        SCLogDebug("getting multiple blobs. Iter %p, %"PRIu64"/%u", *iter, (*iter)->offset, (*iter)->len);
+
 
         StreamingBufferSBBGetData(&stream->sb, (*iter), &mydata, &mydata_len);
-        SCLogDebug("mydata %p", mydata);
+
 
         if ((*iter)->offset < offset) {
             uint64_t delta = offset - (*iter)->offset;
@@ -1186,7 +1186,7 @@ static int GetRawBuffer(TcpStream *stream, const uint8_t **data, uint32_t *data_
                 *data_len = mydata_len - delta;
                 *data_offset = offset;
             } else {
-                SCLogDebug("no data (yet)");
+
                 *data = NULL;
                 *data_len = 0;
                 *data_offset = 0;
@@ -1199,7 +1199,7 @@ static int GetRawBuffer(TcpStream *stream, const uint8_t **data, uint32_t *data_
         }
 
         *iter = SBB_RB_NEXT(*iter);
-        SCLogDebug("*iter %p", *iter);
+
     }
     return 0;
 }
@@ -1320,7 +1320,7 @@ void StreamReassembleRawUpdateProgress(TcpSession *ssn, Packet *p, uint64_t prog
             "now that detect ran also set STREAMTCP_STREAM_FLAG_DISABLE_RAW", ssn);
     }
 
-    SCLogDebug("stream raw progress now %"PRIu64, STREAM_RAW_PROGRESS(stream));
+
 }
 
 /** \internal
@@ -1388,12 +1388,12 @@ static int StreamReassembleRawInline(TcpSession *ssn, const Packet *p,
         return_progress = true;
 
     } else {
-        SCLogDebug("finding our SBB from offset %"PRIu64, packet_leftedge_abs);
+
         /* find our block */
         StreamingBufferBlock key = { .offset = packet_leftedge_abs, .len = p->payload_len };
         StreamingBufferBlock *sbb = SBB_RB_FIND_INCLUSIVE(&stream->sb.sbb_tree, &key);
         if (sbb) {
-            SCLogDebug("found %p offset %"PRIu64" len %u", sbb, sbb->offset, sbb->len);
+
             StreamingBufferSBBGetData(&stream->sb, sbb, &mydata, &mydata_len);
             mydata_offset = sbb->offset;
         }
@@ -1414,23 +1414,23 @@ static int StreamReassembleRawInline(TcpSession *ssn, const Packet *p,
         //mydata_rightedge_abs = packet_rightedge_abs;
     } else {
         /* adjust buffer to match chunk_size */
-        SCLogDebug("chunk_size %u mydata_len %u", chunk_size, mydata_len);
+
         if (mydata_len > chunk_size) {
             uint32_t excess = mydata_len - chunk_size;
-            SCLogDebug("chunk_size %u mydata_len %u excess %u", chunk_size, mydata_len, excess);
+
 
             if (mydata_rightedge_abs == packet_rightedge_abs) {
                 mydata += excess;
                 mydata_len -= excess;
                 mydata_offset += excess;
-                SCLogDebug("cutting front of the buffer with %u", excess);
+
             } else if (mydata_offset == packet_leftedge_abs) {
                 mydata_len -= excess;
-                SCLogDebug("cutting tail of the buffer with %u", excess);
+
             } else {
                 uint32_t before = (uint32_t)(packet_leftedge_abs - mydata_offset);
                 uint32_t after = (uint32_t)(mydata_rightedge_abs - packet_rightedge_abs);
-                SCLogDebug("before %u after %u", before, after);
+
 
                 if (after >= (chunk_size - p->payload_len) / 2) {
                     // more trailing data than we need
@@ -1485,7 +1485,7 @@ static int StreamReassembleRawInline(TcpSession *ssn, const Packet *p,
             /* get max absolute offset */
             last_ack_abs += delta;
         }
-        SCLogDebug("last_ack_abs %"PRIu64, last_ack_abs);
+
 
         if (STREAM_RAW_PROGRESS(stream) < last_ack_abs) {
             if (mydata_offset > last_ack_abs) {
@@ -1559,21 +1559,21 @@ static int StreamReassembleRawDo(TcpSession *ssn, TcpStream *stream,
         } else {
             progress -= stream->min_inspect_depth;
         }
-        SCLogDebug("applied min inspect depth due to STREAMTCP_STREAM_FLAG_TRIGGER_RAW: progress %"PRIu64, progress);
 
-        SCLogDebug("stream app %"PRIu64", raw %"PRIu64, STREAM_APP_PROGRESS(stream), STREAM_RAW_PROGRESS(stream));
+
+
     }
 
-    SCLogDebug("progress %"PRIu64", min inspect depth %u %s", progress, stream->min_inspect_depth, stream->flags & STREAMTCP_STREAM_FLAG_TRIGGER_RAW ? "STREAMTCP_STREAM_FLAG_TRIGGER_RAW":"(no trigger)");
+
 
     /* get window of data that is acked */
     if (STREAM_LASTACK_GT_BASESEQ(stream)) {
-        SCLogDebug("last_ack %u, base_seq %u", stream->last_ack, stream->base_seq);
+
         uint32_t delta = stream->last_ack - stream->base_seq;
         DEBUG_VALIDATE_BUG_ON(delta > 10000000ULL && delta > stream->window);
         /* get max absolute offset */
         last_ack_abs += delta;
-        SCLogDebug("last_ack_abs %"PRIu64, last_ack_abs);
+
     }
 
     /* loop through available buffers. On no packet loss we'll have a single
@@ -1585,12 +1585,12 @@ static int StreamReassembleRawDo(TcpSession *ssn, TcpStream *stream,
 
         GetRawBuffer(stream, &mydata, &mydata_len, &iter, progress, &mydata_offset);
         if (mydata_len == 0) {
-            SCLogDebug("no data");
+
             break;
         }
         //PrintRawDataFp(stdout, mydata, mydata_len);
 
-        SCLogDebug("raw progress %"PRIu64, progress);
+
         SCLogDebug("stream %p data in buffer %p of len %u and offset %"PRIu64,
                 stream, &stream->sb, mydata_len, progress);
 
@@ -1598,12 +1598,12 @@ static int StreamReassembleRawDo(TcpSession *ssn, TcpStream *stream,
             // inspect all remaining data, ack'd or not
         } else {
             if (last_ack_abs < progress) {
-                SCLogDebug("nothing to do");
+
                 goto end;
             }
 
-            SCLogDebug("last_ack_abs %"PRIu64", raw_progress %"PRIu64, last_ack_abs, progress);
-            SCLogDebug("raw_progress + mydata_len %"PRIu64", last_ack_abs %"PRIu64, progress + mydata_len, last_ack_abs);
+
+
 
             /* see if the buffer contains unack'd data as well */
             if (progress + mydata_len > last_ack_abs) {
@@ -1618,7 +1618,7 @@ static int StreamReassembleRawDo(TcpSession *ssn, TcpStream *stream,
         if (mydata_len == 0)
             break;
 
-        SCLogDebug("data %p len %u", mydata, mydata_len);
+
 
         /* we have data. */
         r = Callback(cb_data, mydata, mydata_len);
@@ -1629,14 +1629,14 @@ static int StreamReassembleRawDo(TcpSession *ssn, TcpStream *stream,
                     progress, mydata_len, progress_in + mydata_len);
 
             progress += mydata_len;
-            SCLogDebug("raw progress now %"PRIu64, progress);
+
 
         /* data is beyond the progress we'd like, and before last ack. Gap. */
         } else if (mydata_offset > progress && mydata_offset < last_ack_abs) {
-            SCLogDebug("GAP: data is missing from %"PRIu64" (%u bytes), setting to first data we have: %"PRIu64, progress, (uint32_t)(mydata_offset - progress), mydata_offset);
-            SCLogDebug("last_ack_abs %"PRIu64, last_ack_abs);
+
+
             progress = mydata_offset;
-            SCLogDebug("raw progress now %"PRIu64, progress);
+
 
         } else {
             SCLogDebug("not increasing progress, data gap => mydata_offset "
@@ -1746,20 +1746,20 @@ int StreamTcpReassembleHandleSegment(ThreadVars *tv, TcpReassemblyThreadCtx *ra_
     if ((dir == UPDATE_DIR_OPPOSING || dir == UPDATE_DIR_BOTH) &&
         StreamTcpReassembleHandleSegmentUpdateACK(tv, ra_ctx, ssn, opposing_stream, p) != 0)
     {
-        SCLogDebug("StreamTcpReassembleHandleSegmentUpdateACK error");
+
         SCReturnInt(-1);
     }
 
     /* if this segment contains data, insert it */
     if (p->payload_len > 0 && !(stream->flags & STREAMTCP_STREAM_FLAG_NOREASSEMBLY)) {
-        SCLogDebug("calling StreamTcpReassembleHandleSegmentHandleData");
+
 
         if (StreamTcpReassembleHandleSegmentHandleData(tv, ra_ctx, ssn, stream, p) != 0) {
-            SCLogDebug("StreamTcpReassembleHandleSegmentHandleData error");
+
             SCReturnInt(-1);
         }
 
-        SCLogDebug("packet %"PRIu64" set PKT_STREAM_ADD", p->pcap_cnt);
+
         p->flags |= PKT_STREAM_ADD;
     } else {
         SCLogDebug("ssn %p / stream %p: not calling StreamTcpReassembleHandleSegmentHandleData:"
@@ -1778,7 +1778,7 @@ int StreamTcpReassembleHandleSegment(ThreadVars *tv, TcpReassemblyThreadCtx *ra_
                 (STREAMTCP_STREAM_FLAG_DEPTH_REACHED|STREAMTCP_STREAM_FLAG_NOREASSEMBLY)) ==
             STREAMTCP_STREAM_FLAG_DEPTH_REACHED)
     {
-        SCLogDebug("STREAMTCP_STREAM_FLAG_DEPTH_REACHED, truncate applayer");
+
         if (dir != UPDATE_DIR_PACKET) {
             SCLogDebug("override: direction now UPDATE_DIR_PACKET so we "
                     "can trigger Truncate");
@@ -1808,7 +1808,7 @@ int StreamTcpReassembleHandleSegment(ThreadVars *tv, TcpReassemblyThreadCtx *ra_
 TcpSegment *StreamTcpGetSegment(ThreadVars *tv, TcpReassemblyThreadCtx *ra_ctx)
 {
     TcpSegment *seg = (TcpSegment *) PoolThreadGetById(segment_thread_pool, ra_ctx->segment_thread_pool_id);
-    SCLogDebug("seg we return is %p", seg);
+
     if (seg == NULL) {
         /* Increment the counter to show that we are not able to serve the
            segment request due to memcap limit */
@@ -1845,7 +1845,7 @@ void StreamTcpReassembleTriggerRawReassembly(TcpSession *ssn, int direction)
             ssn->server.flags |= STREAMTCP_STREAM_FLAG_TRIGGER_RAW;
         }
 
-        SCLogDebug("flagged ssn %p for immediate raw reassembly", ssn);
+
     }
 }
 
@@ -1858,10 +1858,10 @@ void StreamTcpReassemblySetMinInspectDepth(TcpSession *ssn, int direction, uint3
     if (ssn != NULL) {
         if (direction == STREAM_TOSERVER) {
             ssn->client.min_inspect_depth = depth;
-            SCLogDebug("ssn %p: set client.min_inspect_depth to %u", ssn, depth);
+
         } else {
             ssn->server.min_inspect_depth = depth;
-            SCLogDebug("ssn %p: set server.min_inspect_depth to %u", ssn, depth);
+
         }
     }
 }

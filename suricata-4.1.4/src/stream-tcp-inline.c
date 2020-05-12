@@ -74,21 +74,21 @@ int StreamTcpInlineSegmentCompare(const TcpStream *stream,
 
         uint32_t pkt_end = pkt_seq + p->payload_len;
         uint32_t seg_end = seg->seq + seg_datalen;
-        SCLogDebug("pkt_end %u, seg_end %u", pkt_end, seg_end);
+
 
         /* get the minimal seg*_end */
         uint32_t end = (SEQ_GT(pkt_end, seg_end)) ? seg_end : pkt_end;
         /* and the max seq */
         uint32_t seq = (SEQ_LT(pkt_seq, seg->seq)) ? seg->seq : pkt_seq;
 
-        SCLogDebug("seq %u, end %u", seq, end);
+
 
         uint16_t pkt_off = seq - pkt_seq;
         uint16_t seg_off = seq - seg->seq;
-        SCLogDebug("pkt_off %u, seg_off %u", pkt_off, seg_off);
+
 
         uint32_t range = end - seq;
-        SCLogDebug("range %u", range);
+
         BUG_ON(range > 65536);
 
         if (range) {
@@ -130,20 +130,20 @@ void StreamTcpInlineSegmentReplacePacket(const TcpStream *stream,
 
     uint32_t pend = pseq + p->payload_len;
     uint32_t tend = tseq + seg_datalen;
-    SCLogDebug("pend %u, tend %u", pend, tend);
+
 
     /* get the minimal seg*_end */
     uint32_t end = (SEQ_GT(pend, tend)) ? tend : pend;
     /* and the max seq */
     uint32_t seq = (SEQ_LT(pseq, tseq)) ? tseq : pseq;
-    SCLogDebug("seq %u, end %u", seq, end);
+
 
     uint16_t poff = seq - pseq;
     uint16_t toff = seq - tseq;
-    SCLogDebug("poff %u, toff %u", poff, toff);
+
 
     uint32_t range = end - seq;
-    SCLogDebug("range %u", range);
+
     BUG_ON(range > 65536);
 
     if (range) {
