@@ -253,7 +253,11 @@ int SetupDdpdkPorts(void)
 			}
 		}
 
-		rte_eth_promiscuous_enable(i);
+		ret = rte_eth_promiscuous_enable(i);
+        if (ret != 0)
+        {
+            SCLogNotice("ktanguy failed to set promiscuous mode");
+        }
 
 		// ktanguy set link up if it is down
 		rte_eth_link_get(i, &link);
@@ -636,7 +640,9 @@ static void *DpdkConfigParser(const char *device)
 	ThreadVars *tv_worker = NULL;
 	TmModule *tm_module = NULL;
 
-	DpdkIfaceConfig_t *config = rte_zmalloc(NULL, sizeof(DpdkIfaceConfig_t), 0);
+	//DpdkIfaceConfig_t *config = rte_zmalloc(NULL, sizeof(DpdkIfaceConfig_t), 0);
+    // ktanguy: we want to use socket 1
+	DpdkIfaceConfig_t *config = rte_zmalloc(NULL, sizeof(DpdkIfaceConfig_t), 0, 1);
 	if (config == NULL) {
 		SCLogError(SC_ERR_DPDK_MEM, " failed to alloc memory");
 		SCReturnPtr(NULL, "void *");
