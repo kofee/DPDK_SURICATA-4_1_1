@@ -375,7 +375,9 @@ TmEcode ReceiveDpdkInit(ThreadVars *tv, void *initdata, void **data)
 		SCReturnInt(TM_ECODE_FAILED);
 	}
 
-	DpdkThreadVars *ptv = rte_zmalloc(NULL, sizeof(DpdkThreadVars), 0);
+	//DpdkThreadVars *ptv = rte_zmalloc(NULL, sizeof(DpdkThreadVars), 0);
+    // ktanguy, using socket_id 1
+	DpdkThreadVars *ptv = rte_zmalloc_socket(NULL, sizeof(DpdkThreadVars), 0, 1);
 	if (unlikely(ptv == NULL)) {
 		SCLogError(SC_ERR_DPDK_MEM, "failed to alloc memory");
 		SCReturnInt(TM_ECODE_FAILED);

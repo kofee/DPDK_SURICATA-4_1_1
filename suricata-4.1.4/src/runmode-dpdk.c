@@ -149,6 +149,8 @@ int SetupDdpdkPorts(void)
 	uint16_t nb_txd = 1024;
 	uint16_t mtu = 0;
 	int i, j;
+	struct rte_eth_link link;
+	int ret;
 
 	struct rte_eth_conf port_conf = {
 		.rxmode = {
@@ -243,6 +245,7 @@ int SetupDdpdkPorts(void)
 		}
 
 		if (mtu != dpdk_ports[i].mtu) {
+			SCLogNotice("mtu is now %d, should be %d");
 			if (rte_eth_dev_set_mtu (i, mtu) != 0) {
 				SCLogError(SC_ERR_DPDK_CONFIG, "Failed to set mtu (%u) for port [%d]", mtu, i);
 				return -EINVAL;
@@ -250,6 +253,16 @@ int SetupDdpdkPorts(void)
 		}
 
 		rte_eth_promiscuous_enable(i);
+
+		// ktanguy set link up if it is down
+		rte_eth_link_get(i, &link);
+		if (link.link_status == ETH_LINK_DOWN)
+		{
+			ret = rte_eth_dev_set_link_up(i);
+			SCLogNotice("ktanguy link up %d", ret);
+		} else {
+			SCLogNotice("ktanguy link already up");
+		}
 	}
 
 #if 0
