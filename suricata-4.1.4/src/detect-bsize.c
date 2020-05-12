@@ -187,7 +187,7 @@ static DetectBsizeData *DetectBsizeParse (const char *str)
     }
     if (*str == '\0') {
         // done
-        SCLogDebug("str1 '%s'", str1);
+
 
         uint64_t val = 0;
         if (ParseSizeStringU64(str1, &val) < 0) {
@@ -234,7 +234,7 @@ static DetectBsizeData *DetectBsizeParse (const char *str)
         }
         if (*str == '\0') {
             // done
-            SCLogDebug("str2 '%s'", str2);
+
 
             if (ParseSizeStringU64(str2, &val) < 0) {
                 ERR("'%s' is not a valid u32", str2);

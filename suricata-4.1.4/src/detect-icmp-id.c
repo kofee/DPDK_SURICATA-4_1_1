@@ -93,7 +93,7 @@ static inline _Bool GetIcmpId(Packet *p, uint16_t *id)
                 pid = ICMPV4_GET_ID(p);
                 break;
             default:
-                SCLogDebug("Packet has no id field");
+
                 return FALSE;
         }
     } else if (PKT_IS_ICMPV6(p)) {
@@ -107,11 +107,11 @@ static inline _Bool GetIcmpId(Packet *p, uint16_t *id)
                 pid = ICMPV6_GET_ID(p);
                 break;
             default:
-                SCLogDebug("Packet has no id field");
+
                 return FALSE;
         }
     } else {
-        SCLogDebug("Packet not ICMPV4 nor ICMPV6");
+
         return FALSE;
     }
 
@@ -278,7 +278,7 @@ PrefilterPacketIcmpIdMatch(DetectEngineThreadCtx *det_ctx, Packet *p, const void
 
     if (pid == ctx->v1.u16[0])
     {
-        SCLogDebug("packet matches ICMP ID %u", ctx->v1.u16[0]);
+
         PrefilterAddSids(&det_ctx->pmq, ctx->sigs_array, ctx->sigs_cnt);
     }
 }

@@ -84,7 +84,7 @@ static DetectCipServiceData *DetectCipServiceParse(const char *rulestrc)
     const char delims[] = ",";
     DetectCipServiceData *cipserviced = NULL;
 
-    //SCLogDebug("DetectCipServiceParse - rule string  %s", rulestr);
+    //
 
     /* strtok_r modifies the string so work with a copy */
     char *rulestr = SCStrdup(rulestrc);
@@ -170,9 +170,9 @@ static DetectCipServiceData *DetectCipServiceParse(const char *rulestrc)
     cipserviced->cipattribute = input[2];
     cipserviced->tokens = i;
 
-    SCLogDebug("DetectCipServiceParse - tokens %d", cipserviced->tokens);
-    SCLogDebug("DetectCipServiceParse - service %d", cipserviced->cipservice);
-    SCLogDebug("DetectCipServiceParse - class %d", cipserviced->cipclass);
+
+
+
     SCLogDebug("DetectCipServiceParse - match attribute %d",
             cipserviced->matchattribute);
     SCLogDebug("DetectCipServiceParse - attribute %d",

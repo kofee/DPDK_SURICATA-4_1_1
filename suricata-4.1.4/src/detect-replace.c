@@ -165,7 +165,7 @@ DetectReplaceList *DetectReplaceAddToList(DetectReplaceList *replist,
 
     if (cd->content_len != cd->replace_len)
         return NULL;
-    SCLogDebug("replace: Adding match");
+
 
     newlist = SCMalloc(sizeof(DetectReplaceList));
     if (unlikely(newlist == NULL))
@@ -183,10 +183,10 @@ void DetectReplaceExecuteInternal(Packet *p, DetectReplaceList *replist)
 {
     DetectReplaceList *tlist = NULL;
 
-    SCLogDebug("replace: Executing match");
+
     while (replist) {
         memcpy(replist->found, replist->cd->replace, replist->cd->replace_len);
-        SCLogDebug("replace: injecting '%s'", replist->cd->replace);
+
         p->flags |= PKT_STREAM_MODIFIED;
         ReCalculateChecksum(p);
         tlist = replist;
@@ -200,7 +200,7 @@ void DetectReplaceFreeInternal(DetectReplaceList *replist)
 {
     DetectReplaceList *tlist = NULL;
     while (replist) {
-        SCLogDebug("replace: Freeing match");
+
         tlist = replist;
         replist = replist->next;
         SCFree(tlist);
@@ -236,7 +236,7 @@ int DetectReplaceLongPatternMatchTest(uint8_t *raw_eth_pkt, uint16_t pktsize,
     DetectEngineThreadCtx *det_ctx = NULL;
 
     if (pp == NULL) {
-        SCLogDebug("replace: looks like a second run");
+
     }
 
     PacketCopyData(p, raw_eth_pkt, pktsize);
@@ -275,14 +275,14 @@ int DetectReplaceLongPatternMatchTest(uint8_t *raw_eth_pkt, uint16_t pktsize,
     DetectEngineMoveToFreeList(de_ctx);
 
     if (PacketAlertCheck(p, sid) != 1) {
-        SCLogDebug("replace: no alert on sig %d", sid);
+
         goto end;
     }
 
     if (pp) {
         memcpy(pp, GET_PKT_DATA(p), GET_PKT_LEN(p));
         *len = pktsize;
-        SCLogDebug("replace: copying %d on %p", *len, pp);
+
     }
 
 
@@ -342,7 +342,7 @@ static int DetectReplaceLongPatternMatchTestWrp(const char *sig, uint32_t sid, c
     ret = DetectReplaceLongPatternMatchTest(raw_eth_pkt, (uint16_t)sizeof(raw_eth_pkt),
                              sig, sid, p, &psize);
     if (ret == 1) {
-        SCLogDebug("replace: test1 phase1");
+
         ret = DetectReplaceLongPatternMatchTest(p, psize, sig_rep, sid_rep, NULL, NULL);
     }
     run_mode = run_mode_backup;
@@ -377,7 +377,7 @@ static int DetectReplaceLongPatternMatchTestUDPWrp(const char *sig, uint32_t sid
     ret = DetectReplaceLongPatternMatchTest(raw_eth_pkt, (uint16_t)sizeof(raw_eth_pkt),
                              sig, sid, p, &psize);
     if (ret == 1) {
-        SCLogDebug("replace: test1 phase1 ok: %" PRIuMAX" vs %d",(uintmax_t)sizeof(raw_eth_pkt),psize);
+
         ret = DetectReplaceLongPatternMatchTest(p, psize, sig_rep, sid_rep, NULL, NULL);
     }
     run_mode = run_mode_backup;

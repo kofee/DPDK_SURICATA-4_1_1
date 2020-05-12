@@ -412,7 +412,7 @@ static int LuaSetFlowint(lua_State *luastate)
 
     FlowVarAddInt(f, idx, number);
 
-    SCLogDebug("stored flow:%p idx:%u value:%u", f, idx, number);
+
     return 0;
 }
 
@@ -443,7 +443,7 @@ static int LuaIncrFlowint(lua_State *luastate)
 
     /* return value through luastate, as a luanumber */
     lua_pushnumber(luastate, (lua_Number)number);
-    SCLogDebug("incremented flow:%p idx:%u value:%u", f, idx, number);
+
     return 1;
 
 }
@@ -475,7 +475,7 @@ static int LuaDecrFlowint(lua_State *luastate)
 
     /* return value through luastate, as a luanumber */
     lua_pushnumber(luastate, (lua_Number)number);
-    SCLogDebug("decremented flow:%p idx:%u value:%u", f, idx, number);
+
     return 1;
 
 }
@@ -483,7 +483,7 @@ static int LuaDecrFlowint(lua_State *luastate)
 void LuaExtensionsMatchSetup(lua_State *lua_state, DetectLuaData *ld, DetectEngineThreadCtx *det_ctx,
         Flow *f, Packet *p, uint8_t flags)
 {
-    SCLogDebug("det_ctx %p, f %p", det_ctx, f);
+
 
     /* lua keyword data */
     lua_pushlightuserdata(lua_state, (void *)&luaext_key_ld);

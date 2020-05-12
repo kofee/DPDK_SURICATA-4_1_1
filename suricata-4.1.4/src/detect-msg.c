@@ -75,7 +75,7 @@ static int DetectMsgSetup (DetectEngineCtx *de_ctx, Signature *s, const char *ms
                         str[i] != '\\' &&
                         str[i] != '\"')
                 {
-                    SCLogDebug("character \"%c\" does not need to be escaped but is" ,str[i]);
+
                 }
                 escape = 0;
                 converted = 1;

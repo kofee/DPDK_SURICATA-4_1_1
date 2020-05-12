@@ -84,7 +84,7 @@ static void PrefilterTxRequestCookie(DetectEngineThreadCtx *det_ctx,
     htp_header_t *h = (htp_header_t *)htp_table_get_c(tx->request_headers,
                                                       "Cookie");
     if (h == NULL || h->value == NULL) {
-        SCLogDebug("HTTP cookie header not present in this request");
+
         return;
     }
 
@@ -131,7 +131,7 @@ static void PrefilterTxResponseCookie(DetectEngineThreadCtx *det_ctx,
     htp_header_t *h = (htp_header_t *)htp_table_get_c(tx->response_headers,
                                                       "Set-Cookie");
     if (h == NULL || h->value == NULL) {
-        SCLogDebug("HTTP cookie header not present in this request");
+
         return;
     }
 
@@ -178,14 +178,14 @@ int DetectEngineInspectHttpCookie(ThreadVars *tv,
         h = (htp_header_t *)htp_table_get_c(tx->request_headers,
                                             "Cookie");
         if (h == NULL) {
-            SCLogDebug("HTTP cookie header not present in this request");
+
             goto end;
         }
     } else {
         h = (htp_header_t *)htp_table_get_c(tx->response_headers,
                                             "Set-Cookie");
         if (h == NULL) {
-            SCLogDebug("HTTP Set-Cookie header not present in this request");
+
             goto end;
         }
     }

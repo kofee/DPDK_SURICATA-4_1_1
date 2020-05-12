@@ -108,7 +108,7 @@ static int DetectSslVersionMatch(ThreadVars *t, DetectEngineThreadCtx *det_ctx,
     const DetectSslVersionData *ssl = (const DetectSslVersionData *)m;
     SSLState *app_state = (SSLState *)state;
     if (app_state == NULL) {
-        SCLogDebug("no app state, no match");
+
         SCReturnInt(0);
     }
 

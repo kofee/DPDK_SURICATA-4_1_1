@@ -85,7 +85,7 @@ static int PacketAlertHandle(DetectEngineCtx *de_ctx, DetectEngineThreadCtx *det
         do {
             td = SigGetThresholdTypeIter(s, p, &smd, DETECT_SM_LIST_SUPPRESS);
             if (td != NULL) {
-                SCLogDebug("td %p", td);
+
 
                 /* PacketAlertThreshold returns 2 if the alert is suppressed but
                  * we do need to apply rule actions to the packet. */
@@ -108,7 +108,7 @@ static int PacketAlertHandle(DetectEngineCtx *de_ctx, DetectEngineThreadCtx *det
         do {
             td = SigGetThresholdTypeIter(s, p, &smd, DETECT_SM_LIST_THRESHOLD);
             if (td != NULL) {
-                SCLogDebug("td %p", td);
+
 
                 /* PacketAlertThreshold returns 2 if the alert is suppressed but
                  * we do need to apply rule actions to the packet. */
@@ -164,7 +164,7 @@ int PacketAlertRemove(Packet *p, uint16_t pos)
     int match = 0;
 
     if (pos > p->alerts.cnt) {
-        SCLogDebug("removing %u failed, pos > cnt %u", pos, p->alerts.cnt);
+
         return 0;
     }
 
@@ -193,7 +193,7 @@ int PacketAlertAppend(DetectEngineThreadCtx *det_ctx, const Signature *s,
     if (p->alerts.cnt == PACKET_ALERT_MAX)
         return 0;
 
-    SCLogDebug("sid %"PRIu32"", s->id);
+
 
     /* It should be usually the last, so check it before iterating */
     if (p->alerts.cnt == 0 || (p->alerts.cnt > 0 &&
@@ -241,7 +241,7 @@ void PacketAlertFinalize(DetectEngineCtx *de_ctx, DetectEngineThreadCtx *det_ctx
     int i = 0;
 
     while (i < p->alerts.cnt) {
-        SCLogDebug("Sig->num: %"PRIu16, p->alerts.alerts[i].num);
+
         const Signature *s = de_ctx->sig_array[p->alerts.alerts[i].num];
 
         int res = PacketAlertHandle(de_ctx, det_ctx, s, p, &p->alerts.alerts[i]);
@@ -265,7 +265,7 @@ void PacketAlertFinalize(DetectEngineCtx *de_ctx, DetectEngineThreadCtx *det_ctx
             if (s->flags & SIG_FLAG_IPONLY) {
                 if (((p->flowflags & FLOW_PKT_TOSERVER) && !(p->flowflags & FLOW_PKT_TOSERVER_IPONLY_SET)) ||
                     ((p->flowflags & FLOW_PKT_TOCLIENT) && !(p->flowflags & FLOW_PKT_TOCLIENT_IPONLY_SET))) {
-                    SCLogDebug("testing against \"ip-only\" signatures");
+
 
                     if (p->flow != NULL) {
                         /* Update flow flags for iponly */

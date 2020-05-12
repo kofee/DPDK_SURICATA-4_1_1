@@ -122,7 +122,7 @@ static bool DetectHttpRawUriValidateCallback(const Signature *s, const char **si
 static void DetectHttpRawUriSetupCallback(const DetectEngineCtx *de_ctx,
                                           Signature *s)
 {
-    SCLogDebug("callback invoked by %u", s->id);
+
     DetectUrilenApplyToContent(s, g_http_raw_uri_buffer_id);
 }
 

@@ -313,7 +313,7 @@ static int DetectFilestoreSetup (DetectEngineCtx *de_ctx, Signature *s, const ch
     sm->type = DETECT_FILESTORE;
 
     if (str != NULL && strlen(str) > 0) {
-        SCLogDebug("str %s", str);
+
 
         ret = pcre_exec(parse_regex, parse_regex_study, str, strlen(str), 0, 0, ov, MAX_SUBSTRINGS);
         if (ret < 1 || ret > 4) {
@@ -354,7 +354,7 @@ static int DetectFilestoreSetup (DetectEngineCtx *de_ctx, Signature *s, const ch
         memset(fd, 0x00, sizeof(DetectFilestoreData));
 
         if (args[0] != NULL) {
-            SCLogDebug("first arg %s", args[0]);
+
 
             if (strcasecmp(args[0], "request") == 0 ||
                     strcasecmp(args[0], "to_server") == 0)
@@ -378,7 +378,7 @@ static int DetectFilestoreSetup (DetectEngineCtx *de_ctx, Signature *s, const ch
         }
 
         if (args[1] != NULL) {
-            SCLogDebug("second arg %s", args[1]);
+
 
             if (strcasecmp(args[1], "file") == 0)
             {

@@ -115,7 +115,7 @@ void DetectNfsVersionRegister (void)
 
     g_nfs_request_buffer_id = DetectBufferTypeGetByName("nfs_request");
 
-    SCLogDebug("g_nfs_request_buffer_id %d", g_nfs_request_buffer_id);
+
 }
 
 static int DetectEngineInspectNfsRequestGeneric(ThreadVars *tv,
@@ -227,7 +227,7 @@ static DetectNfsVersionData *DetectNfsVersionParse (const char *rawstr)
         SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
         goto error;
     }
-    SCLogDebug("mode \"%s\"", mode);
+
 
     res = pcre_copy_substring((char *)rawstr, ov, MAX_SUBSTRINGS, 2, value1,
                               sizeof(value1));
@@ -235,7 +235,7 @@ static DetectNfsVersionData *DetectNfsVersionParse (const char *rawstr)
         SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
         goto error;
     }
-    SCLogDebug("value1 \"%s\"", value1);
+
 
     if (ret > 3) {
         res = pcre_copy_substring((char *)rawstr, ov, MAX_SUBSTRINGS, 3,
@@ -244,7 +244,7 @@ static DetectNfsVersionData *DetectNfsVersionParse (const char *rawstr)
             SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
             goto error;
         }
-        SCLogDebug("range \"%s\"", range);
+
 
         if (ret > 4) {
             res = pcre_copy_substring((char *)rawstr, ov, MAX_SUBSTRINGS, 4,
@@ -254,7 +254,7 @@ static DetectNfsVersionData *DetectNfsVersionParse (const char *rawstr)
                            "pcre_copy_substring failed");
                 goto error;
             }
-            SCLogDebug("value2 \"%s\"", value2);
+
         }
     }
 
@@ -336,7 +336,7 @@ static int DetectNfsVersionSetup (DetectEngineCtx *de_ctx, Signature *s,
     DetectNfsVersionData *dd = NULL;
     SigMatch *sm = NULL;
 
-    SCLogDebug("\'%s\'", rawstr);
+
 
     if (DetectSignatureSetAppProto(s, ALPROTO_NFS) != 0)
         return -1;
@@ -356,7 +356,7 @@ static int DetectNfsVersionSetup (DetectEngineCtx *de_ctx, Signature *s,
     sm->type = DETECT_AL_NFS_VERSION;
     sm->ctx = (void *)dd;
 
-    SCLogDebug("low %u hi %u", dd->lo, dd->hi);
+
     SigMatchAppendSMToList(s, sm, g_nfs_request_buffer_id);
     return 0;
 

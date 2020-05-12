@@ -1357,7 +1357,7 @@ static int DetectHttpUATest14(void)
     }
     p->alerts.cnt = 0;
 
-    SCLogDebug("sending data chunk 7");
+
 
     FLOWLOCK_WRLOCK(&f);
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_HTTP,

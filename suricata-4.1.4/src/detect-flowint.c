@@ -119,11 +119,11 @@ int DetectFlowintMatch(ThreadVars *t, DetectEngineThreadCtx *det_ctx,
         targetval = sfd->target.value;
     }
 
-    SCLogDebug("Our var %s is at idx: %"PRIu16"", sfd->name, sfd->idx);
+
 
     if (sfd->modifier == FLOWINT_MODIFIER_SET) {
         FlowVarAddIntNoLock(p->flow, sfd->idx, targetval);
-        SCLogDebug("Setting %s = %u", sfd->name, targetval);
+
         ret = 1;
         goto end;
     }
@@ -131,14 +131,14 @@ int DetectFlowintMatch(ThreadVars *t, DetectEngineThreadCtx *det_ctx,
     fv = FlowVarGet(p->flow, sfd->idx);
 
     if (sfd->modifier == FLOWINT_MODIFIER_ISSET) {
-        SCLogDebug(" Isset %s? = %u", sfd->name,(fv) ? 1 : 0);
+
         if (fv != NULL)
             ret = 1;
         goto end;
     }
 
     if (sfd->modifier == FLOWINT_MODIFIER_NOTSET) {
-        SCLogDebug(" Not set %s? = %u", sfd->name,(fv) ? 0 : 1);
+
         if (fv == NULL)
             ret = 1;
         goto end;
@@ -146,7 +146,7 @@ int DetectFlowintMatch(ThreadVars *t, DetectEngineThreadCtx *det_ctx,
 
     if (fv != NULL && fv->datatype == FLOWVAR_TYPE_INT) {
         if (sfd->modifier == FLOWINT_MODIFIER_ADD) {
-            SCLogDebug("Adding %u to %s", targetval, sfd->name);
+
             FlowVarAddIntNoLock(p->flow, sfd->idx, fv->data.fv_int.value +
                            targetval);
             ret = 1;
@@ -154,7 +154,7 @@ int DetectFlowintMatch(ThreadVars *t, DetectEngineThreadCtx *det_ctx,
         }
 
         if (sfd->modifier == FLOWINT_MODIFIER_SUB) {
-            SCLogDebug("Substracting %u to %s", targetval, sfd->name);
+
             FlowVarAddIntNoLock(p->flow, sfd->idx, fv->data.fv_int.value -
                            targetval);
             ret = 1;
@@ -163,31 +163,31 @@ int DetectFlowintMatch(ThreadVars *t, DetectEngineThreadCtx *det_ctx,
 
         switch(sfd->modifier) {
             case FLOWINT_MODIFIER_EQ:
-                SCLogDebug("( %u EQ %u )", fv->data.fv_int.value, targetval);
+
                 ret = (fv->data.fv_int.value == targetval);
                 break;
             case FLOWINT_MODIFIER_NE:
-                SCLogDebug("( %u NE %u )", fv->data.fv_int.value, targetval);
+
                 ret = (fv->data.fv_int.value != targetval);
                 break;
             case FLOWINT_MODIFIER_LT:
-                SCLogDebug("( %u LT %u )", fv->data.fv_int.value, targetval);
+
                 ret = (fv->data.fv_int.value < targetval);
                 break;
             case FLOWINT_MODIFIER_LE:
-                SCLogDebug("( %u LE %u )", fv->data.fv_int.value, targetval);
+
                 ret = (fv->data.fv_int.value <= targetval);
                 break;
             case FLOWINT_MODIFIER_GT:
-                SCLogDebug("( %u GT %u )", fv->data.fv_int.value, targetval);
+
                 ret = (fv->data.fv_int.value > targetval);
                 break;
             case FLOWINT_MODIFIER_GE:
-                SCLogDebug("( %u GE %u )", fv->data.fv_int.value, targetval);
+
                 ret = (fv->data.fv_int.value >= targetval);
                 break;
             default:
-                SCLogDebug("Unknown Modifier!");
+
 #ifdef DEBUG
                 BUG_ON(1);
 #endif
@@ -196,11 +196,11 @@ int DetectFlowintMatch(ThreadVars *t, DetectEngineThreadCtx *det_ctx,
         /* allow a add on a non-existing var, it will init to the "add" value,
          * so implying a 0 set. */
         if (sfd->modifier == FLOWINT_MODIFIER_ADD) {
-            SCLogDebug("Adding %u to %s (new var)", targetval, sfd->name);
+
             FlowVarAddIntNoLock(p->flow, sfd->idx, targetval);
             ret = 1;
         } else {
-            SCLogDebug("Var not found!");
+
             /* It doesn't exist because it wasn't set
              * or it is a string var, that we don't compare here
              */
@@ -330,7 +330,7 @@ static DetectFlowintData *DetectFlowintParse(DetectEngineCtx *de_ctx, const char
         goto error;
     }
     sfd->idx = VarNameStoreSetupAdd(varname, VAR_TYPE_FLOW_INT);
-    SCLogDebug("sfd->name %s id %u", sfd->name, sfd->idx);
+
     sfd->modifier = modifier;
 
     pcre_free_substring(varname);
@@ -432,7 +432,7 @@ void DetectFlowintFree(void *tmp)
 static void DetectFlowintPrintData(DetectFlowintData *sfd)
 {
     if (sfd == NULL) {
-        SCLogDebug("DetectFlowintPrintData: Error, DetectFlowintData == NULL!");
+
         return;
     }
 
@@ -444,10 +444,10 @@ static void DetectFlowintPrintData(DetectFlowintData *sfd)
                         sfd->target.tvar.name);
             break;
         case FLOWINT_TARGET_VAL:
-            SCLogDebug("Value: %"PRIu32"; ", sfd->target.value);
+
             break;
         default :
-            SCLogDebug("DetectFlowintPrintData: Error, Targettype not known!");
+
     }
 }
 
@@ -1024,56 +1024,56 @@ static int DetectFlowintTestParseInvalidSyntaxis01(void)
 
     sfd = DetectFlowintParse(de_ctx, "myvar,=,9999999999");
     if (sfd != NULL) {
-        SCLogDebug("DetectFlowintTestParseInvalidSyntaxis01: ERROR: invalid option at myvar,=,9532458716234857");
+
         result = 0;
     }
     if (sfd) DetectFlowintFree(sfd);
 
     sfd = DetectFlowintParse(de_ctx, "myvar,=,45targetvar");
     if (sfd != NULL) {
-        SCLogDebug("DetectFlowintTestParseInvalidSyntaxis01: ERROR: invalid option at myvar,=,45targetvar ");
+
         result = 0;
     }
     if (sfd) DetectFlowintFree(sfd);
 
     sfd = DetectFlowintParse(de_ctx, "657myvar,=,targetvar");
     if (sfd != NULL) {
-        SCLogDebug("DetectFlowintTestParseInvalidSyntaxis01: ERROR: invalid option at 657myvar,=,targetvar ");
+
         result = 0;
     }
     if (sfd) DetectFlowintFree(sfd);
 
     sfd = DetectFlowintParse(de_ctx, "myvar,=<,targetvar");
     if (sfd != NULL) {
-        SCLogDebug("DetectFlowintTestParseInvalidSyntaxis01: ERROR: invalid option at myvar,=<,targetvar ");
+
         result = 0;
     }
     if (sfd) DetectFlowintFree(sfd);
 
     sfd = DetectFlowintParse(de_ctx, "myvar,===,targetvar");
     if (sfd != NULL) {
-        SCLogDebug("DetectFlowintTestParseInvalidSyntaxis01: ERROR: invalid option at myvar,===,targetvar ");
+
         result = 0;
     }
     if (sfd) DetectFlowintFree(sfd);
 
     sfd = DetectFlowintParse(de_ctx, "myvar,==");
     if (sfd != NULL) {
-        SCLogDebug("DetectFlowintTestParseInvalidSyntaxis01: ERROR: invalid option at myvar,==");
+
         result = 0;
     }
     if (sfd) DetectFlowintFree(sfd);
 
     sfd = DetectFlowintParse(de_ctx, "myvar,");
     if (sfd != NULL) {
-        SCLogDebug("DetectFlowintTestParseInvalidSyntaxis01: ERROR: invalid option at myvar,");
+
         result = 0;
     }
     if (sfd) DetectFlowintFree(sfd);
 
     sfd = DetectFlowintParse(de_ctx, "myvar");
     if (sfd != NULL) {
-        SCLogDebug("DetectFlowintTestParseInvalidSyntaxis01: ERROR: invalid option at myvar");
+
         result = 0;
     }
     if (sfd) DetectFlowintFree(sfd);

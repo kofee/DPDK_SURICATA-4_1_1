@@ -132,7 +132,7 @@ static int DetectSslStateMatch(ThreadVars *t, DetectEngineThreadCtx *det_ctx,
     const DetectSslStateData *ssd = (const DetectSslStateData *)m;
     SSLState *ssl_state = (SSLState *)alstate;
     if (ssl_state == NULL) {
-        SCLogDebug("no app state, no match");
+
         return 0;
     }
 

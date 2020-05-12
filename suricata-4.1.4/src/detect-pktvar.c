@@ -107,7 +107,7 @@ static int DetectPktvarSetup (DetectEngineCtx *de_ctx, Signature *s, const char 
     }
     varcontent = (char *)str_ptr;
 
-    SCLogDebug("varname '%s', varcontent '%s'", varname, varcontent);
+
 
     char *parse_content;
     if (strlen(varcontent) >= 2 && varcontent[0] == '"' &&

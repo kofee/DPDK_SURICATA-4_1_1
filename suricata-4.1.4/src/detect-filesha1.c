@@ -52,7 +52,7 @@ void DetectFileSha1Register(void)
     sigmatch_table[DETECT_FILESHA1].RegisterTests = NULL;
     sigmatch_table[DETECT_FILESHA1].flags = SIGMATCH_NOT_BUILT;
 
-    SCLogDebug("registering filesha1 rule option");
+
     return;
 }
 
@@ -77,7 +77,7 @@ void DetectFileSha1Register(void)
 
     g_file_match_list_id = DetectBufferTypeRegister("files");
 
-    SCLogDebug("registering filesha1 rule option");
+
     return;
 }
 

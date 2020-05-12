@@ -64,29 +64,29 @@ int DetectAddressCmpIPv4(DetectAddress *a, DetectAddress *b)
     uint32_t b_ip2 = SCNtohl(b->ip2.addr_data32[0]);
 
     if (a_ip1 == b_ip1 && a_ip2 == b_ip2) {
-        SCLogDebug("ADDRESS_EQ");
+
         return ADDRESS_EQ;
     } else if (a_ip1 >= b_ip1 && a_ip1 <= b_ip2 && a_ip2 <= b_ip2) {
-        SCLogDebug("ADDRESS_ES");
+
         return ADDRESS_ES;
     } else if (a_ip1 <= b_ip1 && a_ip2 >= b_ip2) {
-        SCLogDebug("ADDRESS_EB");
+
         return ADDRESS_EB;
     } else if (a_ip1 < b_ip1 && a_ip2 < b_ip2 && a_ip2 >= b_ip1) {
-        SCLogDebug("ADDRESS_LE");
+
         return ADDRESS_LE;
     } else if (a_ip1 < b_ip1 && a_ip2 < b_ip2) {
-        SCLogDebug("ADDRESS_LT");
+
         return ADDRESS_LT;
     } else if (a_ip1 > b_ip1 && a_ip1 <= b_ip2 && a_ip2 > b_ip2) {
-        SCLogDebug("ADDRESS_GE");
+
         return ADDRESS_GE;
     } else if (a_ip1 > b_ip2) {
-        SCLogDebug("ADDRESS_GT");
+
         return ADDRESS_GT;
     } else {
         /* should be unreachable */
-        SCLogDebug("Internal Error: should be unreachable");
+
     }
 
     return ADDRESS_ER;
@@ -126,7 +126,7 @@ int DetectAddressCutIPv4(DetectEngineCtx *de_ctx, DetectAddress *a,
 
     r = DetectAddressCmpIPv4(a, b);
     if (r != ADDRESS_ES && r != ADDRESS_EB && r != ADDRESS_LE && r != ADDRESS_GE) {
-        SCLogDebug("we shouldn't be here");
+
         goto error;
     }
 
@@ -141,7 +141,7 @@ int DetectAddressCutIPv4(DetectEngineCtx *de_ctx, DetectAddress *a,
      * part c: a_ip2 + 1 <-> b_ip2
      */
     if (r == ADDRESS_LE) {
-        SCLogDebug("DetectAddressCutIPv4: r == ADDRESS_LE");
+
 
         a->ip.addr_data32[0]  = htonl(a_ip1);
         a->ip2.addr_data32[0] = htonl(b_ip1 - 1);
@@ -164,7 +164,7 @@ int DetectAddressCutIPv4(DetectEngineCtx *de_ctx, DetectAddress *a,
      * part c: b_ip2 + 1 <-> a_ip2
      */
     } else if (r == ADDRESS_GE) {
-        SCLogDebug("DetectAddressCutIPv4: r == ADDRESS_GE");
+
 
         a->ip.addr_data32[0] = htonl(b_ip1);
         a->ip2.addr_data32[0] = htonl(a_ip1 - 1);
@@ -198,10 +198,10 @@ int DetectAddressCutIPv4(DetectEngineCtx *de_ctx, DetectAddress *a,
          * part c: a_ip2 + 1 <-> b_ip2
          */
     } else if (r == ADDRESS_ES) {
-        SCLogDebug("DetectAddressCutIPv4: r == ADDRESS_ES");
+
 
         if (a_ip1 == b_ip1) {
-            SCLogDebug("DetectAddressCutIPv4: 1");
+
 
             a->ip.addr_data32[0] = htonl(a_ip1);
             a->ip2.addr_data32[0] = htonl(a_ip2);
@@ -210,7 +210,7 @@ int DetectAddressCutIPv4(DetectEngineCtx *de_ctx, DetectAddress *a,
             b->ip2.addr_data32[0] = htonl(b_ip2);
 
         } else if (a_ip2 == b_ip2) {
-            SCLogDebug("DetectAddressCutIPv4: 2");
+
 
             a->ip.addr_data32[0]   = htonl(b_ip1);
             a->ip2.addr_data32[0] = htonl(a_ip1 - 1);
@@ -219,7 +219,7 @@ int DetectAddressCutIPv4(DetectEngineCtx *de_ctx, DetectAddress *a,
             b->ip2.addr_data32[0] = htonl(a_ip2);
 
         } else {
-            SCLogDebug("3");
+
 
             a->ip.addr_data32[0]   = htonl(b_ip1);
             a->ip2.addr_data32[0] = htonl(a_ip1 - 1);
@@ -253,10 +253,10 @@ int DetectAddressCutIPv4(DetectEngineCtx *de_ctx, DetectAddress *a,
          * part c: b_ip2 + 1 <-> a_ip2
          */
     } else if (r == ADDRESS_EB) {
-        SCLogDebug("DetectAddressCutIPv4: r == ADDRESS_EB");
+
 
         if (a_ip1 == b_ip1) {
-            SCLogDebug("DetectAddressCutIPv4: 1");
+
 
             a->ip.addr_data32[0] = htonl(b_ip1);
             a->ip2.addr_data32[0] = htonl(b_ip2);
@@ -264,7 +264,7 @@ int DetectAddressCutIPv4(DetectEngineCtx *de_ctx, DetectAddress *a,
             b->ip.addr_data32[0] = htonl(b_ip2 + 1);
             b->ip2.addr_data32[0] = htonl(a_ip2);
         } else if (a_ip2 == b_ip2) {
-            SCLogDebug("DetectAddressCutIPv4: 2");
+
 
             a->ip.addr_data32[0]   = htonl(a_ip1);
             a->ip2.addr_data32[0] = htonl(b_ip1 - 1);
@@ -272,7 +272,7 @@ int DetectAddressCutIPv4(DetectEngineCtx *de_ctx, DetectAddress *a,
             b->ip.addr_data32[0]   = htonl(b_ip1);
             b->ip2.addr_data32[0] = htonl(b_ip2);
         } else {
-            SCLogDebug("DetectAddressCutIPv4: 3");
+
 
             a->ip.addr_data32[0] = htonl(a_ip1);
             a->ip2.addr_data32[0] = htonl(b_ip1 - 1);

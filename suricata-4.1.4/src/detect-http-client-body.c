@@ -104,7 +104,7 @@ void DetectHttpClientBodyRegister(void)
 static void DetectHttpClientBodySetupCallback(const DetectEngineCtx *de_ctx,
                                               Signature *s)
 {
-    SCLogDebug("callback invoked by %u", s->id);
+
     AppLayerHtpEnableRequestBodyCallback();
 
     /* client body needs to be inspected in sync with stream if possible */
@@ -136,7 +136,7 @@ static inline HtpBody *GetRequestBody(htp_tx_t *tx)
 {
     HtpTxUserData *htud = (HtpTxUserData *)htp_tx_get_user_data(tx);
     if (htud == NULL) {
-        SCLogDebug("no htud");
+
         return NULL;
     }
 
@@ -165,13 +165,13 @@ static InspectionBuffer *HttpClientBodyGetDataCallback(DetectEngineThreadCtx *de
 
     /* no new data */
     if (body->body_inspected == body->content_len_so_far) {
-        SCLogDebug("no new data");
+
         return NULL;
     }
 
     HtpBodyChunk *cur = body->first;
     if (cur == NULL) {
-        SCLogDebug("No http chunks to inspect for this transacation");
+
         return NULL;
     }
 
@@ -207,7 +207,7 @@ static InspectionBuffer *HttpClientBodyGetDataCallback(DetectEngineThreadCtx *de
     if (body->body_inspected > htp_state->cfg->request.inspect_min_size) {
         BUG_ON(body->content_len_so_far < body->body_inspected);
         uint64_t inspect_win = body->content_len_so_far - body->body_inspected;
-        SCLogDebug("inspect_win %"PRIu64, inspect_win);
+
         if (inspect_win < htp_state->cfg->request.inspect_window) {
             uint64_t inspect_short = htp_state->cfg->request.inspect_window - inspect_win;
             if (body->body_inspected < inspect_short)
@@ -230,7 +230,7 @@ static InspectionBuffer *HttpClientBodyGetDataCallback(DetectEngineThreadCtx *de
     /* move inspected tracker to end of the data. HtpBodyPrune will consider
      * the window sizes when freeing data */
     body->body_inspected = body->content_len_so_far;
-    SCLogDebug("body->body_inspected now: %"PRIu64, body->body_inspected);
+
 
     SCReturnPtr(buffer, "InspectionBuffer");
 }
@@ -1463,7 +1463,7 @@ static int DetectHttpClientBodyTest14(void)
     }
     p->alerts.cnt = 0;
 
-    SCLogDebug("sending data chunk 7");
+
 
     FLOWLOCK_WRLOCK(&f);
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_HTTP,
@@ -1687,7 +1687,7 @@ static int DetectHttpClientBodyTest15(void)
     }
     p->alerts.cnt = 0;
 
-    SCLogDebug("sending data chunk 7");
+
 
     FLOWLOCK_WRLOCK(&f);
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_HTTP,
@@ -1727,14 +1727,14 @@ static int DetectHttpClientBodyTest15(void)
 
     HtpBodyChunk *cur = htud->request_body.first;
     if (htud->request_body.first == NULL) {
-        SCLogDebug("No body data in t1 (it should be removed only when the tx is destroyed): ");
+
         goto end;
     }
 
     if (StreamingBufferSegmentCompareRawData(htud->request_body.sb, &cur->sbseg,
                 (uint8_t *)"Body one!!", 10) != 1)
     {
-        SCLogDebug("Body data in t1 is not correctly set: ");
+
         goto end;
     }
 
@@ -1742,14 +1742,14 @@ static int DetectHttpClientBodyTest15(void)
 
     cur = htud->request_body.first;
     if (htud->request_body.first == NULL) {
-        SCLogDebug("No body data in t1 (it should be removed only when the tx is destroyed): ");
+
         goto end;
     }
 
     if (StreamingBufferSegmentCompareRawData(htud->request_body.sb, &cur->sbseg,
                 (uint8_t *)"Body two!!", 10) != 1)
     {
-        SCLogDebug("Body data in t1 is not correctly set: ");
+
         goto end;
     }
 

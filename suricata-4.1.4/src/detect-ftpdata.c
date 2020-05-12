@@ -162,7 +162,7 @@ static DetectFtpdataData *DetectFtpdataParse(const char *ftpcommandstr)
         SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
         goto error;
     }
-    SCLogDebug("Arg1 \"%s\"", arg1);
+
 
     ftpcommandd = SCMalloc(sizeof (DetectFtpdataData));
     if (unlikely(ftpcommandd == NULL))

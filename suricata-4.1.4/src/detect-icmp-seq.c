@@ -94,7 +94,7 @@ static inline _Bool GetIcmpSeq(Packet *p, uint16_t *seq)
                 seqn = ICMPV4_GET_SEQ(p);
                 break;
             default:
-                SCLogDebug("Packet has no seq field");
+
                 return FALSE;
         }
     } else if (PKT_IS_ICMPV6(p)) {
@@ -109,11 +109,11 @@ static inline _Bool GetIcmpSeq(Packet *p, uint16_t *seq)
                 seqn = ICMPV6_GET_SEQ(p);
                 break;
             default:
-                SCLogDebug("Packet has no seq field");
+
                 return FALSE;
         }
     } else {
-        SCLogDebug("Packet not ICMPV4 nor ICMPV6");
+
         return FALSE;
     }
 
@@ -281,7 +281,7 @@ PrefilterPacketIcmpSeqMatch(DetectEngineThreadCtx *det_ctx, Packet *p, const voi
 
     if (seqn == ctx->v1.u16[0])
     {
-        SCLogDebug("packet matches ICMP SEQ %u", ctx->v1.u16[0]);
+
         PrefilterAddSids(&det_ctx->pmq, ctx->sigs_array, ctx->sigs_cnt);
     }
 }

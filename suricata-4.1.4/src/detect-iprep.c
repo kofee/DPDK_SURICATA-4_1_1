@@ -104,7 +104,7 @@ static uint8_t GetHostRepSrc(Packet *p, uint8_t cat, uint32_t version)
     if (r->version >= version)
         val = r->rep[cat];
     else
-        SCLogDebug("version mismatch %u != %u", r->version, version);
+
 
     HostRelease(h);
     return val;
@@ -144,7 +144,7 @@ static uint8_t GetHostRepDst(Packet *p, uint8_t cat, uint32_t version)
     if (r->version >= version)
         val = r->rep[cat];
     else
-        SCLogDebug("version mismatch %u != %u", r->version, version);
+
 
     HostRelease(h);
     return val;
@@ -177,7 +177,7 @@ static int DetectIPRepMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx, Pack
     uint32_t version = det_ctx->de_ctx->srep_version;
     uint8_t val = 0;
 
-    SCLogDebug("rd->cmd %u", rd->cmd);
+
     switch(rd->cmd) {
         case DETECT_IPREP_CMD_ANY:
             val = GetHostRepSrc(p, rd->cat, version);
@@ -197,7 +197,7 @@ static int DetectIPRepMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx, Pack
 
         case DETECT_IPREP_CMD_SRC:
             val = GetHostRepSrc(p, rd->cat, version);
-            SCLogDebug("checking src -- val %u (looking for cat %u, val %u)", val, rd->cat, rd->val);
+
             if (val == 0)
                 val = SRepCIDRGetIPRepSrc(det_ctx->de_ctx->srepCIDR_ctx, p, rd->cat, version);
             if (val > 0) {
@@ -206,7 +206,7 @@ static int DetectIPRepMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx, Pack
             break;
 
         case DETECT_IPREP_CMD_DST:
-            SCLogDebug("checking dst");
+
             val = GetHostRepDst(p, rd->cat, version);
             if (val == 0)
                 val = SRepCIDRGetIPRepDst(det_ctx->de_ctx->srepCIDR_ctx, p, rd->cat, version);
@@ -335,7 +335,7 @@ int DetectIPRepSetup (DetectEngineCtx *de_ctx, Signature *s, const char *rawstr)
     cd->cat = cat;
     cd->op = op;
     cd->val = val;
-    SCLogDebug("cmd %u, cat %u, op %u, val %u", cd->cmd, cd->cat, cd->op, cd->val);
+
 
     pcre_free_substring(name);
     name = NULL;
@@ -393,7 +393,7 @@ static FILE *DetectIPRepGenerateCategoriesDummy(void)
 
     fd = SCFmemopen((void *)buffer, strlen(buffer), "r");
     if (fd == NULL)
-        SCLogDebug("Error with SCFmemopen()");
+
 
     return fd;
 }
@@ -407,7 +407,7 @@ static FILE *DetectIPRepGenerateCategoriesDummy2(void)
 
     fd = SCFmemopen((void *)buffer, strlen(buffer), "r");
     if (fd == NULL)
-        SCLogDebug("Error with SCFmemopen()");
+
 
     return fd;
 }
@@ -419,7 +419,7 @@ static FILE *DetectIPRepGenerateNetworksDummy(void)
 
     fd = SCFmemopen((void *)buffer, strlen(buffer), "r");
     if (fd == NULL)
-        SCLogDebug("Error with SCFmemopen()");
+
 
     return fd;
 }
@@ -433,7 +433,7 @@ static FILE *DetectIPRepGenerateNetworksDummy2(void)
 
     fd = SCFmemopen((void *)buffer, strlen(buffer), "r");
     if (fd == NULL)
-        SCLogDebug("Error with SCFmemopen()");
+
 
     return fd;
 }

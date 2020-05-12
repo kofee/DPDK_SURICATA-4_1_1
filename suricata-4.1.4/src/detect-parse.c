@@ -722,13 +722,13 @@ static int SigParseOptions(DetectEngineCtx *de_ctx, Signature *s, char *optstr, 
         }
         /* setup may or may not add a new SigMatch to the list */
         if (st->Setup(de_ctx, s, ptr) < 0) {
-            SCLogDebug("\"%s\" failed to setup", st->name);
+
             goto error;
         }
     } else {
         /* setup may or may not add a new SigMatch to the list */
         if (st->Setup(de_ctx, s, NULL) < 0) {
-            SCLogDebug("\"%s\" failed to setup", st->name);
+
             goto error;
         }
     }
@@ -752,7 +752,7 @@ error:
 static int SigParseAddress(DetectEngineCtx *de_ctx,
         Signature *s, const char *addrstr, char flag)
 {
-    SCLogDebug("Address Group \"%s\" to be parsed now", addrstr);
+
 
     /* pass on to the address(list) parser */
     if (flag == 0) {
@@ -843,7 +843,7 @@ static int SigParsePort(const DetectEngineCtx *de_ctx,
 
     /* XXX VJ exclude handling this for none UDP/TCP proto's */
 
-    SCLogDebug("Port group \"%s\" to be parsed", portstr);
+
 
     if (flag == 0) {
         if (strcasecmp(portstr, "any") == 0)
@@ -1135,7 +1135,7 @@ int SigParse(DetectEngineCtx *de_ctx, Signature *s, const char *sigstr, uint8_t 
 
     int ret = SigParseBasics(de_ctx, s, sigstr, &parser, addrs_direction);
     if (ret < 0) {
-        SCLogDebug("SigParseBasics failed");
+
         SCReturnInt(-1);
     }
 
@@ -1179,7 +1179,7 @@ Signature *SigAlloc (void)
     }
 
     sig->init_data->smlists_array_size = DetectBufferTypeMaxId();
-    SCLogDebug("smlists size %u", sig->init_data->smlists_array_size);
+
     sig->init_data->smlists = SCCalloc(sig->init_data->smlists_array_size, sizeof(SigMatch *));
     if (sig->init_data->smlists == NULL) {
         SCFree(sig->init_data);
@@ -1221,7 +1221,7 @@ static void SigMetadataFree(Signature *s)
         SCReturn;
     }
 
-    SCLogDebug("s %p, s->metadata %p", s, s->metadata);
+
 
     for (mdata = s->metadata; mdata != NULL;)   {
         next_mdata = mdata->next;
@@ -1251,7 +1251,7 @@ static void SigRefFree (Signature *s)
         SCReturn;
     }
 
-    SCLogDebug("s %p, s->references %p", s, s->references);
+
 
     for (ref = s->references; ref != NULL;)   {
         next_ref = ref->next;
@@ -1608,19 +1608,19 @@ static int SigValidate(DetectEngineCtx *de_ctx, Signature *s)
         SCLogError(SC_ERR_INVALID_SIGNATURE, "rule %u mixes keywords with conflicting directions", s->id);
         SCReturnInt(0);
     } else if (ts_excl) {
-        SCLogDebug("%u: implied rule direction is toserver", s->id);
+
         if (DetectFlowSetupImplicit(s, SIG_FLAG_TOSERVER) < 0) {
             SCLogError(SC_ERR_INVALID_SIGNATURE, "rule %u mixes keywords with conflicting directions", s->id);
             SCReturnInt(0);
         }
     } else if (tc_excl) {
-        SCLogDebug("%u: implied rule direction is toclient", s->id);
+
         if (DetectFlowSetupImplicit(s, SIG_FLAG_TOCLIENT) < 0) {
             SCLogError(SC_ERR_INVALID_SIGNATURE, "rule %u mixes keywords with conflicting directions", s->id);
             SCReturnInt(0);
         }
     } else if (dir_amb) {
-        SCLogDebug("%u: rule direction cannot be deduced from keywords", s->id);
+
     }
 
     if ((s->flags & SIG_FLAG_REQUIRE_PACKET) &&
@@ -3327,7 +3327,7 @@ static int SigTestBidirec03 (void)
     FlowInitConfig(FLOW_QUIET);
     p = UTHBuildPacketFromEth(rawpkt1_ether, sizeof(rawpkt1_ether));
     if (p == NULL) {
-        SCLogDebug("Error building packet");
+
         goto end;
     }
     UTHMatchPackets(de_ctx, &p, 1);

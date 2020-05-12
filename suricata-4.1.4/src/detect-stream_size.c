@@ -80,7 +80,7 @@ void DetectStreamSizeRegister(void)
 
 static int DetectStreamSizeCompare (uint32_t diff, uint32_t stream_size, uint8_t mode)
 {
-    SCLogDebug("diff %u stream_size %u mode %u", diff, stream_size, mode);
+
 
     int ret = 0;
     switch (mode) {

@@ -97,7 +97,7 @@ static int DetectTosMatch(ThreadVars *tv, DetectEngineThreadCtx *det_ctx, Packet
     }
 
     if (tosd->tos == IPV4_GET_IPTOS(p)) {
-        SCLogDebug("tos match found for %d\n", tosd->tos);
+
         result = 1;
     }
 

@@ -186,7 +186,7 @@ static int DetectTlsSubjectMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx,
     const DetectTlsData *tls_data = (const DetectTlsData *)m;
     SSLState *ssl_state = (SSLState *)state;
     if (ssl_state == NULL) {
-        SCLogDebug("no tls state, no match");
+
         SCReturnInt(0);
     }
 
@@ -287,7 +287,7 @@ static DetectTlsData *DetectTlsSubjectParse (const char *str, bool negate)
 
     SCFree(orig);
 
-    SCLogDebug("will look for TLS subject %s", tls->subject);
+
 
     return tls;
 
@@ -386,7 +386,7 @@ static int DetectTlsIssuerDNMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx
     const DetectTlsData *tls_data = (const DetectTlsData *)m;
     SSLState *ssl_state = (SSLState *)state;
     if (ssl_state == NULL) {
-        SCLogDebug("no tls state, no match");
+
         SCReturnInt(0);
     }
 
@@ -487,7 +487,7 @@ static DetectTlsData *DetectTlsIssuerDNParse(const char *str, bool negate)
 
     SCFree(orig);
 
-    SCLogDebug("Will look for TLS issuerdn %s", tls->issuerdn);
+
 
     return tls;
 
@@ -620,7 +620,7 @@ static DetectTlsData *DetectTlsFingerprintParse (const char *str, bool negate)
 
     SCFree(orig);
 
-    SCLogDebug("will look for TLS fingerprint %s", tls->fingerprint);
+
 
     return tls;
 
@@ -649,7 +649,7 @@ static int DetectTlsFingerprintMatch (ThreadVars *t, DetectEngineThreadCtx *det_
     const DetectTlsData *tls_data = (const DetectTlsData *)m;
     SSLState *ssl_state = (SSLState *)state;
     if (ssl_state == NULL) {
-        SCLogDebug("no tls state, no match");
+
         SCReturnInt(0);
     }
 
@@ -787,7 +787,7 @@ static int DetectTlsStorePostMatch (ThreadVars *t, DetectEngineThreadCtx *det_ct
 
     SSLState *ssl_state = FlowGetAppState(p->flow);
     if (ssl_state == NULL) {
-        SCLogDebug("no tls state, no match");
+
         SCReturnInt(0);
     }
 

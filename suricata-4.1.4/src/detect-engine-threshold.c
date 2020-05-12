@@ -270,11 +270,11 @@ static int ThresholdHandlePacketSuppress(Packet *p,
     switch (td->track) {
         case TRACK_DST:
             m = DetectAddressLookupInHead(&td->addrs, &p->dst);
-            SCLogDebug("TRACK_DST");
+
             break;
         case TRACK_SRC:
             m = DetectAddressLookupInHead(&td->addrs, &p->src);
-            SCLogDebug("TRACK_SRC");
+
             break;
         /* suppress if either src or dst is a match on the suppress
          * address list */
@@ -398,12 +398,12 @@ static int ThresholdHandlePacketIPPair(IPPair *pair, Packet *p, const DetectThre
     int ret = 0;
 
     DetectThresholdEntry *lookup_tsh = ThresholdIPPairLookupEntry(pair, sid, gid);
-    SCLogDebug("ippair lookup_tsh %p sid %u gid %u", lookup_tsh, sid, gid);
+
 
     switch (td->type) {
         case TYPE_RATE:
         {
-            SCLogDebug("rate_filter");
+
             ret = 1;
             if (lookup_tsh && IsThresholdReached(lookup_tsh, td, p->ts.tv_sec)) {
                 RateFilterSetAction(p, pa, td->new_action);
@@ -434,12 +434,12 @@ static int ThresholdHandlePacketHost(Host *h, Packet *p, const DetectThresholdDa
     int ret = 0;
 
     DetectThresholdEntry *lookup_tsh = ThresholdHostLookupEntry(h, sid, gid);
-    SCLogDebug("lookup_tsh %p sid %u gid %u", lookup_tsh, sid, gid);
+
 
     switch(td->type)   {
         case TYPE_LIMIT:
         {
-            SCLogDebug("limit");
+
 
             if (lookup_tsh != NULL)  {
                 if ((p->ts.tv_sec - lookup_tsh->tv_sec1) < td->seconds) {
@@ -474,7 +474,7 @@ static int ThresholdHandlePacketHost(Host *h, Packet *p, const DetectThresholdDa
         }
         case TYPE_THRESHOLD:
         {
-            SCLogDebug("threshold");
+
 
             if (lookup_tsh != NULL)  {
                 if ((p->ts.tv_sec - lookup_tsh->tv_sec1) < td->seconds) {
@@ -508,7 +508,7 @@ static int ThresholdHandlePacketHost(Host *h, Packet *p, const DetectThresholdDa
         }
         case TYPE_BOTH:
         {
-            SCLogDebug("both");
+
 
             if (lookup_tsh != NULL) {
                 if ((p->ts.tv_sec - lookup_tsh->tv_sec1) < td->seconds) {
@@ -554,7 +554,7 @@ static int ThresholdHandlePacketHost(Host *h, Packet *p, const DetectThresholdDa
         /* detection_filter */
         case TYPE_DETECTION:
         {
-            SCLogDebug("detection_filter");
+
 
             if (lookup_tsh != NULL) {
                 long double time_diff = ((p->ts.tv_sec + p->ts.tv_usec/1000000.0) -
@@ -592,7 +592,7 @@ static int ThresholdHandlePacketHost(Host *h, Packet *p, const DetectThresholdDa
         /* rate_filter */
         case TYPE_RATE:
         {
-            SCLogDebug("rate_filter");
+
             ret = 1;
             if (lookup_tsh && IsThresholdReached(lookup_tsh, td, p->ts.tv_sec)) {
                 RateFilterSetAction(p, pa, td->new_action);
@@ -616,7 +616,7 @@ static int ThresholdHandlePacketRule(DetectEngineCtx *de_ctx, Packet *p,
     int ret = 0;
 
     DetectThresholdEntry* lookup_tsh = (DetectThresholdEntry *)de_ctx->ths_ctx.th_entry[s->num];
-    SCLogDebug("by_rule lookup_tsh %p num %u", lookup_tsh, s->num);
+
 
     switch (td->type) {
         case TYPE_RATE:

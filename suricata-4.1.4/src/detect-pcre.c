@@ -98,14 +98,14 @@ void DetectPcreRegister (void)
 
     if (!ConfGetInt("pcre.match-limit", &val)) {
         pcre_match_limit = SC_MATCH_LIMIT_DEFAULT;
-        SCLogDebug("Using PCRE match-limit setting of: %i", pcre_match_limit);
+
     }
     else    {
         pcre_match_limit = val;
         if (pcre_match_limit != SC_MATCH_LIMIT_DEFAULT) {
             SCLogInfo("Using PCRE match-limit setting of: %i", pcre_match_limit);
         } else {
-            SCLogDebug("Using PCRE match-limit setting of: %i", pcre_match_limit);
+
         }
     }
 
@@ -113,14 +113,14 @@ void DetectPcreRegister (void)
 
     if (!ConfGetInt("pcre.match-limit-recursion", &val)) {
         pcre_match_limit_recursion = SC_MATCH_LIMIT_RECURSION_DEFAULT;
-        SCLogDebug("Using PCRE match-limit-recursion setting of: %i", pcre_match_limit_recursion);
+
     }
     else    {
         pcre_match_limit_recursion = val;
         if (pcre_match_limit_recursion != SC_MATCH_LIMIT_RECURSION_DEFAULT) {
             SCLogInfo("Using PCRE match-limit-recursion setting of: %i", pcre_match_limit_recursion);
         } else {
-            SCLogDebug("Using PCRE match-limit-recursion setting of: %i", pcre_match_limit_recursion);
+
         }
     }
 
@@ -197,7 +197,7 @@ int DetectPcrePayloadMatch(DetectEngineThreadCtx *det_ctx, const Signature *s,
 
     /* run the actual pcre detection */
     ret = pcre_exec(pe->re, pe->sd, (char *)ptr, len, start_offset, 0, ov, MAX_SUBSTRINGS);
-    SCLogDebug("ret %d (negating %s)", ret, (pe->flags & DETECT_PCRE_NEGATE) ? "set" : "not set");
+
 
     if (ret == PCRE_ERROR_NOMATCH) {
         if (pe->flags & DETECT_PCRE_NEGATE) {
@@ -216,13 +216,13 @@ int DetectPcrePayloadMatch(DetectEngineThreadCtx *det_ctx, const Signature *s,
             /* regex matched and we're not negated,
              * considering it a match */
 
-            SCLogDebug("ret %d pe->idx %u", ret, pe->idx);
+
 
             /* see if we need to do substring capturing. */
             if (ret > 1 && pe->idx != 0) {
                 uint8_t x;
                 for (x = 0; x < pe->idx; x++) {
-                    SCLogDebug("capturing %u", x);
+
                     const char *str_ptr = NULL;
                     ret = pcre_get_substring((char *)ptr, ov, MAX_SUBSTRINGS, x+1, &str_ptr);
                     if (unlikely(ret == 0)) {
@@ -276,7 +276,7 @@ int DetectPcrePayloadMatch(DetectEngineThreadCtx *det_ctx, const Signature *s,
         }
 
     } else {
-        SCLogDebug("pcre had matching error");
+
         ret = 0;
     }
     SCReturnInt(ret);
@@ -347,7 +347,7 @@ static DetectPcreData *DetectPcreParse (DetectEngineCtx *de_ctx,
      * extract below. Add 1 to please Coverity's alloc_strlen test. */
     size_t slen = strlen(regexstr) + 1;
     if (fcap || pcap) {
-        SCLogDebug("regexstr %s", regexstr);
+
 
         if (fcap && !pcap)
             cut_capture = fcap - regexstr;
@@ -356,12 +356,12 @@ static DetectPcreData *DetectPcreParse (DetectEngineCtx *de_ctx,
         else
             cut_capture = MIN((pcap - regexstr), (fcap - regexstr));
 
-        SCLogDebug("cut_capture %d", cut_capture);
+
 
         if (cut_capture > 1) {
             int offset = cut_capture - 1;
             while (offset) {
-                SCLogDebug("regexstr[offset] %c", regexstr[offset]);
+
                 if (regexstr[offset] == ',' || regexstr[offset] == ' ') {
                     offset--;
                 }
@@ -370,7 +370,7 @@ static DetectPcreData *DetectPcreParse (DetectEngineCtx *de_ctx,
             }
 
             if (cut_capture == (offset + 1)) {
-                SCLogDebug("missing separators, assume it's part of the regex");
+
             } else {
                 slen = offset + 1;
                 strlcpy(capture_names, regexstr+cut_capture, capture_names_size);
@@ -416,7 +416,7 @@ static DetectPcreData *DetectPcreParse (DetectEngineCtx *de_ctx,
 
     if (op != NULL) {
         while (*op) {
-            SCLogDebug("regex option %c", *op);
+
 
             switch (*op) {
                 case 'A':
@@ -584,7 +584,7 @@ static DetectPcreData *DetectPcreParse (DetectEngineCtx *de_ctx,
     if (*sm_list == -1)
         goto error;
 
-    SCLogDebug("DetectPcreParse: \"%s\"", re);
+
 
     /* host header */
     if (check_host_header) {
@@ -703,10 +703,10 @@ static int DetectPcreParseCapture(const char *regexstr, DetectEngineCtx *de_ctx,
     int capture_cnt = 0;
     int key = 0;
 
-    SCLogDebug("regexstr %s, pd %p", regexstr, pd);
+
 
     ret = pcre_fullinfo(pd->re, pd->sd, PCRE_INFO_CAPTURECOUNT, &capture_cnt);
-    SCLogDebug("ret %d capture_cnt %d", ret, capture_cnt);
+
     if (ret == 0 && capture_cnt && strlen(capture_names) > 0)
     {
         char *ptr = NULL;
@@ -716,18 +716,18 @@ static int DetectPcreParseCapture(const char *regexstr, DetectEngineCtx *de_ctx,
                         "var capture names than capturing substrings");
                 return -1;
             }
-            SCLogDebug("name '%s'", name_array[name_idx]);
+
 
             if (strcmp(name_array[name_idx], "pkt:key") == 0) {
                 key = 1;
-                SCLogDebug("key-value/key");
+
 
                 pd->captypes[pd->idx] = VAR_TYPE_PKT_VAR_KV;
-                SCLogDebug("id %u type %u", pd->capids[pd->idx], pd->captypes[pd->idx]);
+
                 pd->idx++;
 
             } else if (key == 1 && strcmp(name_array[name_idx], "pkt:value") == 0) {
-                SCLogDebug("key-value/value");
+
                 key = 0;
 
             /* kv error conditions */
@@ -744,7 +744,7 @@ static int DetectPcreParseCapture(const char *regexstr, DetectEngineCtx *de_ctx,
             } else if (strncmp(name_array[name_idx], "pkt:", 4) == 0) {
                 pd->capids[pd->idx] = VarNameStoreSetupAdd(name_array[name_idx]+4, VAR_TYPE_PKT_VAR);
                 pd->captypes[pd->idx] = VAR_TYPE_PKT_VAR;
-                SCLogDebug("id %u type %u", pd->capids[pd->idx], pd->captypes[pd->idx]);
+
                 pd->idx++;
 
             } else {
@@ -769,7 +769,7 @@ static int DetectPcreParseCapture(const char *regexstr, DetectEngineCtx *de_ctx,
         goto error;
 
     while (1) {
-        SCLogDebug("\'%s\'", regexstr);
+
 
         ret = pcre_exec(parse_capture_regex, parse_capture_regex_study, regexstr, strlen(regexstr), 0, 0, ov, MAX_SUBSTRINGS);
         if (ret < 3) {
@@ -790,8 +790,8 @@ static int DetectPcreParseCapture(const char *regexstr, DetectEngineCtx *de_ctx,
             goto error;
         }
 
-        SCLogDebug("type \'%s\'", type_str);
-        SCLogDebug("capture \'%s\'", capture_str);
+
+
 
         if (pd->idx >= DETECT_PCRE_CAPTURE_MAX) {
             SCLogError(SC_ERR_VAR_LIMIT, "rule can have maximally %d pkt/flow "
@@ -802,7 +802,7 @@ static int DetectPcreParseCapture(const char *regexstr, DetectEngineCtx *de_ctx,
         if (strcmp(type_str, "pkt") == 0) {
             pd->capids[pd->idx] = VarNameStoreSetupAdd((char *)capture_str, VAR_TYPE_PKT_VAR);
             pd->captypes[pd->idx] = VAR_TYPE_PKT_VAR;
-            SCLogDebug("id %u type %u", pd->capids[pd->idx], pd->captypes[pd->idx]);
+
             pd->idx++;
         } else if (strcmp(type_str, "flow") == 0) {
             pd->capids[pd->idx] = VarNameStoreSetupAdd((char *)capture_str, VAR_TYPE_FLOW_VAR);
@@ -2931,7 +2931,7 @@ static int DetectPcreTxBodyChunksTest02(void)
     FAIL_IF((PacketAlertCheck(p, 1)) || (PacketAlertCheck(p, 2)));
     p->alerts.cnt = 0;
 
-    SCLogDebug("sending data chunk 7");
+
 
     FLOWLOCK_WRLOCK(&f);
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_HTTP,
@@ -3106,7 +3106,7 @@ static int DetectPcreTxBodyChunksTest03(void)
     FAIL_IF((PacketAlertCheck(p, 1)) || (PacketAlertCheck(p, 2)));
     p->alerts.cnt = 0;
 
-    SCLogDebug("sending data chunk 7");
+
 
     FLOWLOCK_WRLOCK(&f);
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_HTTP,

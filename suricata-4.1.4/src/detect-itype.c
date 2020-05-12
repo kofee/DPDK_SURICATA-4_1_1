@@ -548,19 +548,19 @@ static int DetectITypeMatchTest01(void)
 
     SigMatchSignatures(&th_v, de_ctx, det_ctx, p);
     if (PacketAlertCheck(p, 1) == 0) {
-        SCLogDebug("sid 1 did not alert, but should have");
+
         goto cleanup;
     } else if (PacketAlertCheck(p, 2) == 0) {
-        SCLogDebug("sid 2 did not alert, but should have");
+
         goto cleanup;
     } else if (PacketAlertCheck(p, 3)) {
-        SCLogDebug("sid 3 alerted, but should not have");
+
         goto cleanup;
     } else if (PacketAlertCheck(p, 4) == 0) {
-        SCLogDebug("sid 4 did not alert, but should have");
+
         goto cleanup;
     } else if (PacketAlertCheck(p, 5) == 0) {
-        SCLogDebug("sid 5 did not alert, but should have");
+
         goto cleanup;
     }
 

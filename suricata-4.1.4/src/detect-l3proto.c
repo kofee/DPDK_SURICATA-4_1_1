@@ -87,7 +87,7 @@ static int DetectL3ProtoSetup(DetectEngineCtx *de_ctx, Signature *s, const char 
             goto error;
         }
         s->proto.flags |= DETECT_PROTO_IPV4;
-        SCLogDebug("IPv4 protocol detected");
+
     } else if (strcasecmp(str,"ipv6") == 0 ||
             strcasecmp(str,"ip6") == 0 ) {
         if (s->proto.flags & DETECT_PROTO_IPV6) {
@@ -95,7 +95,7 @@ static int DetectL3ProtoSetup(DetectEngineCtx *de_ctx, Signature *s, const char 
             goto error;
         }
         s->proto.flags |= DETECT_PROTO_IPV6;
-        SCLogDebug("IPv6 protocol detected");
+
     } else {
         SCLogError(SC_ERR_INVALID_SIGNATURE, "Invalid l3 proto: \"%s\"", str);
         goto error;

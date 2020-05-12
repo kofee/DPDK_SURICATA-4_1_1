@@ -130,7 +130,7 @@ int DetectBytetestDoMatch(DetectEngineThreadCtx *det_ctx,
         //PrintRawDataFp(stdout,ptr,len);
     }
     else {
-        SCLogDebug("absolute, data->offset %"PRIi32"", data->offset);
+
 
         ptr = payload + offset;
         len = payload_len - offset;
@@ -154,7 +154,7 @@ int DetectBytetestDoMatch(DetectEngineThreadCtx *det_ctx,
         if (extbytes <= 0) {
             /* strtoull() return 0 if there is no numeric value in data string */
             if (val == 0) {
-                SCLogDebug("No Numeric value");
+
                 SCReturnInt(0);
             } else {
                 SCLogDebug("error extracting %d "
@@ -225,11 +225,11 @@ int DetectBytetestDoMatch(DetectEngineThreadCtx *det_ctx,
 
     /* A successful match depends on negation */
     if ((!neg && match) || (neg && !match)) {
-        SCLogDebug("MATCH");
+
         SCReturnInt(1);
     }
 
-    SCLogDebug("NO MATCH");
+
     SCReturnInt(0);
 
 }

@@ -99,7 +99,7 @@ void DetectRunPrefilterTx(DetectEngineThreadCtx *det_ctx,
     /* reset rule store */
     det_ctx->pmq.rule_id_array_cnt = 0;
 
-    SCLogDebug("tx %p progress %d", tx->tx_ptr, tx->tx_progress);
+
 
     PrefilterEngine *engine = sgh->tx_engines;
     do {
@@ -443,7 +443,7 @@ void PrefilterSetupRuleGroup(DetectEngineCtx *de_ctx, SigGroupHead *sgh)
             }
             e++;
         }
-        SCLogDebug("sgh %p max local_id %u", sgh, local_id);
+
     }
 }
 
@@ -502,7 +502,7 @@ static int PrefilterStoreGetId(DetectEngineCtx *de_ctx,
 
     BUG_ON(de_ctx->prefilter_hash_table == NULL);
 
-    SCLogDebug("looking up %s", name);
+
 
     PrefilterStore *rctx = HashListTableLookup(de_ctx->prefilter_hash_table, (void *)&ctx, 0);
     if (rctx != NULL) {
@@ -517,7 +517,7 @@ static int PrefilterStoreGetId(DetectEngineCtx *de_ctx,
     actx->name = name;
     actx->FreeFunc = FreeFunc;
     actx->id = de_ctx->prefilter_id++;
-    SCLogDebug("prefilter engine %s has profile id %u", actx->name, actx->id);
+
 
     int ret = HashListTableAdd(de_ctx->prefilter_hash_table, actx, 0);
     if (ret != 0) {
@@ -581,7 +581,7 @@ static void PrefilterMpm(DetectEngineThreadCtx *det_ctx,
 
     const PrefilterMpmCtx *ctx = (const PrefilterMpmCtx *)pectx;
     const MpmCtx *mpm_ctx = ctx->mpm_ctx;
-    SCLogDebug("running on list %d", ctx->list_id);
+
 
     InspectionBuffer *buffer = ctx->GetData(det_ctx, ctx->transforms,
             f, flags, txv, ctx->list_id);
@@ -591,7 +591,7 @@ static void PrefilterMpm(DetectEngineThreadCtx *det_ctx,
     const uint32_t data_len = buffer->inspect_len;
     const uint8_t *data = buffer->inspect;
 
-    SCLogDebug("mpm'ing buffer:");
+
     //PrintRawDataFp(stdout, data, data_len);
 
     if (data != NULL && data_len >= mpm_ctx->minlen) {

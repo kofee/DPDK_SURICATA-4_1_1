@@ -108,7 +108,7 @@ void DetectFilenameRegister(void)
 
     g_file_match_list_id = DetectBufferTypeGetByName("files");
 
-	SCLogDebug("registering filename rule option");
+	
     return;
 }
 
@@ -146,7 +146,7 @@ static int DetectFilenameMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx,
             if (name != NULL) {
                 memcpy(name, filename->name, filename->len);
                 name[filename->len] = '\0';
-                SCLogDebug("will look for filename %s", name);
+
                 SCFree(name);
             }
         }
@@ -158,7 +158,7 @@ static int DetectFilenameMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx,
     }
 
     else if (filename->flags & DETECT_CONTENT_NEGATED) {
-        SCLogDebug("negated match");
+
         ret = 1;
     }
 
@@ -197,9 +197,9 @@ static DetectFilenameData *DetectFilenameParse (const char *str, bool negate)
         filename->flags |= DETECT_CONTENT_NEGATED;
     }
 
-    SCLogDebug("flags %02X", filename->flags);
+
     if (filename->flags & DETECT_CONTENT_NEGATED) {
-        SCLogDebug("negated filename");
+
     }
 
 #ifdef DEBUG
@@ -208,7 +208,7 @@ static DetectFilenameData *DetectFilenameParse (const char *str, bool negate)
         if (name != NULL) {
             memcpy(name, filename->name, filename->len);
             name[filename->len] = '\0';
-            SCLogDebug("will look for filename %s", name);
+
             SCFree(name);
         }
     }

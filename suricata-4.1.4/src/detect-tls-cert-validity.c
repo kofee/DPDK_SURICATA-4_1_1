@@ -152,7 +152,7 @@ static int DetectTlsValidityMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx
 
     SSLState *ssl_state = (SSLState *)state;
     if (ssl_state == NULL) {
-        SCLogDebug("no tls state, no match");
+
         SCReturnInt(0);
     }
 
@@ -311,7 +311,7 @@ static DetectTlsValidityData *DetectTlsValidityParse (const char *rawstr)
         SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
         goto error;
     }
-    SCLogDebug("mode \"%s\"", mode);
+
 
     res = pcre_copy_substring((char *)rawstr, ov, MAX_SUBSTRINGS, 2, value1,
                               sizeof(value1));
@@ -319,7 +319,7 @@ static DetectTlsValidityData *DetectTlsValidityParse (const char *rawstr)
         SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
         goto error;
     }
-    SCLogDebug("value1 \"%s\"", value1);
+
 
     if (ret > 3) {
         res = pcre_copy_substring((char *)rawstr, ov, MAX_SUBSTRINGS, 3,
@@ -328,7 +328,7 @@ static DetectTlsValidityData *DetectTlsValidityParse (const char *rawstr)
             SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
             goto error;
         }
-        SCLogDebug("range \"%s\"", range);
+
 
         if (ret > 4) {
             res = pcre_copy_substring((char *)rawstr, ov, MAX_SUBSTRINGS, 4,
@@ -338,7 +338,7 @@ static DetectTlsValidityData *DetectTlsValidityParse (const char *rawstr)
                            "pcre_copy_substring failed");
                 goto error;
             }
-            SCLogDebug("value2 \"%s\"", value2);
+
         }
     }
 
@@ -419,7 +419,7 @@ static int DetectTlsExpiredSetup (DetectEngineCtx *de_ctx, Signature *s,
     DetectTlsValidityData *dd = NULL;
     SigMatch *sm = NULL;
 
-    SCLogDebug("\'%s\'", rawstr);
+
 
     if (DetectSignatureSetAppProto(s, ALPROTO_TLS) != 0)
         return -1;
@@ -470,7 +470,7 @@ static int DetectTlsValidSetup (DetectEngineCtx *de_ctx, Signature *s,
     DetectTlsValidityData *dd = NULL;
     SigMatch *sm = NULL;
 
-    SCLogDebug("\'%s\'", rawstr);
+
 
     if (DetectSignatureSetAppProto(s, ALPROTO_TLS) != 0)
         return -1;
@@ -560,7 +560,7 @@ static int DetectTlsValiditySetup (DetectEngineCtx *de_ctx, Signature *s,
     DetectTlsValidityData *dd = NULL;
     SigMatch *sm = NULL;
 
-    SCLogDebug("\'%s\'", rawstr);
+
 
     if (DetectSignatureSetAppProto(s, ALPROTO_TLS) != 0)
         return -1;

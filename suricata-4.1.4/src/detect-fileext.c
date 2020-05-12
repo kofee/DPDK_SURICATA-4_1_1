@@ -74,7 +74,7 @@ void DetectFileextRegister(void)
 
     g_file_match_list_id = DetectBufferTypeRegister("files");
 
-	SCLogDebug("registering fileext rule option");
+	
     return;
 }
 
@@ -114,10 +114,10 @@ static int DetectFileextMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx,
     {
         if (!(fileext->flags & DETECT_CONTENT_NEGATED)) {
             ret = 1;
-            SCLogDebug("File ext found");
+
         }
     } else if (fileext->flags & DETECT_CONTENT_NEGATED) {
-        SCLogDebug("negated match");
+
         ret = 1;
     }
 
@@ -154,9 +154,9 @@ static DetectFileextData *DetectFileextParse (const char *str, bool negate)
         fileext->flags |= DETECT_CONTENT_NEGATED;
     }
 
-    SCLogDebug("flags %02X", fileext->flags);
+
     if (fileext->flags & DETECT_CONTENT_NEGATED) {
-        SCLogDebug("negated fileext");
+
     }
 
 #ifdef DEBUG
@@ -165,7 +165,7 @@ static DetectFileextData *DetectFileextParse (const char *str, bool negate)
         if (ext != NULL) {
             memcpy(ext, fileext->ext, fileext->len);
             ext[fileext->len] = '\0';
-            SCLogDebug("will look for fileext %s", ext);
+
             SCFree(ext);
         }
     }

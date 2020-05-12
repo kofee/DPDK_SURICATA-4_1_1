@@ -108,7 +108,7 @@ static DetectUrilenData *DetectUrilenParse (const char *urilenstr)
     }
     const char *str_ptr;
 
-    SCLogDebug("ret %d", ret);
+
 
     res = pcre_get_substring((char *)urilenstr, ov, MAX_SUBSTRINGS, 1, &str_ptr);
     if (res < 0) {
@@ -116,7 +116,7 @@ static DetectUrilenData *DetectUrilenParse (const char *urilenstr)
         goto error;
     }
     arg1 = (char *) str_ptr;
-    SCLogDebug("Arg1 \"%s\"", arg1);
+
 
     res = pcre_get_substring((char *)urilenstr, ov, MAX_SUBSTRINGS, 2, &str_ptr);
     if (res < 0) {
@@ -124,7 +124,7 @@ static DetectUrilenData *DetectUrilenParse (const char *urilenstr)
         goto error;
     }
     arg2 = (char *) str_ptr;
-    SCLogDebug("Arg2 \"%s\"", arg2);
+
 
     if (ret > 3) {
         res = pcre_get_substring((char *)urilenstr, ov, MAX_SUBSTRINGS, 3, &str_ptr);
@@ -133,7 +133,7 @@ static DetectUrilenData *DetectUrilenParse (const char *urilenstr)
             goto error;
         }
         arg3 = (char *) str_ptr;
-        SCLogDebug("Arg3 \"%s\"", arg3);
+
 
         if (ret > 4) {
             res = pcre_get_substring((char *)urilenstr, ov, MAX_SUBSTRINGS, 4, &str_ptr);
@@ -142,7 +142,7 @@ static DetectUrilenData *DetectUrilenParse (const char *urilenstr)
                 goto error;
             }
             arg4 = (char *) str_ptr;
-            SCLogDebug("Arg4 \"%s\"", arg4);
+
         }
         if (ret > 5) {
             res = pcre_get_substring((char *)urilenstr, ov, MAX_SUBSTRINGS, 5, &str_ptr);
@@ -151,7 +151,7 @@ static DetectUrilenData *DetectUrilenParse (const char *urilenstr)
                 goto error;
             }
             arg5 = (char *) str_ptr;
-            SCLogDebug("Arg5 \"%s\"", arg5);
+
         }
     }
 
@@ -322,7 +322,7 @@ void DetectUrilenApplyToContent(Signature *s, int list)
     if (!found || high == 65535)
         return;
 
-    SCLogDebug("high %u", high);
+
 
     sm = s->init_data->smlists[list];
     for ( ; sm != NULL;  sm = sm->next) {
@@ -691,7 +691,7 @@ static int DetectUrilenSigTest01(void)
     int r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_HTTP,
                                 STREAM_TOSERVER, httpbuf1, httplen1);
     if (r != 0) {
-        SCLogDebug("toserver chunk 1 returned %" PRId32 ", expected 0: ", r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -699,7 +699,7 @@ static int DetectUrilenSigTest01(void)
 
     HtpState *htp_state = f.alstate;
     if (htp_state == NULL) {
-        SCLogDebug("no http state: ");
+
         goto end;
     }
 

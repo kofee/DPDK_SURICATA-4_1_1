@@ -1523,7 +1523,7 @@ static int DetectHttpServerBodyTest14(void)
     SigGroupBuild(de_ctx);
     DetectEngineThreadCtxInit(&th_v, (void *)de_ctx, (void *)&det_ctx);
 
-    SCLogDebug("add chunk 1");
+
 
     FLOWLOCK_WRLOCK(&f);
     int r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_HTTP,
@@ -1535,7 +1535,7 @@ static int DetectHttpServerBodyTest14(void)
         goto end;
     }
 
-    SCLogDebug("add chunk 2");
+
 
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_HTTP,
                             STREAM_TOCLIENT, httpbuf2, httplen2);
@@ -1546,7 +1546,7 @@ static int DetectHttpServerBodyTest14(void)
     }
     FLOWLOCK_UNLOCK(&f);
 
-    SCLogDebug("inspect chunk 1");
+
 
     /* do detect */
     SigMatchSignatures(&th_v, de_ctx, det_ctx, p);
@@ -1556,7 +1556,7 @@ static int DetectHttpServerBodyTest14(void)
     }
     p->alerts.cnt = 0;
 
-    SCLogDebug("add chunk 3");
+
 
     FLOWLOCK_WRLOCK(&f);
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_HTTP,
@@ -1567,7 +1567,7 @@ static int DetectHttpServerBodyTest14(void)
         goto end;
     }
 
-    SCLogDebug("add chunk 4");
+
 
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_HTTP,
                             STREAM_TOCLIENT | STREAM_EOF, httpbuf4, httplen4);
@@ -1578,7 +1578,7 @@ static int DetectHttpServerBodyTest14(void)
     }
     FLOWLOCK_UNLOCK(&f);
 
-    SCLogDebug("inspect chunk 4");
+
 
     /* do detect */
     SigMatchSignatures(&th_v, de_ctx, det_ctx, p);

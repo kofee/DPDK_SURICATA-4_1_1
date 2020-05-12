@@ -321,7 +321,7 @@ static int DetectDceIfaceMatch(ThreadVars *t, DetectEngineThreadCtx *det_ctx,
     DCERPCUuidEntry *item = NULL;
     const DCERPCState *dcerpc_state = DetectDceGetState(f->alproto, f->alstate);
     if (dcerpc_state == NULL) {
-        SCLogDebug("No DCERPCState for the flow");
+
         SCReturnInt(0);
     }
 
@@ -334,7 +334,7 @@ static int DetectDceIfaceMatch(ThreadVars *t, DetectEngineThreadCtx *det_ctx,
         goto end;
 
     TAILQ_FOREACH(item, &dcerpc_state->dcerpc.dcerpcbindbindack.accepted_uuid_list, next) {
-        SCLogDebug("item %p", item);
+
         ret = 1;
 
         /* if any_frag is not enabled, we need to match only against the first
@@ -390,9 +390,9 @@ static int DetectDceIfaceMatchRust(ThreadVars *t,
     DetectDceIfaceData *dce_data = (DetectDceIfaceData *)m;
 
     if (rs_smb_tx_get_dce_iface(f->alstate, txv, dce_data->uuid, 16, dce_data->op, dce_data->version) != 1) {
-        SCLogDebug("rs_smb_tx_get_dce_iface: didn't match");
+
     } else {
-        SCLogDebug("rs_smb_tx_get_dce_iface: matched!");
+
         ret = 1;
         // TODO validate frag
     }
@@ -968,7 +968,7 @@ static int DetectDceIfaceTestParse12(void)
     SigGroupBuild(de_ctx);
     DetectEngineThreadCtxInit(&th_v, (void *)de_ctx, (void *)&det_ctx);
 
-    SCLogDebug("handling to_server chunk");
+
 
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_DCERPC,
                             STREAM_TOSERVER | STREAM_START, dcerpc_bind,
@@ -982,7 +982,7 @@ static int DetectDceIfaceTestParse12(void)
     SigMatchSignatures(&th_v, de_ctx, det_ctx, p);
     FAIL_IF(PacketAlertCheck(p, 1));
 
-    SCLogDebug("handling to_client chunk");
+
 
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_DCERPC,
                             STREAM_TOCLIENT, dcerpc_bindack,
@@ -1176,18 +1176,18 @@ static int DetectDceIfaceTestParse13(void)
     SigGroupBuild(de_ctx);
     DetectEngineThreadCtxInit(&th_v, (void *)de_ctx, (void *)&det_ctx);
 
-    SCLogDebug("chunk 1, bind");
+
 
     r = AppLayerParserParse(alp_tctx, &f, ALPROTO_DCERPC, STREAM_TOSERVER | STREAM_START,
                             dcerpc_bind, dcerpc_bind_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         goto end;
     }
 
     dcerpc_state = f.alstate;
     if (dcerpc_state == NULL) {
-        SCLogDebug("no dcerpc state: ");
+
         goto end;
     }
 
@@ -1201,12 +1201,12 @@ static int DetectDceIfaceTestParse13(void)
         goto end;
     }
 
-    SCLogDebug("chunk 2, bind_ack");
+
 
     r = AppLayerParserParse(alp_tctx, &f, ALPROTO_DCERPC, STREAM_TOCLIENT, dcerpc_bindack,
                             dcerpc_bindack_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         goto end;
     }
 
@@ -1220,13 +1220,13 @@ static int DetectDceIfaceTestParse13(void)
         goto end;
     }
 
-    SCLogDebug("chunk 3, request 1");
+
 
     /* request1 */
     r = AppLayerParserParse(alp_tctx, &f, ALPROTO_DCERPC, STREAM_TOSERVER, dcerpc_request1,
                             dcerpc_request1_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         goto end;
     }
 
@@ -1240,13 +1240,13 @@ static int DetectDceIfaceTestParse13(void)
         goto end;
     }
 
-    SCLogDebug("sending response1");
+
 
     /* response1 */
     r = AppLayerParserParse(alp_tctx, &f, ALPROTO_DCERPC, STREAM_TOCLIENT, dcerpc_response1,
                             dcerpc_response1_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         goto end;
     }
 
@@ -1260,13 +1260,13 @@ static int DetectDceIfaceTestParse13(void)
         goto end;
     }
 
-    SCLogDebug("sending request2");
+
 
     /* request2 */
     r = AppLayerParserParse(alp_tctx, &f, ALPROTO_DCERPC, STREAM_TOSERVER, dcerpc_request2,
                             dcerpc_request2_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         goto end;
     }
 
@@ -1284,7 +1284,7 @@ static int DetectDceIfaceTestParse13(void)
     r = AppLayerParserParse(alp_tctx, &f, ALPROTO_DCERPC, STREAM_TOCLIENT, dcerpc_response2,
                             dcerpc_response2_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         goto end;
     }
 
@@ -1302,7 +1302,7 @@ static int DetectDceIfaceTestParse13(void)
     r = AppLayerParserParse(alp_tctx, &f, ALPROTO_DCERPC, STREAM_TOSERVER, dcerpc_request3,
                             dcerpc_request3_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         goto end;
     }
 
@@ -1320,7 +1320,7 @@ static int DetectDceIfaceTestParse13(void)
     r = AppLayerParserParse(alp_tctx, &f, ALPROTO_DCERPC, STREAM_TOCLIENT | STREAM_EOF,
                             dcerpc_response3, dcerpc_response3_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         goto end;
     }
 
@@ -1444,7 +1444,7 @@ static int DetectDceIfaceTestParse14(void)
                             STREAM_TOSERVER | STREAM_START, dcerpc_bind,
                             dcerpc_bind_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1452,7 +1452,7 @@ static int DetectDceIfaceTestParse14(void)
 
     dcerpc_state = f.alstate;
     if (dcerpc_state == NULL) {
-        SCLogDebug("no dcerpc state: ");
+
         goto end;
     }
 
@@ -1467,7 +1467,7 @@ static int DetectDceIfaceTestParse14(void)
                             STREAM_TOCLIENT, dcerpc_bindack,
                             dcerpc_bindack_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1486,7 +1486,7 @@ static int DetectDceIfaceTestParse14(void)
                             STREAM_TOCLIENT, dcerpc_request,
                             dcerpc_request_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1657,7 +1657,7 @@ static int DetectDceIfaceTestParse15(void)
                             STREAM_TOSERVER | STREAM_START, dcerpc_bind,
                             dcerpc_bind_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1665,7 +1665,7 @@ static int DetectDceIfaceTestParse15(void)
 
     dcerpc_state = f.alstate;
     if (dcerpc_state == NULL) {
-        SCLogDebug("no dcerpc state: ");
+
         goto end;
     }
 
@@ -1682,7 +1682,7 @@ static int DetectDceIfaceTestParse15(void)
                             STREAM_TOCLIENT, dcerpc_bindack,
                             dcerpc_bindack_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1705,7 +1705,7 @@ static int DetectDceIfaceTestParse15(void)
                             STREAM_TOSERVER, dcerpc_alter_context,
                             dcerpc_alter_context_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1728,7 +1728,7 @@ static int DetectDceIfaceTestParse15(void)
                             STREAM_TOCLIENT, dcerpc_alter_context_resp,
                             dcerpc_alter_context_resp_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1751,7 +1751,7 @@ static int DetectDceIfaceTestParse15(void)
                             STREAM_TOSERVER, dcerpc_request1,
                             dcerpc_request1_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1774,7 +1774,7 @@ static int DetectDceIfaceTestParse15(void)
                             STREAM_TOCLIENT, dcerpc_response1,
                             dcerpc_response1_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1797,7 +1797,7 @@ static int DetectDceIfaceTestParse15(void)
                             STREAM_TOSERVER, dcerpc_request2,
                             dcerpc_request2_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }

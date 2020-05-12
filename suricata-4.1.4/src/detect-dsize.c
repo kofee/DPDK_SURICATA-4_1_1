@@ -119,7 +119,7 @@ static int DetectDsizeMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx, Pack
 
     const DetectDsizeData *dd = (const DetectDsizeData *)ctx;
 
-    SCLogDebug("p->payload_len %"PRIu16"", p->payload_len);
+
 
     ret = DsizeMatch(p->payload_len, dd->mode, dd->dsize, dd->dsize2);
 
@@ -157,14 +157,14 @@ static DetectDsizeData *DetectDsizeParse (const char *rawstr)
         SCLogError(SC_ERR_PCRE_GET_SUBSTRING,"pcre_copy_substring failed");
         goto error;
     }
-    SCLogDebug("mode \"%s\"", mode);
+
 
     res = pcre_copy_substring((char *)rawstr, ov, MAX_SUBSTRINGS, 2, value1, sizeof(value1));
     if (res < 0) {
         SCLogError(SC_ERR_PCRE_GET_SUBSTRING,"pcre_copy_substring failed");
         goto error;
     }
-    SCLogDebug("value1 \"%s\"", value1);
+
 
     if (ret > 3) {
         res = pcre_copy_substring((char *)rawstr, ov, MAX_SUBSTRINGS, 3, range, sizeof(range));
@@ -172,7 +172,7 @@ static DetectDsizeData *DetectDsizeParse (const char *rawstr)
             SCLogError(SC_ERR_PCRE_GET_SUBSTRING,"pcre_copy_substring failed");
             goto error;
         }
-        SCLogDebug("range \"%s\"", range);
+
 
         if (ret > 4) {
             res = pcre_copy_substring((char *)rawstr, ov, MAX_SUBSTRINGS, 4, value2, sizeof(value2));
@@ -180,7 +180,7 @@ static DetectDsizeData *DetectDsizeParse (const char *rawstr)
                 SCLogError(SC_ERR_PCRE_GET_SUBSTRING,"pcre_copy_substring failed");
                 goto error;
             }
-            SCLogDebug("value2 \"%s\"", value2);
+
         }
     }
 
@@ -232,7 +232,7 @@ static DetectDsizeData *DetectDsizeParse (const char *rawstr)
         }
     }
 
-    SCLogDebug("dsize parsed successfully dsize: %"PRIu16" dsize2: %"PRIu16"",dd->dsize,dd->dsize2);
+
     return dd;
 
 error:
@@ -263,7 +263,7 @@ static int DetectDsizeSetup (DetectEngineCtx *de_ctx, Signature *s, const char *
         goto error;
     }
 
-    SCLogDebug("\'%s\'", rawstr);
+
 
     dd = DetectDsizeParse(rawstr);
     if (dd == NULL) {
@@ -329,7 +329,7 @@ PrefilterPacketDsizeMatch(DetectEngineThreadCtx *det_ctx, Packet *p, const void 
     const uint16_t dsize = p->payload_len;
     if (DsizeMatch(dsize, ctx->v1.u8[0], ctx->v1.u16[1], ctx->v1.u16[2]))
     {
-        SCLogDebug("packet matches dsize %u", dsize);
+
         PrefilterAddSids(&det_ctx->pmq, ctx->sigs_array, ctx->sigs_cnt);
     }
 }
@@ -429,7 +429,7 @@ void SigParseSetDsizePair(Signature *s)
         s->dsize_low = low;
         s->dsize_high = high;
 
-        SCLogDebug("low %u, high %u", low, high);
+
     }
 }
 

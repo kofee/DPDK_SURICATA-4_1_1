@@ -94,7 +94,7 @@ void SupportFastPatternForSigMatchList(int list_id, int priority)
     /* insertion point - ip */
     for (SCFPSupportSMList *tmp = sm_fp_support_smlist_list; tmp != NULL; tmp = tmp->next) {
         if (list_id == tmp->list_id) {
-            SCLogDebug("SM list already registered.");
+
             return;
         }
 

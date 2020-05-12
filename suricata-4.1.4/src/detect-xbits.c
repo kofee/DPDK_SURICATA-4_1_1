@@ -205,7 +205,7 @@ static int DetectXbitParse(DetectEngineCtx *de_ctx,
         SCLogError(SC_ERR_PCRE_MATCH, "\"%s\" is not a valid setting for xbits.", rawstr);
         return -1;
     }
-    SCLogDebug("ret %d, %s", ret, rawstr);
+
     res = pcre_copy_substring((char *)rawstr, ov, MAX_SUBSTRINGS, 1, fb_cmd_str, sizeof(fb_cmd_str));
     if (res < 0) {
         SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
@@ -224,7 +224,7 @@ static int DetectXbitParse(DetectEngineCtx *de_ctx,
                 SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
                 return -1;
             }
-            SCLogDebug("hb_dir_str %s", hb_dir_str);
+
             if (strlen(hb_dir_str) > 0) {
                 if (strcmp(hb_dir_str, "ip_src") == 0) {
                     hb_dir = DETECT_XBITS_TRACK_IPSRC;
@@ -248,7 +248,7 @@ static int DetectXbitParse(DetectEngineCtx *de_ctx,
                     SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
                     return -1;
                 }
-                SCLogDebug("expire_str %s", expire_str);
+
                 expire = atoi(expire_str);
                 if (expire < 0) {
                     SCLogError(SC_ERR_INVALID_VALUE, "expire must be positive. "
@@ -259,7 +259,7 @@ static int DetectXbitParse(DetectEngineCtx *de_ctx,
                     SCLogError(SC_ERR_INVALID_VALUE, "expire must be bigger than 0");
                     return -1;
                 }
-                SCLogDebug("expire %d", expire);
+
             }
         }
     }

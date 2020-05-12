@@ -57,47 +57,47 @@ int DetectProtoParse(DetectProto *dp, const char *str)
 {
     if (strcasecmp(str, "tcp") == 0) {
         dp->proto[IPPROTO_TCP / 8] |= 1 << (IPPROTO_TCP % 8);
-        SCLogDebug("TCP protocol detected");
+
     } else if (strcasecmp(str, "tcp-pkt") == 0) {
         dp->proto[IPPROTO_TCP / 8] |= 1 << (IPPROTO_TCP % 8);
-        SCLogDebug("TCP protocol detected, packets only");
+
         dp->flags |= DETECT_PROTO_ONLY_PKT;
     } else if (strcasecmp(str, "tcp-stream") == 0) {
         dp->proto[IPPROTO_TCP / 8] |= 1 << (IPPROTO_TCP % 8);
-        SCLogDebug("TCP protocol detected, stream only");
+
         dp->flags |= DETECT_PROTO_ONLY_STREAM;
     } else if (strcasecmp(str, "udp") == 0) {
         dp->proto[IPPROTO_UDP / 8] |= 1 << (IPPROTO_UDP % 8);
-        SCLogDebug("UDP protocol detected");
+
     } else if (strcasecmp(str, "icmpv4") == 0) {
         dp->proto[IPPROTO_ICMP / 8] |= 1 << (IPPROTO_ICMP % 8);
-        SCLogDebug("ICMPv4 protocol detected");
+
     } else if (strcasecmp(str, "icmpv6") == 0) {
         dp->proto[IPPROTO_ICMPV6 / 8] |= 1 << (IPPROTO_ICMPV6 % 8);
-        SCLogDebug("ICMPv6 protocol detected");
+
     } else if (strcasecmp(str, "icmp") == 0) {
         dp->proto[IPPROTO_ICMP / 8] |= 1 << (IPPROTO_ICMP % 8);
         dp->proto[IPPROTO_ICMPV6 / 8] |= 1 << (IPPROTO_ICMPV6 % 8);
-        SCLogDebug("ICMP protocol detected, sig applies both to ICMPv4 and ICMPv6");
+
     } else if (strcasecmp(str, "sctp") == 0) {
         dp->proto[IPPROTO_SCTP / 8] |= 1 << (IPPROTO_SCTP % 8);
-        SCLogDebug("SCTP protocol detected");
+
     } else if (strcasecmp(str,"ipv4") == 0 ||
                strcasecmp(str,"ip4") == 0 ) {
         dp->flags |= (DETECT_PROTO_IPV4 | DETECT_PROTO_ANY);
         memset(dp->proto, 0xff, sizeof(dp->proto));
-        SCLogDebug("IPv4 protocol detected");
+
     } else if (strcasecmp(str,"ipv6") == 0 ||
                strcasecmp(str,"ip6") == 0 ) {
         dp->flags |= (DETECT_PROTO_IPV6 | DETECT_PROTO_ANY);
         memset(dp->proto, 0xff, sizeof(dp->proto));
-        SCLogDebug("IPv6 protocol detected");
+
     } else if (strcasecmp(str,"ip") == 0 ||
                strcasecmp(str,"pkthdr") == 0) {
         /* Proto "ip" is treated as an "any" */
         dp->flags |= DETECT_PROTO_ANY;
         memset(dp->proto, 0xff, sizeof(dp->proto));
-        SCLogDebug("IP protocol detected");
+
     } else {
         goto error;
 
@@ -108,7 +108,7 @@ int DetectProtoParse(DetectProto *dp, const char *str)
         /* Extract out a 0-256 value with validation checks */
         if (ByteExtractStringUint8(&proto_u8, 10, 0, str) == -1) {
             // XXX
-            SCLogDebug("DetectProtoParse: Error in extracting byte string");
+
             goto error;
         }
         proto = (int)proto_u8;
@@ -205,7 +205,7 @@ static int ProtoTestParse01 (void)
         return 1;
     }
 
-    SCLogDebug("DetectProtoParse should have rejected the \"6\" string");
+
     return 0;
 }
 /**
@@ -222,7 +222,7 @@ static int ProtoTestParse02 (void)
         return 1;
     }
 
-    SCLogDebug("ProtoTestParse02: Error in parsing the \"tcp\" string");
+
     return 0;
 }
 /**
@@ -239,7 +239,7 @@ static int ProtoTestParse03 (void)
         return 1;
     }
 
-    SCLogDebug("ProtoTestParse03: Error in parsing the \"ip\" string");
+
     return 0;
 }
 
@@ -258,7 +258,7 @@ static int ProtoTestParse04 (void)
         return 1;
     }
 
-    SCLogDebug("ProtoTestParse04: it should not parsing the \"4242\" string");
+
     return 0;
 }
 
@@ -277,7 +277,7 @@ static int ProtoTestParse05 (void)
         return 1;
     }
 
-    SCLogDebug("ProtoTestParse05: it should not parsing the \"tcp/udp\" string");
+
     return 0;
 }
 

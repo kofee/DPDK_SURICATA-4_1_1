@@ -95,7 +95,7 @@ void DetectHttpMethodRegister(void)
 
     g_http_method_buffer_id = DetectBufferTypeGetByName("http_method");
 
-    SCLogDebug("registering http_method rule option");
+
 }
 
 /**
@@ -514,7 +514,7 @@ static int DetectHttpMethodSigTest01(void)
     int r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_HTTP,
                                 STREAM_TOSERVER, httpbuf1, httplen1);
     if (r != 0) {
-        SCLogDebug("toserver chunk 1 returned %" PRId32 ", expected 0: ", r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -522,7 +522,7 @@ static int DetectHttpMethodSigTest01(void)
 
     http_state = f.alstate;
     if (http_state == NULL) {
-        SCLogDebug("no http state: ");
+
         goto end;
     }
 
@@ -618,7 +618,7 @@ static int DetectHttpMethodSigTest02(void)
     int r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_HTTP,
                                 STREAM_TOSERVER, httpbuf1, httplen1);
     if (r != 0) {
-        SCLogDebug("toserver chunk 1 returned %" PRId32 ", expected 0: ", r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -626,7 +626,7 @@ static int DetectHttpMethodSigTest02(void)
 
     http_state = f.alstate;
     if (http_state == NULL) {
-        SCLogDebug("no http state: ");
+
         goto end;
     }
 
@@ -702,7 +702,7 @@ static int DetectHttpMethodSigTest03(void)
                                    "content:\"GET\"; "
                                    "http_method; sid:1;)");
     if (s == NULL) {
-        SCLogDebug("Bad signature");
+
         goto end;
     }
 
@@ -713,7 +713,7 @@ static int DetectHttpMethodSigTest03(void)
     int r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_HTTP,
                                 STREAM_TOSERVER, httpbuf1, httplen1);
     if (r != 0) {
-        SCLogDebug("toserver chunk 1 returned %" PRId32 ", expected 0: ", r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -721,7 +721,7 @@ static int DetectHttpMethodSigTest03(void)
 
     http_state = f.alstate;
     if (http_state == NULL) {
-        SCLogDebug("no http state: ");
+
         goto end;
     }
 
@@ -810,7 +810,7 @@ static int DetectHttpMethodSigTest04(void)
     int r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_HTTP,
                                 STREAM_TOSERVER, httpbuf1, httplen1);
     if (r != 0) {
-        SCLogDebug("toserver chunk 1 returned %" PRId32 ", expected 0: ", r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -818,7 +818,7 @@ static int DetectHttpMethodSigTest04(void)
 
     http_state = f.alstate;
     if (http_state == NULL) {
-        SCLogDebug("no http state: ");
+
         goto end;
     }
 
@@ -888,7 +888,7 @@ static int DetectHttpMethodIsdataatParseTest(void)
 void DetectHttpMethodRegisterTests(void)
 {
 #ifdef UNITTESTS /* UNITTESTS */
-    SCLogDebug("Registering tests for DetectHttpMethod...");
+
     UtRegisterTest("DetectHttpMethodTest01", DetectHttpMethodTest01);
     UtRegisterTest("DetectHttpMethodTest02", DetectHttpMethodTest02);
     UtRegisterTest("DetectHttpMethodTest03", DetectHttpMethodTest03);

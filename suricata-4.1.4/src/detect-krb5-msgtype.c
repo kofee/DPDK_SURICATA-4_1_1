@@ -84,7 +84,7 @@ void DetectKrb5MsgTypeRegister(void) {
     DetectSetupParseRegexes(PARSE_REGEX, &parse_regex, &parse_regex_study);
 
     g_krb5_msg_type_list_id = DetectBufferTypeRegister("krb5_msg_type");
-    SCLogDebug("g_krb5_msg_type_list_id %d", g_krb5_msg_type_list_id);
+
 }
 
 static int DetectEngineInspectKRB5Generic(ThreadVars *tv,

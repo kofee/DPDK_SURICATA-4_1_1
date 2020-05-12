@@ -114,7 +114,7 @@ static int DetectTtlMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx, Packet
     } else if (PKT_IS_IPV6(p)) {
         pttl = IPV6_GET_HLIM(p);
     } else {
-        SCLogDebug("Packet is of not IPv4 or IPv6");
+
         return 0;
     }
 
@@ -150,7 +150,7 @@ static DetectTtlData *DetectTtlParse (const char *ttlstr)
         SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
         return NULL;
     }
-    SCLogDebug("arg1 \"%s\"", arg1);
+
 
     if (ret >= 3) {
         res = pcre_copy_substring((char *) ttlstr, ov, MAX_SUBSTRINGS, 2, arg2, sizeof(arg2));
@@ -158,7 +158,7 @@ static DetectTtlData *DetectTtlParse (const char *ttlstr)
             SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
             return NULL;
         }
-        SCLogDebug("arg2 \"%s\"", arg2);
+
 
         if (ret >= 4) {
             res = pcre_copy_substring((char *) ttlstr, ov, MAX_SUBSTRINGS, 3, arg3, sizeof(arg3));
@@ -166,7 +166,7 @@ static DetectTtlData *DetectTtlParse (const char *ttlstr)
                 SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
                 return NULL;
             }
-            SCLogDebug("arg3 \"%s\"", arg3);
+
         }
     }
 
@@ -183,7 +183,7 @@ static DetectTtlData *DetectTtlParse (const char *ttlstr)
                 mode = DETECT_TTL_LT;
                 ttl1 = atoi(arg3);
 
-                SCLogDebug("ttl is %"PRIu8"",ttl1);
+
                 if (strlen(arg1) > 0)
                     return NULL;
 
@@ -195,7 +195,7 @@ static DetectTtlData *DetectTtlParse (const char *ttlstr)
                 mode = DETECT_TTL_GT;
                 ttl1 = atoi(arg3);
 
-                SCLogDebug("ttl is %"PRIu8"",ttl1);
+
                 if (strlen(arg1) > 0)
                     return NULL;
 
@@ -208,7 +208,7 @@ static DetectTtlData *DetectTtlParse (const char *ttlstr)
                 ttl1 = atoi(arg1);
                 ttl2 = atoi(arg3);
 
-                SCLogDebug("ttl is %"PRIu8" to %"PRIu8"",ttl1, ttl2);
+
                 if (ttl1 >= ttl2) {
                     SCLogError(SC_ERR_INVALID_SIGNATURE, "invalid ttl range");
                     return NULL;
@@ -307,7 +307,7 @@ PrefilterPacketTtlMatch(DetectEngineThreadCtx *det_ctx, Packet *p, const void *p
     } else if (PKT_IS_IPV6(p)) {
         pttl = IPV6_GET_HLIM(p);
     } else {
-        SCLogDebug("Packet is of not IPv4 or IPv6");
+
         return;
     }
 
@@ -317,7 +317,7 @@ PrefilterPacketTtlMatch(DetectEngineThreadCtx *det_ctx, Packet *p, const void *p
 
     if (TtlMatch(pttl, ctx->v1.u8[0], ctx->v1.u8[1], ctx->v1.u8[2]))
     {
-        SCLogDebug("packet matches ttl/hl %u", pttl);
+
         PrefilterAddSids(&det_ctx->pmq, ctx->sigs_array, ctx->sigs_cnt);
     }
 }

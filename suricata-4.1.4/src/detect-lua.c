@@ -80,7 +80,7 @@ void DetectLuaRegister(void)
     sigmatch_table[DETECT_LUA].RegisterTests = NULL;
     sigmatch_table[DETECT_LUA].flags = SIGMATCH_NOT_BUILT;
 
-	SCLogDebug("registering lua rule option");
+	
     return;
 }
 
@@ -129,7 +129,7 @@ void DetectLuaRegister(void)
             ALPROTO_SMTP, SIG_FLAG_TOCLIENT, 0,
             InspectSmtpGeneric);
 
-	SCLogDebug("registering lua rule option");
+	
     return;
 }
 
@@ -255,7 +255,7 @@ int DetectLuaMatchBuffer(DetectEngineThreadCtx *det_ctx,
         /* script returns a number (return 1 or return 0) */
         if (lua_type(tlua->luastate, 1) == LUA_TNUMBER) {
             double script_ret = lua_tonumber(tlua->luastate, 1);
-            SCLogDebug("script_ret %f", script_ret);
+
             lua_pop(tlua->luastate, 1);
 
             if (script_ret == 1.0)
@@ -273,7 +273,7 @@ int DetectLuaMatchBuffer(DetectEngineThreadCtx *det_ctx,
                 if (!k || !v)
                     continue;
 
-                SCLogDebug("k='%s', v='%s'", k, v);
+
 
                 if (strcmp(k, "retval") == 0) {
                     if (atoi(v) == 1)
@@ -287,7 +287,7 @@ int DetectLuaMatchBuffer(DetectEngineThreadCtx *det_ctx,
             lua_pop(tlua->luastate, 1);
         }
     } else {
-        SCLogDebug("no stack");
+
     }
 
     /* clear the stack */
@@ -403,7 +403,7 @@ static int DetectLuaMatch (ThreadVars *tv, DetectEngineThreadCtx *det_ctx,
         /* script returns a number (return 1 or return 0) */
         if (lua_type(tlua->luastate, 1) == LUA_TNUMBER) {
             double script_ret = lua_tonumber(tlua->luastate, 1);
-            SCLogDebug("script_ret %f", script_ret);
+
             lua_pop(tlua->luastate, 1);
 
             if (script_ret == 1.0)
@@ -421,7 +421,7 @@ static int DetectLuaMatch (ThreadVars *tv, DetectEngineThreadCtx *det_ctx,
                 if (!k || !v)
                     continue;
 
-                SCLogDebug("k='%s', v='%s'", k, v);
+
 
                 if (strcmp(k, "retval") == 0) {
                     if (atoi(v) == 1)
@@ -505,7 +505,7 @@ static int DetectLuaAppMatchCommon (ThreadVars *t, DetectEngineThreadCtx *det_ct
         /* script returns a number (return 1 or return 0) */
         if (lua_type(tlua->luastate, 1) == LUA_TNUMBER) {
             double script_ret = lua_tonumber(tlua->luastate, 1);
-            SCLogDebug("script_ret %f", script_ret);
+
             lua_pop(tlua->luastate, 1);
 
             if (script_ret == 1.0)
@@ -523,7 +523,7 @@ static int DetectLuaAppMatchCommon (ThreadVars *t, DetectEngineThreadCtx *det_ct
                 if (!k || !v)
                     continue;
 
-                SCLogDebug("k='%s', v='%s'", k, v);
+
 
                 if (strcmp(k, "retval") == 0) {
                     if (atoi(v) == 1)
@@ -770,7 +770,7 @@ static int DetectLuaSetupPrime(DetectEngineCtx *de_ctx, DetectLuaData *ld)
                 while (lua_next(luastate, -2) != 0) {
                     /* value at -1, key is at -2 which we ignore */
                     const char *value = lua_tostring(luastate, -1);
-                    SCLogDebug("value %s", value);
+
                     /* removes 'value'; keeps 'key' for next iteration */
                     lua_pop(luastate, 1);
 
@@ -781,7 +781,7 @@ static int DetectLuaSetupPrime(DetectEngineCtx *de_ctx, DetectLuaData *ld)
 
                     uint32_t idx = VarNameStoreSetupAdd((char *)value, VAR_TYPE_FLOW_VAR);
                     ld->flowvar[ld->flowvars++] = idx;
-                    SCLogDebug("script uses flowvar %u with script id %u", idx, ld->flowvars - 1);
+
                 }
             }
             lua_pop(luastate, 1);
@@ -792,7 +792,7 @@ static int DetectLuaSetupPrime(DetectEngineCtx *de_ctx, DetectLuaData *ld)
                 while (lua_next(luastate, -2) != 0) {
                     /* value at -1, key is at -2 which we ignore */
                     const char *value = lua_tostring(luastate, -1);
-                    SCLogDebug("value %s", value);
+
                     /* removes 'value'; keeps 'key' for next iteration */
                     lua_pop(luastate, 1);
 
@@ -803,7 +803,7 @@ static int DetectLuaSetupPrime(DetectEngineCtx *de_ctx, DetectLuaData *ld)
 
                     uint32_t idx = VarNameStoreSetupAdd((char *)value, VAR_TYPE_FLOW_INT);
                     ld->flowint[ld->flowints++] = idx;
-                    SCLogDebug("script uses flowint %u with script id %u", idx, ld->flowints - 1);
+
                 }
             }
             lua_pop(luastate, 1);
@@ -815,7 +815,7 @@ static int DetectLuaSetupPrime(DetectEngineCtx *de_ctx, DetectLuaData *ld)
         if (v == NULL)
             continue;
 
-        SCLogDebug("k='%s', v='%s'", k, v);
+
         if (strcmp(k, "packet") == 0 && strcmp(v, "true") == 0) {
             ld->flags |= DATATYPE_PACKET;
         } else if (strcmp(k, "payload") == 0 && strcmp(v, "true") == 0) {
@@ -1211,7 +1211,7 @@ static int LuaMatchTest01(void)
     }
 
     /* do detect for p1 */
-    SCLogDebug("inspecting p1");
+
     SigMatchSignatures(&th_v, de_ctx, det_ctx, p1);
 
     if ((PacketAlertCheck(p1, 1))) {
@@ -1229,7 +1229,7 @@ static int LuaMatchTest01(void)
     }
     FLOWLOCK_UNLOCK(&f);
     /* do detect for p2 */
-    SCLogDebug("inspecting p2");
+
     SigMatchSignatures(&th_v, de_ctx, det_ctx, p2);
 
     if (!(PacketAlertCheck(p2, 1))) {

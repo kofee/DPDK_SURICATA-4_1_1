@@ -138,16 +138,16 @@ int DetectFlowMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx, Packet *p,
 {
     SCEnter();
 
-    SCLogDebug("pkt %p", p);
+
 
     if (p->flowflags & FLOW_PKT_TOSERVER) {
-        SCLogDebug("FLOW_PKT_TOSERVER");
+
     } else if (p->flowflags & FLOW_PKT_TOCLIENT) {
-        SCLogDebug("FLOW_PKT_TOCLIENT");
+
     }
 
     if (p->flowflags & FLOW_PKT_ESTABLISHED) {
-        SCLogDebug("FLOW_PKT_ESTABLISHED");
+
     }
 
     const DetectFlowData *fd = (const DetectFlowData *)ctx;
@@ -323,8 +323,8 @@ int DetectFlowSetupImplicit(Signature *s, uint32_t flags)
     BUG_ON(flags & ~SIG_FLAG_BOTH);
     BUG_ON((flags & SIG_FLAG_BOTH) == SIG_FLAG_BOTH);
 
-    SCLogDebug("want %08lx", flags & SIG_FLAG_BOTH);
-    SCLogDebug("have %08lx", s->flags & SIG_FLAG_BOTH);
+
+
 
     if (flags & SIG_FLAG_TOSERVER) {
         if ((s->flags & SIG_FLAG_BOTH) == SIG_FLAG_BOTH) {

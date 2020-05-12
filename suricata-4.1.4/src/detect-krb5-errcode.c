@@ -84,7 +84,7 @@ void DetectKrb5ErrCodeRegister(void) {
     DetectSetupParseRegexes(PARSE_REGEX, &parse_regex, &parse_regex_study);
 
     g_krb5_err_code_list_id = DetectBufferTypeRegister("krb5_err_code");
-    SCLogDebug("g_krb5_err_code_list_id %d", g_krb5_err_code_list_id);
+
 }
 
 static int DetectEngineInspectKRB5Generic(ThreadVars *tv,

@@ -141,7 +141,7 @@ int DetectByteExtractDoMatch(DetectEngineThreadCtx *det_ctx, const SigMatchData 
         }
         //PrintRawDataFp(stdout,ptr,len);
     } else {
-        SCLogDebug("absolute, data->offset %"PRIu32"", data->offset);
+
 
         ptr = payload + data->offset;
         len = payload_len - data->offset;
@@ -161,7 +161,7 @@ int DetectByteExtractDoMatch(DetectEngineThreadCtx *det_ctx, const SigMatchData 
         if (extbytes <= 0) {
             /* strtoull() return 0 if there is no numeric value in data string */
             if (val == 0) {
-                SCLogDebug("No Numeric value");
+
                 return 0;
             } else {
                 SCLogError(SC_ERR_INVALID_NUM_BYTES, "Error extracting %d "
@@ -193,7 +193,7 @@ int DetectByteExtractDoMatch(DetectEngineThreadCtx *det_ctx, const SigMatchData 
     det_ctx->buffer_offset = ptr - payload;
 
     *value = val;
-    SCLogDebug("extracted value is %"PRIu64, val);
+
     return 1;
 }
 

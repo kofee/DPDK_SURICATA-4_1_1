@@ -97,18 +97,18 @@ static int DetectRpcMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx, Packet
     if (PKT_IS_TCP(p)) {
         /* if Rpc msg too small */
         if (p->payload_len < 28) {
-            SCLogDebug("TCP packet to small for the rpc msg (%u)", p->payload_len);
+
             return 0;
         }
         rpcmsg += 4;
     } else if (PKT_IS_UDP(p)) {
         /* if Rpc msg too small */
         if (p->payload_len < 24) {
-            SCLogDebug("UDP packet to small for the rpc msg (%u)", p->payload_len);
+
             return 0;
         }
     } else {
-        SCLogDebug("No valid proto for the rpc message");
+
         return 0;
     }
 
@@ -117,7 +117,7 @@ static int DetectRpcMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx, Packet
 
     /* If its not a call, no match */
     if (SCNtohl(msg->type) != 0) {
-        SCLogDebug("RPC message type is not a call");
+
         return 0;
     }
 
@@ -130,7 +130,7 @@ static int DetectRpcMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx, Packet
     if ((rd->flags & DETECT_RPC_CHECK_PROCEDURE) && SCNtohl(msg->proc) != rd->procedure)
         return 0;
 
-    SCLogDebug("prog:%u pver:%u proc:%u matched", SCNtohl(msg->prog), SCNtohl(msg->vers), SCNtohl(msg->proc));
+
     return 1;
 }
 
@@ -334,7 +334,7 @@ static int DetectRpcTestParse02 (void)
             rd->procedure == 333) {
             result = 1;
         } else {
-            SCLogDebug("Error: Flags: %d; program: %u, version: %u, procedure: %u", rd->flags, rd->program, rd->program_version, rd->procedure);
+
         }
         DetectRpcFree(rd);
     }
@@ -360,7 +360,7 @@ static int DetectRpcTestParse03 (void)
         rd->program == 111 && rd->program_version == 0 &&
         rd->procedure == 333))
             result = 0;
-    SCLogDebug("rd1 Flags: %d; program: %u, version: %u, procedure: %u", rd->flags, rd->program, rd->program_version, rd->procedure);
+
 
     DetectRpcFree(rd);
 
@@ -374,7 +374,7 @@ static int DetectRpcTestParse03 (void)
         rd->program == 111 && rd->program_version == 222 &&
         rd->procedure == 0))
             result = 0;
-    SCLogDebug("rd2 Flags: %d; program: %u, version: %u, procedure: %u", rd->flags, rd->program, rd->program_version, rd->procedure);
+
 
     DetectRpcFree(rd);
 
@@ -388,7 +388,7 @@ static int DetectRpcTestParse03 (void)
         rd->program == 111 && rd->program_version == 0 &&
         rd->procedure == 0))
             result = 0;
-    SCLogDebug("rd2 Flags: %d; program: %u, version: %u, procedure: %u", rd->flags, rd->program, rd->program_version, rd->procedure);
+
 
     DetectRpcFree(rd);
 
@@ -402,7 +402,7 @@ static int DetectRpcTestParse03 (void)
         rd->program == 111 && rd->program_version == 222 &&
         rd->procedure == 0))
             result = 0;
-    SCLogDebug("rd2 Flags: %d; program: %u, version: %u, procedure: %u", rd->flags, rd->program, rd->program_version, rd->procedure);
+
 
     DetectRpcFree(rd);
 
@@ -416,7 +416,7 @@ static int DetectRpcTestParse03 (void)
         rd->program == 111 && rd->program_version == 0 &&
         rd->procedure == 0))
             result = 0;
-    SCLogDebug("rd2 Flags: %d; program: %u, version: %u, procedure: %u", rd->flags, rd->program, rd->program_version, rd->procedure);
+
 
     DetectRpcFree(rd);
     return result;
@@ -433,7 +433,7 @@ static int DetectRpcTestParse04 (void)
     if (rd == NULL) {
         result = 1;
     } else {
-        SCLogDebug("Error: Flags: %d; program: %u, version: %u, procedure: %u", rd->flags, rd->program, rd->program_version, rd->procedure);
+
         DetectRpcFree(rd);
     }
 
@@ -451,7 +451,7 @@ static int DetectRpcTestParse05 (void)
     if (rd == NULL) {
         result = 1;
     } else {
-        SCLogDebug("Error: Flags: %d; program: %u, version: %u, procedure: %u", rd->flags, rd->program, rd->program_version, rd->procedure);
+
         DetectRpcFree(rd);
     }
 

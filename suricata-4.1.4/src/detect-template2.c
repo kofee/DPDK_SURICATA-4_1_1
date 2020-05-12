@@ -111,7 +111,7 @@ static int DetectTemplate2Match (ThreadVars *t, DetectEngineThreadCtx *det_ctx, 
     } else if (PKT_IS_IPV6(p)) {
         ptemplate2 = IPV6_GET_HLIM(p);
     } else {
-        SCLogDebug("Packet is of not IPv4 or IPv6");
+
         return 0;
     }
 
@@ -151,7 +151,7 @@ static DetectTemplate2Data *DetectTemplate2Parse (const char *template2str)
         goto error;
     }
     arg1 = (char *) str_ptr;
-    SCLogDebug("Arg1 \"%s\"", arg1);
+
 
     if (ret >= 3) {
         res = pcre_get_substring((char *) template2str, ov, MAX_SUBSTRINGS, 2, &str_ptr);
@@ -160,7 +160,7 @@ static DetectTemplate2Data *DetectTemplate2Parse (const char *template2str)
             goto error;
         }
         arg2 = (char *) str_ptr;
-        SCLogDebug("Arg2 \"%s\"", arg2);
+
 
         if (ret >= 4) {
             res = pcre_get_substring((char *) template2str, ov, MAX_SUBSTRINGS, 3, &str_ptr);
@@ -169,7 +169,7 @@ static DetectTemplate2Data *DetectTemplate2Parse (const char *template2str)
                 goto error;
             }
             arg3 = (char *) str_ptr;
-            SCLogDebug("Arg3 \"%s\"", arg3);
+
         }
     }
 
@@ -189,7 +189,7 @@ static DetectTemplate2Data *DetectTemplate2Parse (const char *template2str)
                 template2d->mode = DETECT_TEMPLATE2_LT;
                 template2d->arg1 = (uint8_t) atoi(arg3);
 
-                SCLogDebug("template2 is %"PRIu8"",template2d->arg1);
+
                 if (strlen(arg1) > 0)
                     goto error;
 
@@ -201,7 +201,7 @@ static DetectTemplate2Data *DetectTemplate2Parse (const char *template2str)
                 template2d->mode = DETECT_TEMPLATE2_GT;
                 template2d->arg1 = (uint8_t) atoi(arg3);
 
-                SCLogDebug("template2 is %"PRIu8"",template2d->arg1);
+
                 if (strlen(arg1) > 0)
                     goto error;
 
@@ -216,7 +216,7 @@ static DetectTemplate2Data *DetectTemplate2Parse (const char *template2str)
                 template2d->arg1 = (uint8_t) atoi(arg1);
 
                 template2d->arg2 = (uint8_t) atoi(arg3);
-                SCLogDebug("template2 is %"PRIu8" to %"PRIu8"",template2d->arg1, template2d->arg2);
+
                 if (template2d->arg1 >= template2d->arg2) {
                     SCLogError(SC_ERR_INVALID_SIGNATURE, "Invalid template2 range. ");
                     goto error;
@@ -318,7 +318,7 @@ PrefilterPacketTemplate2Match(DetectEngineThreadCtx *det_ctx, Packet *p, const v
     } else if (PKT_IS_IPV6(p)) {
         ptemplate2 = IPV6_GET_HLIM(p);
     } else {
-        SCLogDebug("Packet is of not IPv4 or IPv6");
+
         return;
     }
 
@@ -332,7 +332,7 @@ PrefilterPacketTemplate2Match(DetectEngineThreadCtx *det_ctx, Packet *p, const v
      * that these will be inspected further */
     if (Template2Match(ptemplate2, ctx->v1.u8[0], ctx->v1.u8[1], ctx->v1.u8[2]))
     {
-        SCLogDebug("packet matches template2/hl %u", ptemplate2);
+
         PrefilterAddSids(&det_ctx->pmq, ctx->sigs_array, ctx->sigs_cnt);
     }
 }

@@ -60,16 +60,16 @@ static InspectionBuffer *FiledataGetDataCallback(DetectEngineThreadCtx *det_ctx,
     SCLogDebug("content_limit %u, content_inspect_min_size %u",
                 content_limit, content_inspect_min_size);
 
-    SCLogDebug("file %p size %"PRIu64", state %d", cur_file, file_size, cur_file->state);
+
 
     /* no new data */
     if (cur_file->content_inspected == file_size) {
-        SCLogDebug("no new data");
+
         return NULL;
     }
 
     if (file_size == 0) {
-        SCLogDebug("no data to inspect for this transaction");
+
         return NULL;
     }
 
@@ -94,7 +94,7 @@ static InspectionBuffer *FiledataGetDataCallback(DetectEngineThreadCtx *det_ctx,
 
     /* update inspected tracker */
     cur_file->content_inspected = file_size;
-    SCLogDebug("content_inspected %"PRIu64, cur_file->content_inspected);
+
 
     SCLogDebug("file_data buffer %p, data %p len %u offset %"PRIu64,
         buffer, buffer->inspect, buffer->inspect_len, buffer->inspect_offset);

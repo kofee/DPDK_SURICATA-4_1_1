@@ -157,7 +157,7 @@ static void * DetectMarkParse (const char *rawstr)
         return NULL;
     }
 
-    SCLogDebug("Rule will set mark 0x%x with mask 0x%x", mark, mask);
+
     SCFree(ptr);
 
     data = SCMalloc(sizeof(DetectMarkData));

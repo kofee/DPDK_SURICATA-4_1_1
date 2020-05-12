@@ -105,7 +105,7 @@ static int DetectFtpbounceMatchArgs(uint8_t *payload, uint16_t payload_len,
                              uint32_t ip_orig, uint16_t offset)
 {
     SCEnter();
-    SCLogDebug("Checking ftpbounce condition");
+
     char *c = NULL;
     uint16_t i = 0;
     int octet = 0;
@@ -127,7 +127,7 @@ static int DetectFtpbounceMatchArgs(uint8_t *payload, uint16_t payload_len,
 
     c =(char*) payload;
     if (c == NULL) {
-        SCLogDebug("No payload to check");
+
         return 0;
     }
 
@@ -141,7 +141,7 @@ static int DetectFtpbounceMatchArgs(uint8_t *payload, uint16_t payload_len,
             octet_ascii_len++;
         } else {
             if (octet > 256) {
-                SCLogDebug("Octet not in ip format");
+
                 return 0;
             }
 
@@ -154,7 +154,7 @@ static int DetectFtpbounceMatchArgs(uint8_t *payload, uint16_t payload_len,
                 ip =(ip << 8) + octet;
                 octet = 0;
             } else {
-                SCLogDebug("Unrecognized character '%c'", c[i]);
+
                 return 0;
             }
             if (noctet == 4) {
@@ -166,12 +166,12 @@ static int DetectFtpbounceMatchArgs(uint8_t *payload, uint16_t payload_len,
                                ip, ip_orig);
                     return 1;
                 }
-                SCLogDebug("Same ip, so no match here");
+
                 return 0;
             }
         }
     }
-    SCLogDebug("No match");
+
     return 0;
 }
 
@@ -195,7 +195,7 @@ static int DetectFtpbounceALMatch(ThreadVars *t, DetectEngineThreadCtx *det_ctx,
 
     FtpState *ftp_state = (FtpState *)state;
     if (ftp_state == NULL) {
-        SCLogDebug("no ftp state, no match");
+
         SCReturnInt(0);
     }
 
@@ -340,7 +340,7 @@ static int DetectFtpbounceTestALMatch02(void)
     int r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_FTP,
                                 STREAM_TOSERVER, ftpbuf1, ftplen1);
     if (r != 0) {
-        SCLogDebug("toserver chunk 1 returned %" PRId32 ", expected 0: ", r);
+
         result = 0;
         FLOWLOCK_UNLOCK(&f);
         goto end;
@@ -349,7 +349,7 @@ static int DetectFtpbounceTestALMatch02(void)
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_FTP, STREAM_TOSERVER,
                             ftpbuf2, ftplen2);
     if (r != 0) {
-        SCLogDebug("toserver chunk 2 returned %" PRId32 ", expected 0: ", r);
+
         result = 0;
         FLOWLOCK_UNLOCK(&f);
         goto end;
@@ -358,7 +358,7 @@ static int DetectFtpbounceTestALMatch02(void)
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_FTP, STREAM_TOSERVER,
                             ftpbuf3, ftplen3);
     if (r != 0) {
-        SCLogDebug("toserver chunk 3 returned %" PRId32 ", expected 0: ", r);
+
         result = 0;
         FLOWLOCK_UNLOCK(&f);
         goto end;
@@ -367,7 +367,7 @@ static int DetectFtpbounceTestALMatch02(void)
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_FTP, STREAM_TOSERVER,
                             ftpbuf4, ftplen4);
     if (r != 0) {
-        SCLogDebug("toserver chunk 4 returned %" PRId32 ", expected 0: ", r);
+
         result = 0;
         FLOWLOCK_UNLOCK(&f);
         goto end;
@@ -377,13 +377,13 @@ static int DetectFtpbounceTestALMatch02(void)
 
     FtpState *ftp_state = f.alstate;
     if (ftp_state == NULL) {
-        SCLogDebug("no ftp state: ");
+
         result = 0;
         goto end;
     }
 
     if (ftp_state->command != FTP_COMMAND_PORT) {
-        SCLogDebug("expected command port not detected");
+
         result = 0;
         goto end;
     }
@@ -485,7 +485,7 @@ static int DetectFtpbounceTestALMatch03(void)
     int r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_FTP,
                                 STREAM_TOSERVER, ftpbuf1, ftplen1);
     if (r != 0) {
-        SCLogDebug("toserver chunk 1 returned %" PRId32 ", expected 0: ", r);
+
         result = 0;
         FLOWLOCK_UNLOCK(&f);
         goto end;
@@ -494,7 +494,7 @@ static int DetectFtpbounceTestALMatch03(void)
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_FTP, STREAM_TOSERVER,
                             ftpbuf2, ftplen2);
     if (r != 0) {
-        SCLogDebug("toserver chunk 2 returned %" PRId32 ", expected 0: ", r);
+
         result = 0;
         FLOWLOCK_UNLOCK(&f);
         goto end;
@@ -503,7 +503,7 @@ static int DetectFtpbounceTestALMatch03(void)
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_FTP, STREAM_TOSERVER,
                             ftpbuf3, ftplen3);
     if (r != 0) {
-        SCLogDebug("toserver chunk 3 returned %" PRId32 ", expected 0: ", r);
+
         result = 0;
         FLOWLOCK_UNLOCK(&f);
         goto end;
@@ -512,7 +512,7 @@ static int DetectFtpbounceTestALMatch03(void)
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_FTP, STREAM_TOSERVER,
                             ftpbuf4, ftplen4);
     if (r != 0) {
-        SCLogDebug("toserver chunk 4 returned %" PRId32 ", expected 0: ", r);
+
         result = 0;
         FLOWLOCK_UNLOCK(&f);
         goto end;
@@ -521,13 +521,13 @@ static int DetectFtpbounceTestALMatch03(void)
 
     FtpState *ftp_state = f.alstate;
     if (ftp_state == NULL) {
-        SCLogDebug("no ftp state: ");
+
         result = 0;
         goto end;
     }
 
     if (ftp_state->command != FTP_COMMAND_PORT) {
-        SCLogDebug("expected command port not detected");
+
         result = 0;
         goto end;
     }
@@ -539,7 +539,7 @@ static int DetectFtpbounceTestALMatch03(void)
     if (!(PacketAlertCheck(p, 1))) {
         result = 1;
     } else {
-        SCLogDebug("It should not match here!");
+
     }
 
 end:

@@ -88,10 +88,10 @@ static void PrefilterTxDceStubDataRequest(DetectEngineThreadCtx *det_ctx,
 #ifdef HAVE_RUST
     if (f->alproto == ALPROTO_SMB) {
         if (rs_smb_tx_get_stub_data(txv, STREAM_TOSERVER, &buffer, &buffer_len) != 1) {
-            SCLogDebug("have no data!");
+
             return;
         }
-        SCLogDebug("have data!");
+
     } else
 #endif
     {
@@ -146,10 +146,10 @@ static void PrefilterTxDceStubDataResponse(DetectEngineThreadCtx *det_ctx,
 #ifdef HAVE_RUST
     if (f->alproto == ALPROTO_SMB) {
         if (rs_smb_tx_get_stub_data(txv, STREAM_TOCLIENT, &buffer, &buffer_len) != 1) {
-            SCLogDebug("have no data!");
+
             return;
         }
-        SCLogDebug("have data!");
+
     } else
 #endif
     {
@@ -197,7 +197,7 @@ static int InspectEngineDceStubData(ThreadVars *tv,
         uint8_t dir = flags & (STREAM_TOSERVER|STREAM_TOCLIENT);
         if (rs_smb_tx_get_stub_data(tx, dir, &buffer, &buffer_len) != 1)
             goto end;
-        SCLogDebug("have data!");
+
     } else
 #endif
     {
@@ -804,7 +804,7 @@ static int DetectDceStubDataTestParse02(void)
                             STREAM_TOSERVER | STREAM_START, dcerpc_bind,
                             dcerpc_bind_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -812,7 +812,7 @@ static int DetectDceStubDataTestParse02(void)
 
     dcerpc_state = f.alstate;
     if (dcerpc_state == NULL) {
-        SCLogDebug("no dcerpc state: ");
+
         goto end;
     }
 
@@ -831,7 +831,7 @@ static int DetectDceStubDataTestParse02(void)
                             STREAM_TOCLIENT, dcerpc_bindack,
                             dcerpc_bindack_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -851,7 +851,7 @@ static int DetectDceStubDataTestParse02(void)
                             STREAM_TOSERVER | STREAM_EOF, dcerpc_request,
                             dcerpc_request_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1548,7 +1548,7 @@ static int DetectDceStubDataTestParse04(void)
                             STREAM_TOSERVER | STREAM_START, dcerpc_bind,
                             dcerpc_bind_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1559,7 +1559,7 @@ static int DetectDceStubDataTestParse04(void)
 
     dcerpc_state = f.alstate;
     if (dcerpc_state == NULL) {
-        SCLogDebug("no dcerpc state: ");
+
         goto end;
     }
 
@@ -1568,7 +1568,7 @@ static int DetectDceStubDataTestParse04(void)
                             STREAM_TOCLIENT, dcerpc_bindack,
                             dcerpc_bindack_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1583,7 +1583,7 @@ static int DetectDceStubDataTestParse04(void)
                             STREAM_TOSERVER, dcerpc_request1,
                             dcerpc_request1_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1603,7 +1603,7 @@ static int DetectDceStubDataTestParse04(void)
                             STREAM_TOCLIENT, dcerpc_response1,
                             dcerpc_response1_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1623,7 +1623,7 @@ static int DetectDceStubDataTestParse04(void)
                             STREAM_TOSERVER, dcerpc_request2,
                             dcerpc_request2_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1643,7 +1643,7 @@ static int DetectDceStubDataTestParse04(void)
                             STREAM_TOCLIENT, dcerpc_response2,
                             dcerpc_response2_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1663,7 +1663,7 @@ static int DetectDceStubDataTestParse04(void)
                             STREAM_TOSERVER, dcerpc_request3,
                             dcerpc_request3_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1683,7 +1683,7 @@ static int DetectDceStubDataTestParse04(void)
                             STREAM_TOCLIENT | STREAM_EOF, dcerpc_response3,
                             dcerpc_response3_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1867,7 +1867,7 @@ static int DetectDceStubDataTestParse05(void)
                             STREAM_TOSERVER | STREAM_START, dcerpc_request1,
                             dcerpc_request1_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1875,7 +1875,7 @@ static int DetectDceStubDataTestParse05(void)
 
     dcerpc_state = f.alstate;
     if (dcerpc_state == NULL) {
-        SCLogDebug("no dcerpc state: ");
+
         goto end;
     }
 
@@ -1893,7 +1893,7 @@ static int DetectDceStubDataTestParse05(void)
                             STREAM_TOCLIENT, dcerpc_response1,
                             dcerpc_response1_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1913,7 +1913,7 @@ static int DetectDceStubDataTestParse05(void)
                             STREAM_TOSERVER, dcerpc_request2,
                             dcerpc_request2_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1933,7 +1933,7 @@ static int DetectDceStubDataTestParse05(void)
                             STREAM_TOCLIENT, dcerpc_response2,
                             dcerpc_response2_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1953,7 +1953,7 @@ static int DetectDceStubDataTestParse05(void)
                             STREAM_TOSERVER, dcerpc_request3,
                             dcerpc_request3_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }
@@ -1973,7 +1973,7 @@ static int DetectDceStubDataTestParse05(void)
                             STREAM_TOCLIENT | STREAM_EOF, dcerpc_response3,
                             dcerpc_response3_len);
     if (r != 0) {
-        SCLogDebug("AppLayerParse for dcerpc failed.  Returned %" PRId32, r);
+
         FLOWLOCK_UNLOCK(&f);
         goto end;
     }

@@ -247,7 +247,7 @@ static int SetHeadPtr(DetectAddressHead *gh, DetectAddress *newhead)
     } else if (newhead->ip.family == AF_INET6) {
         gh->ipv6_head = newhead;
     } else {
-        SCLogDebug("newhead->family %u not supported", newhead->ip.family);
+
         return -1;
     }
 
@@ -406,7 +406,7 @@ int DetectAddressInsert(DetectEngineCtx *de_ctx, DetectAddressHead *gh,
     } else {
         head = new;
         if (SetHeadPtr(gh, head) < 0) {
-            SCLogDebug("SetHeadPtr failed");
+
             goto error;
         }
     }
@@ -541,12 +541,12 @@ int DetectAddressParseString(DetectAddress *dd, const char *str)
     /* first handle 'any' */
     if (strcasecmp(str, "any") == 0) {
         dd->flags |= ADDRESS_FLAG_ANY;
-        SCLogDebug("address is \'any\'");
+
         return 0;
     }
 
     strlcpy(ipstr, str, sizeof(ipstr));
-    SCLogDebug("str %s", str);
+
 
     /* we work with a copy so that we can put a
      * nul-termination in it later */
@@ -713,14 +713,14 @@ static DetectAddress *DetectAddressParseSingle(const char *str)
 {
     DetectAddress *dd;
 
-    SCLogDebug("str %s", str);
+
 
     dd = DetectAddressInit();
     if (dd == NULL)
         goto error;
 
     if (DetectAddressParseString(dd, str) < 0) {
-        SCLogDebug("AddressParse failed");
+
         goto error;
     }
 
@@ -746,7 +746,7 @@ error:
  */
 static int DetectAddressSetup(DetectAddressHead *gh, const char *s)
 {
-    SCLogDebug("gh %p, s %s", gh, s);
+
 
     /* parse the address */
     DetectAddress *ad = DetectAddressParseSingle(s);
@@ -763,7 +763,7 @@ static int DetectAddressSetup(DetectAddressHead *gh, const char *s)
         DetectAddress *ad2 = NULL;
 
         if (DetectAddressCutNot(ad, &ad2) < 0) {
-            SCLogDebug("DetectAddressCutNot failed");
+
             DetectAddressFree(ad);
             return -1;
         }
@@ -772,7 +772,7 @@ static int DetectAddressSetup(DetectAddressHead *gh, const char *s)
          * of the address space (e.g. 0.0.0.0 or 255.255.255.255). */
         if (ad2 != NULL) {
             if (DetectAddressInsert(NULL, gh, ad2) < 0) {
-                SCLogDebug("DetectAddressInsert failed");
+
                 DetectAddressFree(ad);
                 DetectAddressFree(ad2);
                 return -1;
@@ -782,15 +782,15 @@ static int DetectAddressSetup(DetectAddressHead *gh, const char *s)
 
     int r = DetectAddressInsert(NULL, gh, ad);
     if (r < 0) {
-        SCLogDebug("DetectAddressInsert failed");
+
         DetectAddressFree(ad);
         return -1;
     }
-    SCLogDebug("r %d",r);
+
 
     /* if any, insert 0.0.0.0/0 and ::/0 as well */
     if (r == 1 && any == TRUE) {
-        SCLogDebug("adding 0.0.0.0/0 and ::/0 as we\'re handling \'any\'");
+
 
         ad = DetectAddressParseSingle("0.0.0.0/0");
         if (ad == NULL)
@@ -799,7 +799,7 @@ static int DetectAddressSetup(DetectAddressHead *gh, const char *s)
         BUG_ON(ad->ip.family == 0);
 
         if (DetectAddressInsert(NULL, gh, ad) < 0) {
-            SCLogDebug("DetectAddressInsert failed");
+
             goto error;
         }
         ad = DetectAddressParseSingle("::/0");
@@ -809,7 +809,7 @@ static int DetectAddressSetup(DetectAddressHead *gh, const char *s)
         BUG_ON(ad->ip.family == 0);
 
         if (DetectAddressInsert(NULL, gh, ad) < 0) {
-            SCLogDebug("DetectAddressInsert failed");
+
             goto error;
         }
     }
@@ -856,7 +856,7 @@ static int DetectAddressParse2(const DetectEngineCtx *de_ctx,
     const char *rule_var_address = NULL;
     char *temp_rule_var_address = NULL;
 
-    SCLogDebug("s %s negate %s", s, negate ? "true" : "false");
+
 
     for (u = 0, x = 0; u < size && x < sizeof(address); u++) {
         if (x == (sizeof(address) - 1)) {
@@ -881,10 +881,10 @@ static int DetectAddressParse2(const DetectEngineCtx *de_ctx,
             if (depth == 1) {
                 address[x - 1] = '\0';
                 x = 0;
-                SCLogDebug("address %s negate %d, n_set %d", address, negate, n_set);
+
                 if (((negate + n_set) % 2) == 0) {
                     /* normal block */
-                    SCLogDebug("normal block");
+
 
                     if (DetectAddressParse2(de_ctx, gh, ghn, address, (negate + n_set) % 2, var_list) < 0)
                         goto error;
@@ -894,7 +894,7 @@ static int DetectAddressParse2(const DetectEngineCtx *de_ctx,
                      * Extra steps are necessary. First consider it as a normal
                      * (non-negated) range. Merge the + and - ranges if
                      * applicable. Then insert the result into the ghn list. */
-                    SCLogDebug("negated block");
+
 
                     DetectAddressHead tmp_gh = { NULL, NULL, NULL };
                     DetectAddressHead tmp_ghn = { NULL, NULL, NULL };
@@ -905,19 +905,19 @@ static int DetectAddressParse2(const DetectEngineCtx *de_ctx,
                     DetectAddress *tmp_ad;
                     DetectAddress *tmp_ad2;
 #ifdef DEBUG
-                    SCLogDebug("tmp_gh: IPv4");
+
                     for (tmp_ad = tmp_gh.ipv4_head; tmp_ad; tmp_ad = tmp_ad->next) {
                         DetectAddressPrint(tmp_ad);
                     }
-                    SCLogDebug("tmp_ghn: IPv4");
+
                     for (tmp_ad = tmp_ghn.ipv4_head; tmp_ad; tmp_ad = tmp_ad->next) {
                         DetectAddressPrint(tmp_ad);
                     }
-                    SCLogDebug("tmp_gh: IPv6");
+
                     for (tmp_ad = tmp_gh.ipv6_head; tmp_ad; tmp_ad = tmp_ad->next) {
                         DetectAddressPrint(tmp_ad);
                     }
-                    SCLogDebug("tmp_ghn: IPv6");
+
                     for (tmp_ad = tmp_ghn.ipv6_head; tmp_ad; tmp_ad = tmp_ad->next) {
                         DetectAddressPrint(tmp_ad);
                     }
@@ -925,14 +925,14 @@ static int DetectAddressParse2(const DetectEngineCtx *de_ctx,
                     if (DetectAddressMergeNot(&tmp_gh, &tmp_ghn) < 0)
                         goto error;
 
-                    SCLogDebug("merged succesfully");
+
 
                     /* insert the IPv4 addresses into the negated list */
                     for (tmp_ad = tmp_gh.ipv4_head; tmp_ad; tmp_ad = tmp_ad->next) {
                         /* work with a copy of the address group */
                         tmp_ad2 = DetectAddressCopy(tmp_ad);
                         if (tmp_ad2 == NULL) {
-                            SCLogDebug("DetectAddressCopy failed");
+
                             goto error;
                         }
                         DetectAddressPrint(tmp_ad2);
@@ -944,7 +944,7 @@ static int DetectAddressParse2(const DetectEngineCtx *de_ctx,
                         /* work with a copy of the address group */
                         tmp_ad2 = DetectAddressCopy(tmp_ad);
                         if (tmp_ad2 == NULL) {
-                            SCLogDebug("DetectAddressCopy failed");
+
                             goto error;
                         }
                         DetectAddressPrint(tmp_ad2);
@@ -976,7 +976,7 @@ static int DetectAddressParse2(const DetectEngineCtx *de_ctx,
                     goto error;
                 }
 
-                SCLogDebug("rule_var_address %s", rule_var_address);
+
                 if ((negate + n_set) % 2) {
                     temp_rule_var_address = SCMalloc(strlen(rule_var_address) + 3);
                     if (unlikely(temp_rule_var_address == NULL))
@@ -1004,11 +1004,11 @@ static int DetectAddressParse2(const DetectEngineCtx *de_ctx,
                 address[x - 1] = '\0';
 
                 if (!((negate + n_set) % 2)) {
-                    SCLogDebug("DetectAddressSetup into gh, %s", address);
+
                     if (DetectAddressSetup(gh, address) < 0)
                         goto error;
                 } else {
-                    SCLogDebug("DetectAddressSetup into ghn, %s", address);
+
                     if (DetectAddressSetup(ghn, address) < 0)
                         goto error;
                 }
@@ -1045,7 +1045,7 @@ static int DetectAddressParse2(const DetectEngineCtx *de_ctx,
                     goto error;
                 }
 
-                SCLogDebug("rule_var_address %s", rule_var_address);
+
                 if ((negate + n_set) % 2) {
                     temp_rule_var_address = SCMalloc(strlen(rule_var_address) + 3);
                     if (unlikely(temp_rule_var_address == NULL))
@@ -1060,7 +1060,7 @@ static int DetectAddressParse2(const DetectEngineCtx *de_ctx,
 
                 if (DetectAddressParse2(de_ctx, gh, ghn, temp_rule_var_address,
                                     (negate + n_set) % 2, var_list) < 0) {
-                    SCLogDebug("DetectAddressParse2 hates us");
+
                     if (temp_rule_var_address != rule_var_address)
                         SCFree(temp_rule_var_address);
                     goto error;
@@ -1069,15 +1069,15 @@ static int DetectAddressParse2(const DetectEngineCtx *de_ctx,
                 SCFree(temp_rule_var_address);
             } else {
                 if (!((negate + n_set) % 2)) {
-                    SCLogDebug("DetectAddressSetup into gh, %s", address);
+
                     if (DetectAddressSetup(gh, address) < 0) {
-                        SCLogDebug("DetectAddressSetup gh fail");
+
                         goto error;
                     }
                 } else {
-                    SCLogDebug("DetectAddressSetup into ghn, %s", address);
+
                     if (DetectAddressSetup(ghn, address) < 0) {
-                        SCLogDebug("DetectAddressSetup ghn fail");
+
                         goto error;
                     }
                 }
@@ -1157,7 +1157,7 @@ int DetectAddressMergeNot(DetectAddressHead *gh, DetectAddressHead *ghn)
     if (gh->ipv4_head == NULL && ghn->ipv4_head != NULL) {
         r = DetectAddressSetup(gh, "0.0.0.0/0");
         if (r < 0) {
-            SCLogDebug("DetectAddressSetup for 0.0.0.0/0 failed");
+
             goto error;
         }
     }
@@ -1165,7 +1165,7 @@ int DetectAddressMergeNot(DetectAddressHead *gh, DetectAddressHead *ghn)
     if (gh->ipv6_head == NULL && ghn->ipv6_head != NULL) {
         r = DetectAddressSetup(gh, "::/0");
         if (r < 0) {
-            SCLogDebug("DetectAddressSetup for ::/0 failed");
+
             goto error;
         }
     }
@@ -1176,13 +1176,13 @@ int DetectAddressMergeNot(DetectAddressHead *gh, DetectAddressHead *ghn)
          * later. */
         ad = DetectAddressCopy(ag);
         if (ad == NULL) {
-            SCLogDebug("DetectAddressCopy failed");
+
             goto error;
         }
 
         r = DetectAddressInsert(NULL, gh, ad);
         if (r < 0) {
-            SCLogDebug("DetectAddressInsert failed");
+
             goto error;
         }
     }
@@ -1192,13 +1192,13 @@ int DetectAddressMergeNot(DetectAddressHead *gh, DetectAddressHead *ghn)
          * later. */
         ad = DetectAddressCopy(ag);
         if (ad == NULL) {
-            SCLogDebug("DetectAddressCopy failed");
+
             goto error;
         }
 
         r = DetectAddressInsert(NULL, gh, ad);
         if (r < 0) {
-            SCLogDebug("DetectAddressInsert failed");
+
             goto error;
         }
     }
@@ -1213,12 +1213,12 @@ int DetectAddressMergeNot(DetectAddressHead *gh, DetectAddressHead *ghn)
 
     /* step 2: pull the address blocks that match our 'not' blocks */
     for (ag = ghn->ipv4_head; ag != NULL; ag = ag->next) {
-        SCLogDebug("ag %p", ag);
+
         DetectAddressPrint(ag);
 
         int applied = 0;
         for (ag2 = gh->ipv4_head; ag2 != NULL; ) {
-            SCLogDebug("ag2 %p", ag2);
+
             DetectAddressPrint(ag2);
 
             r = DetectAddressCmp(ag, ag2);
@@ -1265,7 +1265,7 @@ int DetectAddressMergeNot(DetectAddressHead *gh, DetectAddressHead *ghn)
                 DetectAddressFree(ag2);
                 ag2 = next_ag2;
 
-                SCLogDebug("applied");
+
                 applied = 1;
             } else {
                 ag2 = ag2->next;
@@ -1320,7 +1320,7 @@ error:
 
 int DetectAddressTestConfVars(void)
 {
-    SCLogDebug("Testing address conf vars for any misconfigured values");
+
 
     ResolvedVariablesList var_list = TAILQ_HEAD_INITIALIZER(var_list);
 
@@ -1334,7 +1334,7 @@ int DetectAddressTestConfVars(void)
 
     ConfNode *seq_node;
     TAILQ_FOREACH(seq_node, &address_vars_node->head, next) {
-        SCLogDebug("Testing %s - %s", seq_node->name, seq_node->val);
+
 
         gh = DetectAddressHeadInit();
         if (gh == NULL) {
@@ -1502,22 +1502,22 @@ int DetectAddressParse(const DetectEngineCtx *de_ctx,
     int r;
     DetectAddressHead *ghn = NULL;
 
-    SCLogDebug("gh %p, str %s", gh, str);
+
 
     if (str == NULL) {
-        SCLogDebug("DetectAddressParse can not be run with NULL address");
+
         goto error;
     }
 
     ghn = DetectAddressHeadInit();
     if (ghn == NULL) {
-        SCLogDebug("DetectAddressHeadInit for ghn failed");
+
         goto error;
     }
 
     r = DetectAddressParse2(de_ctx, gh, ghn, str, /* start with negate no */0, NULL);
     if (r < 0) {
-        SCLogDebug("DetectAddressParse2 returned %d", r);
+
         goto error;
     }
 
@@ -1526,7 +1526,7 @@ int DetectAddressParse(const DetectEngineCtx *de_ctx,
 
     /* merge the 'not' address groups */
     if (DetectAddressMergeNot(gh, ghn) < 0) {
-        SCLogDebug("DetectAddressMergeNot failed");
+
         goto error;
     }
 
@@ -1545,11 +1545,11 @@ const DetectAddressHead *DetectParseAddress(DetectEngineCtx *de_ctx,
 {
     const DetectAddressHead *h = DetectAddressMapLookup(de_ctx, string);
     if (h != NULL) {
-        SCLogDebug("found: %s :: %p", string, h);
+
         return h;
     }
 
-    SCLogDebug("%s not found", string);
+
 
     DetectAddressHead *head = DetectAddressHeadInit();
     if (head == NULL)
@@ -1886,7 +1886,7 @@ int DetectAddressMatch(DetectAddress *dd, Address *a)
 
             break;
         default:
-            SCLogDebug("What other address type can we have :-/");
+
             break;
     }
 
@@ -1907,7 +1907,7 @@ void DetectAddressPrint(DetectAddress *gr)
         return;
 
     if (gr->flags & ADDRESS_FLAG_ANY) {
-        SCLogDebug("ANY");
+
     } else if (gr->ip.family == AF_INET) {
         struct in_addr in;
         char ip[16], mask[16];
@@ -1917,7 +1917,7 @@ void DetectAddressPrint(DetectAddress *gr)
         memcpy(&in, &gr->ip2.addr_data32[0], sizeof(in));
         PrintInet(AF_INET, &in, mask, sizeof(mask));
 
-        SCLogDebug("%s/%s", ip, mask);
+
 //        printf("%s/%s", ip, mask);
     } else if (gr->ip.family == AF_INET6) {
         struct in6_addr in6;
@@ -1928,7 +1928,7 @@ void DetectAddressPrint(DetectAddress *gr)
         memcpy(&in6, &gr->ip2.addr_data32, sizeof(in6));
         PrintInet(AF_INET6, &in6, mask, sizeof(mask));
 
-        SCLogDebug("%s/%s", ip, mask);
+
 //        printf("%s/%s", ip, mask);
     }
 
@@ -1956,13 +1956,13 @@ DetectAddress *DetectAddressLookupInHead(const DetectAddressHead *gh, Address *a
 
     /* XXX should we really do this check every time we run this function? */
     if (a->family == AF_INET) {
-        SCLogDebug("IPv4");
+
         g = gh->ipv4_head;
     } else if (a->family == AF_INET6) {
-        SCLogDebug("IPv6");
+
         g = gh->ipv6_head;
     } else {
-        SCLogDebug("ANY");
+
         g = gh->any_head;
     }
 
@@ -1989,9 +1989,9 @@ static int UTHValidateDetectAddress(DetectAddress *ad, const char *one, const ch
     switch(ad->ip.family) {
         case AF_INET:
             PrintInet(AF_INET, (const void *)&ad->ip.addr_data32[0], str1, sizeof(str1));
-            SCLogDebug("%s", str1);
+
             PrintInet(AF_INET, (const void *)&ad->ip2.addr_data32[0], str2, sizeof(str2));
-            SCLogDebug("%s", str2);
+
 
             if (strcmp(str1, one) != 0) {
                 SCLogInfo("%s != %s", str1, one);
@@ -2008,9 +2008,9 @@ static int UTHValidateDetectAddress(DetectAddress *ad, const char *one, const ch
 
         case AF_INET6:
             PrintInet(AF_INET6, (const void *)&ad->ip.addr_data32[0], str1, sizeof(str1));
-            SCLogDebug("%s", str1);
+
             PrintInet(AF_INET6, (const void *)&ad->ip2.addr_data32[0], str2, sizeof(str2));
-            SCLogDebug("%s", str2);
+
 
             if (strcmp(str1, one) != 0) {
                 SCLogInfo("%s != %s", str1, one);

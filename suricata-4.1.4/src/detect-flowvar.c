@@ -153,7 +153,7 @@ static int DetectFlowvarSetup (DetectEngineCtx *de_ctx, Signature *s, const char
         if (varcontent[strlen(varcontent)-1] == '"')
             varcontent[strlen(varcontent)-1] = '\0';
     }
-    SCLogDebug("varcontent %s", varcontent);
+
 
     res = DetectContentDataParse("flowvar", varcontent, &content, &contentlen);
     if (res == -1)
@@ -307,7 +307,7 @@ static int DetectFlowvarPostMatch(ThreadVars *tv,
     fs = det_ctx->varlist;
     while (fs != NULL) {
         if (fd->idx == 0 || fd->idx == fs->idx) {
-            SCLogDebug("adding to the flow %u:", fs->idx);
+
             //PrintRawDataFp(stdout, fs->buffer, fs->len);
 
             if (fs->type == DETECT_VAR_TYPE_FLOW_POSTMATCH && p && p->flow) {

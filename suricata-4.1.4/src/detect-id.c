@@ -169,7 +169,7 @@ static DetectIdData *DetectIdParse (const char *idstr)
 
     id_d->id = temp;
 
-    SCLogDebug("detect-id: will look for ip_id: %u\n", id_d->id);
+
     return id_d;
 }
 
@@ -236,7 +236,7 @@ PrefilterPacketIdMatch(DetectEngineThreadCtx *det_ctx, Packet *p, const void *pe
 
     if (IPV4_GET_IPID(p) == ctx->v1.u16[0])
     {
-        SCLogDebug("packet matches IP id %u", ctx->v1.u16[0]);
+
         PrefilterAddSids(&det_ctx->pmq, ctx->sigs_array, ctx->sigs_cnt);
     }
 }

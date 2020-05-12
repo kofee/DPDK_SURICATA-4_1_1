@@ -106,36 +106,36 @@ static int DetectSshVersionMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx,
 {
     SCEnter();
 
-    SCLogDebug("lets see");
+
 
     DetectSshVersionData *ssh = (DetectSshVersionData *)m;
     SshState *ssh_state = (SshState *)state;
     if (ssh_state == NULL) {
-        SCLogDebug("no ssh state, no match");
+
         SCReturnInt(0);
     }
 
     int ret = 0;
     if ((flags & STREAM_TOCLIENT) && (ssh_state->srv_hdr.flags & SSH_FLAG_VERSION_PARSED)) {
         if (ssh->flags & SSH_FLAG_PROTOVERSION_2_COMPAT) {
-            SCLogDebug("looking for ssh server protoversion 2 compat");
+
             if (strncmp((char *) ssh_state->srv_hdr.proto_version, "2", 1) == 0 ||
                 strncmp((char *) ssh_state->srv_hdr.proto_version, "2.", 2) == 0 ||
                 strncmp((char *) ssh_state->srv_hdr.proto_version, "1.99", 4) == 0)
                 ret = 1;
         } else {
-            SCLogDebug("looking for ssh server protoversion %s length %"PRIu16"", ssh->ver, ssh->len);
+
             ret = (strncmp((char *) ssh_state->srv_hdr.proto_version, (char *) ssh->ver, ssh->len) == 0)? 1 : 0;
         }
     } else if ((flags & STREAM_TOSERVER) && (ssh_state->cli_hdr.flags & SSH_FLAG_VERSION_PARSED)) {
         if (ssh->flags & SSH_FLAG_PROTOVERSION_2_COMPAT) {
-            SCLogDebug("looking for client ssh client protoversion 2 compat");
+
             if (strncmp((char *) ssh_state->cli_hdr.proto_version, "2", 1) == 0 ||
                 strncmp((char *) ssh_state->cli_hdr.proto_version, "2.", 2) == 0 ||
                 strncmp((char *) ssh_state->cli_hdr.proto_version, "1.99", 4) == 0)
                 ret = 1;
         } else {
-            SCLogDebug("looking for ssh client protoversion %s length %"PRIu16"", ssh->ver, ssh->len);
+
             ret = (strncmp((char *) ssh_state->cli_hdr.proto_version, (char *) ssh->ver, ssh->len) == 0)? 1 : 0;
         }
     }
@@ -184,7 +184,7 @@ static DetectSshVersionData *DetectSshVersionParse (const char *str)
          * will compare it with both strings) */
         if (strcmp("2_compat", str_ptr) == 0) {
             ssh->flags |= SSH_FLAG_PROTOVERSION_2_COMPAT;
-            SCLogDebug("will look for ssh protocol version 2 (2, 2.0, 1.99 that's considered as 2");
+
             return ssh;
         }
 
@@ -194,7 +194,7 @@ static DetectSshVersionData *DetectSshVersionParse (const char *str)
         }
         ssh->len = strlen((char *) ssh->ver);
 
-        SCLogDebug("will look for ssh %s", ssh->ver);
+
     }
 
     return ssh;
@@ -376,22 +376,22 @@ static int DetectSshVersionTestDetect01(void)
     SigGroupBuild(de_ctx);
     DetectEngineThreadCtxInit(&th_v, (void *)de_ctx, (void *)&det_ctx);
 
-    SCLogDebug("==> 1");
+
     int r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_SSH,
                                 STREAM_TOSERVER, sshbuf1, sshlen1);
     FAIL_IF(r != 0);
 
-    SCLogDebug("==> 2");
+
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_SSH, STREAM_TOSERVER,
                             sshbuf2, sshlen2);
     FAIL_IF(r != 0);
 
-    SCLogDebug("==> 3");
+
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_SSH, STREAM_TOSERVER,
                             sshbuf3, sshlen3);
     FAIL_IF(r != 0);
 
-    SCLogDebug("==> 4");
+
     r = AppLayerParserParse(NULL, alp_tctx, &f, ALPROTO_SSH, STREAM_TOSERVER,
                             sshbuf4, sshlen4);
     FAIL_IF(r != 0);

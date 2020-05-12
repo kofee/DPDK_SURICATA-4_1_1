@@ -203,7 +203,7 @@ static DetectModbus *DetectModbusAccessParse(const char *str)
             } else {
                 modbus->address->min    = atoi((const char*) arg);
             }
-            SCLogDebug("and min/equal address %d", modbus->address->min);
+
 
             if (ret > 5) {
                 res = pcre_copy_substring(str, ov, MAX_SUBSTRINGS, 5, arg, MAX_SUBSTRINGS);
@@ -215,7 +215,7 @@ static DetectModbus *DetectModbusAccessParse(const char *str)
                 if (*arg != '\0') {
                     modbus->address->max    = atoi((const char*) (arg+2));
                     modbus->address->mode   = DETECT_MODBUS_RA;
-                    SCLogDebug("and max address %d", modbus->address->max);
+
                 }
 
                 if (ret > 7) {
@@ -248,7 +248,7 @@ static DetectModbus *DetectModbusAccessParse(const char *str)
                     } else {
                         modbus->data->min   = atoi((const char*) arg);
                     }
-                    SCLogDebug("and min/equal value %d", modbus->data->min);
+
 
                     if (ret > 8) {
                         res = pcre_copy_substring(str, ov, MAX_SUBSTRINGS, 8, arg, MAX_SUBSTRINGS);
@@ -260,7 +260,7 @@ static DetectModbus *DetectModbusAccessParse(const char *str)
                         if (*arg != '\0') {
                             modbus->data->max   = atoi((const char*) (arg+2));
                             modbus->data->mode  = DETECT_MODBUS_RA;
-                            SCLogDebug("and max value %d", modbus->data->max);
+
                         }
                     }
                 }
@@ -320,7 +320,7 @@ static DetectModbus *DetectModbusFunctionParse(const char *str)
             goto error;
         }
 
-        SCLogDebug("will look for modbus function %d", modbus->function);
+
 
         if (ret > 2) {
             res = pcre_copy_substring(str, ov, MAX_SUBSTRINGS, 3, arg, MAX_SUBSTRINGS);
@@ -335,7 +335,7 @@ static DetectModbus *DetectModbusFunctionParse(const char *str)
                 goto error;
 
             *(modbus->subfunction) = atoi((const char*) arg);
-            SCLogDebug("and subfunction %d", *(modbus->subfunction));
+
         }
     } else {
         uint8_t neg = 0;
@@ -360,7 +360,7 @@ static DetectModbus *DetectModbusFunctionParse(const char *str)
 
         if (neg)
             modbus->category = ~modbus->category;
-        SCLogDebug("will look for modbus category function %d", modbus->category);
+
     }
 
     SCReturnPtr(modbus, "DetectModbusFunction");
@@ -436,7 +436,7 @@ static DetectModbus *DetectModbusUnitIdParse(const char *str)
     } else {
         modbus->unit_id->min   = atoi((const char*) arg);
     }
-    SCLogDebug("and min/equal unit id %d", modbus->unit_id->min);
+
 
     if (ret > 2) {
         res = pcre_copy_substring(str, ov, MAX_SUBSTRINGS, 2, arg, MAX_SUBSTRINGS);
@@ -448,7 +448,7 @@ static DetectModbus *DetectModbusUnitIdParse(const char *str)
         if (*arg != '\0') {
             modbus->unit_id->max   = atoi((const char*) (arg+2));
             modbus->unit_id->mode  = DETECT_MODBUS_RA;
-            SCLogDebug("and max unit id %d", modbus->unit_id->max);
+
         }
     }
 

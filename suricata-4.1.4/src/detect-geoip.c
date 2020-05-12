@@ -289,13 +289,13 @@ static DetectGeoipData *DetectGeoipDataParse (const char *str)
         pos++;
     }
 
-    SCLogDebug("GeoIP: %"PRIu32" countries loaded", geoipdata->nlocations);
-    for (int i=0; i<geoipdata->nlocations; i++)
-        SCLogDebug("GeoIP country code: %s", geoipdata->location[i]);
 
-    SCLogDebug("flags %02X", geoipdata->flags);
+    for (int i=0; i<geoipdata->nlocations; i++)
+
+
+
     if (geoipdata->flags & GEOIP_MATCH_NEGATED) {
-        SCLogDebug("negated geoip");
+
     }
 
     /* Initialize the geolocation engine */

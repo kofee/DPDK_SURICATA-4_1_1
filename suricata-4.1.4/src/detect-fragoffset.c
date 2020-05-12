@@ -121,7 +121,7 @@ static int DetectFragOffsetMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx,
             return 0;
         }
     } else {
-        SCLogDebug("No IPv4 or IPv6 packet");
+
         return 0;
     }
 
@@ -271,7 +271,7 @@ PrefilterPacketFragOffsetMatch(DetectEngineThreadCtx *det_ctx, Packet *p, const 
             return;
         }
     } else {
-        SCLogDebug("No IPv4 or IPv6 packet");
+
         return;
     }
 

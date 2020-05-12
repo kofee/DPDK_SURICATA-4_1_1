@@ -105,20 +105,20 @@ static int DetectTlsVersionMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx,
     const DetectTlsVersionData *tls_data = (const DetectTlsVersionData *)m;
     SSLState *ssl_state = (SSLState *)state;
     if (ssl_state == NULL) {
-        SCLogDebug("no tls state, no match");
+
         SCReturnInt(0);
     }
 
     int ret = 0;
     uint16_t version = 0;
-    SCLogDebug("looking for tls_data->ver 0x%02X (flags 0x%02X)", tls_data->ver, flags);
+
 
     if (flags & STREAM_TOCLIENT) {
         version = ssl_state->server_connp.version;
-        SCLogDebug("server (toclient) version is 0x%02X", version);
+
     } else if (flags & STREAM_TOSERVER) {
         version =  ssl_state->client_connp.version;
-        SCLogDebug("client (toserver) version is 0x%02X", version);
+
     }
 
     if ((tls_data->flags & DETECT_TLS_VERSION_FLAG_RAW) == 0) {
@@ -208,7 +208,7 @@ static DetectTlsVersionData *DetectTlsVersionParse (const char *str)
 
         SCFree(orig);
 
-        SCLogDebug("will look for tls %"PRIu8"", tls->ver);
+
     }
 
     return tls;

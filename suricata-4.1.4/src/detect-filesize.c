@@ -99,7 +99,7 @@ static int DetectFilesizeMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx, F
     int ret = 0;
     uint64_t file_size = FileTrackedSize(file);
 
-    SCLogDebug("file size %"PRIu64", check %"PRIu64, file_size, fsd->size1);
+
 
     if (file->state == FILE_STATE_CLOSED) {
         switch (fsd->mode) {
@@ -156,7 +156,7 @@ static DetectFilesizeData *DetectFilesizeParse (const char *str)
     }
     const char *str_ptr;
 
-    SCLogDebug("ret %d", ret);
+
 
     res = pcre_get_substring((char *)str, ov, MAX_SUBSTRINGS, 1, &str_ptr);
     if (res < 0) {
@@ -164,7 +164,7 @@ static DetectFilesizeData *DetectFilesizeParse (const char *str)
         goto error;
     }
     arg1 = (char *) str_ptr;
-    SCLogDebug("Arg1 \"%s\"", arg1);
+
 
     res = pcre_get_substring((char *)str, ov, MAX_SUBSTRINGS, 2, &str_ptr);
     if (res < 0) {
@@ -172,7 +172,7 @@ static DetectFilesizeData *DetectFilesizeParse (const char *str)
         goto error;
     }
     arg2 = (char *) str_ptr;
-    SCLogDebug("Arg2 \"%s\"", arg2);
+
 
     if (ret > 3) {
         res = pcre_get_substring((char *)str, ov, MAX_SUBSTRINGS, 3, &str_ptr);
@@ -181,7 +181,7 @@ static DetectFilesizeData *DetectFilesizeParse (const char *str)
             goto error;
         }
         arg3 = (char *) str_ptr;
-        SCLogDebug("Arg3 \"%s\"", arg3);
+
 
         if (ret > 4) {
             res = pcre_get_substring((char *)str, ov, MAX_SUBSTRINGS, 4, &str_ptr);
@@ -190,7 +190,7 @@ static DetectFilesizeData *DetectFilesizeParse (const char *str)
                 goto error;
             }
             arg4 = (char *) str_ptr;
-            SCLogDebug("Arg4 \"%s\"", arg4);
+
         }
     }
 

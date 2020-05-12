@@ -117,7 +117,7 @@ static inline int FlagsMatch(const uint8_t pflags, const uint8_t modifier,
             SCReturnInt(0);
 
         default:
-            SCLogDebug("flags %"PRIu8" and de->flags %"PRIu8"", flags, dflags);
+
             if (flags == dflags) {
                 SCReturnInt(1);
             }
@@ -178,7 +178,7 @@ static DetectFlagsData *DetectFlagsParse (const char *rawstr)
 
     ret = pcre_exec(parse_regex, parse_regex_study, rawstr, strlen(rawstr),
             0, 0, ov, MAX_SUBSTRINGS);
-    SCLogDebug("input '%s', pcre said %d", rawstr, ret);
+
     if (ret < 3) {
         SCLogError(SC_ERR_PCRE_MATCH, "pcre match failed");
         SCReturnPtr(NULL, "DetectFlagsData");
@@ -203,10 +203,10 @@ static DetectFlagsData *DetectFlagsParse (const char *rawstr)
             SCReturnPtr(NULL, "DetectFlagsData");
         }
     }
-    SCLogDebug("args '%s', '%s', '%s'", arg1, arg2, arg3);
+
 
     if (strlen(arg2) == 0) {
-        SCLogDebug("empty argument");
+
         SCReturnPtr(NULL, "DetectFlagsData");
     }
 
@@ -345,7 +345,7 @@ static DetectFlagsData *DetectFlagsParse (const char *rawstr)
                         goto error;
                     }
                     de->modifier = MODIFIER_NOT;
-                    SCLogDebug("NOT modifier is set");
+
                     break;
                 case '+':
                     if (de->modifier != 0) {
@@ -354,7 +354,7 @@ static DetectFlagsData *DetectFlagsParse (const char *rawstr)
                         goto error;
                     }
                     de->modifier = MODIFIER_PLUS;
-                    SCLogDebug("PLUS modifier is set");
+
                     break;
                 case '*':
                     if (de->modifier != 0) {
@@ -363,7 +363,7 @@ static DetectFlagsData *DetectFlagsParse (const char *rawstr)
                         goto error;
                     }
                     de->modifier = MODIFIER_ANY;
-                    SCLogDebug("ANY modifier is set");
+
                     break;
                 default:
                     break;
@@ -438,12 +438,12 @@ static DetectFlagsData *DetectFlagsParse (const char *rawstr)
         }
 
         if (ignore == 0) {
-            SCLogDebug("ignore == 0");
+
             goto error;
         }
     }
 
-    SCLogDebug("found %"PRId32" ignore %"PRId32"", found, ignore);
+
     SCReturnPtr(de, "DetectFlagsData");
 
 error:
@@ -556,7 +556,7 @@ PrefilterPacketFlagsMatch(DetectEngineThreadCtx *det_ctx, Packet *p, const void 
     const uint8_t flags = p->tcph->th_flags;
     if (FlagsMatch(flags, ctx->v1.u8[0], ctx->v1.u8[1], ctx->v1.u8[2]))
     {
-        SCLogDebug("packet matches TCP flags %02x", ctx->v1.u8[1]);
+
         PrefilterAddSids(&det_ctx->pmq, ctx->sigs_array, ctx->sigs_cnt);
     }
 }
@@ -568,7 +568,7 @@ PrefilterPacketFlagsSet(PrefilterPacketHeaderValue *v, void *smctx)
     v->u8[0] = a->modifier;
     v->u8[1] = a->flags;
     v->u8[2] = a->ignored_flags;
-    SCLogDebug("v->u8[0] = %02x", v->u8[0]);
+
 }
 
 static _Bool

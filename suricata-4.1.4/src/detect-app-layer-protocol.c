@@ -48,13 +48,13 @@ static int DetectAppLayerProtocolPacketMatch(ThreadVars *tv,
     if ((s->flags & SIG_FLAG_PDONLY) &&
         (p->flags & (PKT_PROTO_DETECT_TS_DONE|PKT_PROTO_DETECT_TC_DONE)) == 0)
     {
-        SCLogDebug("packet %"PRIu64": flags not set", p->pcap_cnt);
+
         SCReturnInt(0);
     }
 
     const Flow *f = p->flow;
     if (f == NULL) {
-        SCLogDebug("packet %"PRIu64": no flow", p->pcap_cnt);
+
         SCReturnInt(0);
     }
 
@@ -191,17 +191,17 @@ PrefilterPacketAppProtoMatch(DetectEngineThreadCtx *det_ctx, Packet *p, const vo
     const PrefilterPacketHeaderCtx *ctx = pectx;
 
     if (PrefilterPacketHeaderExtraMatch(ctx, p) == FALSE) {
-        SCLogDebug("packet %"PRIu64": extra match failed", p->pcap_cnt);
+
         SCReturn;
     }
 
     if (p->flow == NULL) {
-        SCLogDebug("packet %"PRIu64": no flow, no alproto", p->pcap_cnt);
+
         SCReturn;
     }
 
     if ((p->flags & (PKT_PROTO_DETECT_TS_DONE|PKT_PROTO_DETECT_TC_DONE)) == 0) {
-        SCLogDebug("packet %"PRIu64": flags not set", p->pcap_cnt);
+
         SCReturn;
     }
 
@@ -249,7 +249,7 @@ static int PrefilterSetupAppProto(DetectEngineCtx *de_ctx, SigGroupHead *sgh)
 static _Bool PrefilterAppProtoIsPrefilterable(const Signature *s)
 {
     if (s->flags & SIG_FLAG_PDONLY) {
-        SCLogDebug("prefilter on PD %u", s->id);
+
         return TRUE;
     }
     return FALSE;

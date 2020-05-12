@@ -101,7 +101,7 @@ static int DetectTemplateMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx, P
     } else if (PKT_IS_IPV6(p)) {
         /* ipv6 pkt */
     } else {
-        SCLogDebug("packet is of not IPv4 or IPv6");
+
         return ret;
     }
 #endif
@@ -145,14 +145,14 @@ static DetectTemplateData *DetectTemplateParse (const char *templatestr)
         SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
         return NULL;
     }
-    SCLogDebug("Arg1 \"%s\"", arg1);
+
 
     ret = pcre_copy_substring((char *) templatestr, ov, MAX_SUBSTRINGS, 2, arg2, sizeof(arg2));
     if (ret < 0) {
         SCLogError(SC_ERR_PCRE_GET_SUBSTRING, "pcre_copy_substring failed");
         return NULL;
     }
-    SCLogDebug("Arg2 \"%s\"", arg2);
+
 
     DetectTemplateData *templated = SCMalloc(sizeof (DetectTemplateData));
     if (unlikely(templated == NULL))

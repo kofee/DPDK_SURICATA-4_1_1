@@ -87,7 +87,7 @@ static void PrefilterPktStream(DetectEngineThreadCtx *det_ctx,
         SCLogDebug("POST det_ctx->raw_stream_progress %"PRIu64,
                 det_ctx->raw_stream_progress);
     } else {
-        SCLogDebug("NOT p->flags & PKT_DETECT_HAS_STREAMDATA");
+
     }
 
     /* packets that have not been added to the stream will be inspected

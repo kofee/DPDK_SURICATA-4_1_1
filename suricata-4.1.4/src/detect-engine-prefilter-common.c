@@ -131,7 +131,7 @@ SetupEngineForPacketHeader(DetectEngineCtx *de_ctx, SigGroupHead *sgh,
         if (Compare(ctx->v1, s->init_data->prefilter_sm->ctx) &&
             ctx->type == type && ctx->value == value)
         {
-            SCLogDebug("appending sid %u on %u", s->id, sig_offset);
+
             ctx->sigs_array[sig_offset] = s->num;
             sig_offset++;
 

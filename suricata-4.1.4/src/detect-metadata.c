@@ -135,7 +135,7 @@ static int DetectMetadataParse(DetectEngineCtx *de_ctx, Signature *s, const char
             goto next;
         }
 
-        SCLogDebug("key: %s, value: %s", hkey, hval);
+
 
         DetectMetadata *dkv = SCMalloc(sizeof(DetectMetadata));
         if (dkv == NULL) {

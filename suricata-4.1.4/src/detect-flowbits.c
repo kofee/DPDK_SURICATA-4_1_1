@@ -482,7 +482,7 @@ void DetectFlowbitsAnalyze(DetectEngineCtx *de_ctx)
         if (array[i].state_cnts[DETECT_FLOWBITS_CMD_ISSET] &&
             array[i].state_cnts[DETECT_FLOWBITS_CMD_SET] == 0)
         {
-            SCLogDebug("flowbit %s/%u: isset in state, set not in state", varname, i);
+
         }
 
         /* if signature depends on 'stateful' flowbits, then turn the
@@ -491,7 +491,7 @@ void DetectFlowbitsAnalyze(DetectEngineCtx *de_ctx)
             array[i].state_cnts[DETECT_FLOWBITS_CMD_ISSET] == 0 &&
             array[i].state_cnts[DETECT_FLOWBITS_CMD_SET])
         {
-            SCLogDebug("flowbit %s/%u: isset not in state, set in state", varname, i);
+
             to_state = true;
         }
 
@@ -509,7 +509,7 @@ void DetectFlowbitsAnalyze(DetectEngineCtx *de_ctx)
         }
         for (uint32_t x = 0; x < array[i].isset_sids_idx; x++) {
             Signature *s = de_ctx->sig_array[array[i].isset_sids[x]];
-            SCLogDebug("GET flowbit %s/%u: SID %u", varname, i, s->id);
+
 
             if (to_state) {
                 s->init_data->init_flags |= SIG_FLAG_INIT_STATE_MATCH;

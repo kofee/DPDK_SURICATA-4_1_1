@@ -181,7 +181,7 @@ static int DetectReferenceSetup(DetectEngineCtx *de_ctx, Signature *s,
     if (ref == NULL)
         goto error;
 
-    SCLogDebug("ref %s %s", ref->key, ref->reference);
+
 
     if (s->references == NULL)  {
         s->references = ref;

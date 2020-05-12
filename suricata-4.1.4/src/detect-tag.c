@@ -112,12 +112,12 @@ static int DetectTagMatch(ThreadVars *t, DetectEngineThreadCtx *det_ctx, Packet 
             else if (td->direction == DETECT_TAG_DIR_DST)
                 tde.flags |= TAG_ENTRY_FLAG_DIR_DST;
 
-            SCLogDebug("Tagging Host with sid %"PRIu32":%"PRIu32"", s->id, s->gid);
+
             TagHashAddTag(&tde, p);
             break;
         case DETECT_TAG_TYPE_SESSION:
             if (p->flow != NULL) {
-                SCLogDebug("Setting up tag for flow");
+
                 /* If it already exists it will be updated */
                 tde.sid = s->id;
                 tde.gid = s->gid;
@@ -129,12 +129,12 @@ static int DetectTagMatch(ThreadVars *t, DetectEngineThreadCtx *det_ctx, Packet 
                     tde.first_ts, tde.count);
                 TagFlowAdd(p, &tde);
             } else {
-                SCLogDebug("No flow to append the session tag");
+
             }
             break;
 #ifdef DEBUG
         default:
-            SCLogDebug("unknown type of a tag keyword (not session nor host)");
+
             BUG_ON(1);
             break;
 #endif

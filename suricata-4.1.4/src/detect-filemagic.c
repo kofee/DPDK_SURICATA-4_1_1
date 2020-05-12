@@ -99,7 +99,7 @@ void DetectFilemagicRegister(void)
 
     g_file_match_list_id = DetectBufferTypeRegister("files");
 
-	SCLogDebug("registering filemagic rule option");
+	
     return;
 }
 
@@ -197,7 +197,7 @@ static int DetectFilemagicMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx,
     }
 
     if (file->magic != NULL) {
-        SCLogDebug("magic %s", file->magic);
+
 
         /* we include the \0 in the inspection, so patterns can match on the
          * end of the string. */
@@ -210,7 +210,7 @@ static int DetectFilemagicMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx,
                 if (name != NULL) {
                     memcpy(name, filemagic->name, filemagic->len);
                     name[filemagic->len] = '\0';
-                    SCLogDebug("will look for filemagic %s", name);
+
                     SCFree(name);
                 }
             }
@@ -220,7 +220,7 @@ static int DetectFilemagicMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx,
                 ret = 1;
             }
         } else if (filemagic->flags & DETECT_CONTENT_NEGATED) {
-            SCLogDebug("negated match");
+
             ret = 1;
         }
     }
@@ -260,9 +260,9 @@ static DetectFilemagicData *DetectFilemagicParse (const char *str, bool negate)
         filemagic->flags |= DETECT_CONTENT_NEGATED;
     }
 
-    SCLogDebug("flags %02X", filemagic->flags);
+
     if (filemagic->flags & DETECT_CONTENT_NEGATED) {
-        SCLogDebug("negated filemagic");
+
     }
 
 #ifdef DEBUG
@@ -271,7 +271,7 @@ static DetectFilemagicData *DetectFilemagicParse (const char *str, bool negate)
         if (name != NULL) {
             memcpy(name, filemagic->name, filemagic->len);
             name[filemagic->len] = '\0';
-            SCLogDebug("will look for filemagic %s", name);
+
             SCFree(name);
         }
     }
