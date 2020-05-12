@@ -4745,7 +4745,7 @@ int StreamTcpPacket (ThreadVars *tv, Packet *p, StreamTcpThread *stt,
             goto error;
         }
 
-        if (ssn != NULL)
+        if (ssn != NULL) ;
 
     } else {
         /* special case for PKT_PSEUDO_STREAM_END packets:
