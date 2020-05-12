@@ -256,7 +256,7 @@ int DetectAddressCmpIPv6(DetectAddress *a, DetectAddress *b)
         return ADDRESS_GT;
     } else {
         /* should be unreachable */
-
+        SCLogDebug("Internal Error: should be unreachable\n");
     }
 
     return ADDRESS_ER;

@@ -153,7 +153,7 @@ void SigGroupHeadFree(const DetectEngineCtx *de_ctx, SigGroupHead *sgh)
     if (sgh == NULL)
         return;
 
-
+    SCLogDebug("sgh %p", sgh);
 
     if (sgh->match_array != NULL) {
         SCFree(sgh->match_array);
@@ -201,13 +201,13 @@ static uint32_t SigGroupHeadHashFunc(HashListTable *ht, void *data, uint16_t dat
     uint32_t hash = 0;
     uint32_t b = 0;
 
-
+    SCLogDebug("hashing sgh %p", sgh);
 
     for (b = 0; b < sgh->init->sig_size; b++)
         hash += sgh->init->sig_array[b];
 
     hash %= ht->array_size;
-
+    SCLogDebug("hash %"PRIu32" (sig_size %"PRIu32")", hash, sgh->init->sig_size);
     return hash;
 }
 
@@ -436,7 +436,7 @@ void SigGroupHeadSetProtoAndDirection(SigGroupHead *sgh,
                                       uint8_t ipproto, int dir)
 {
     if (sgh && sgh->init) {
-
+        SCLogDebug("setting proto %u and dir %d on sgh %p", ipproto, dir, sgh);
         sgh->init->protos[ipproto] = 1;
         sgh->init->direction |= dir;
     }
@@ -459,10 +459,10 @@ void SigGroupHeadPrintSigs(DetectEngineCtx *de_ctx, SigGroupHead *sgh)
 
     uint32_t u;
 
-
+    SCLogDebug("The Signatures present in this SigGroupHead are: ");
     for (u = 0; u < (sgh->init->sig_size * 8); u++) {
         if (sgh->init->sig_array[u / 8] & (1 << (u % 8))) {
-
+            SCLogDebug("%" PRIu32, u);
             printf("s->num %"PRIu32" ", u);
         }
     }
@@ -592,19 +592,19 @@ void SigGroupHeadSetFileHashFlag(DetectEngineCtx *de_ctx, SigGroupHead *sgh)
 
         if (SignatureIsFileMd5Inspecting(s)) {
             sgh->flags |= SIG_GROUP_HEAD_HAVEFILEMD5;
-
+            SCLogDebug("sgh %p has filemd5", sgh);
             break;
         }
 
         if (SignatureIsFileSha1Inspecting(s)) {
             sgh->flags |= SIG_GROUP_HEAD_HAVEFILESHA1;
-
+            SCLogDebug("sgh %p has filesha1", sgh);
             break;
         }
 
         if (SignatureIsFileSha256Inspecting(s)) {
             sgh->flags |= SIG_GROUP_HEAD_HAVEFILESHA256;
-
+            SCLogDebug("sgh %p has filesha256", sgh);
             break;
         }
     }

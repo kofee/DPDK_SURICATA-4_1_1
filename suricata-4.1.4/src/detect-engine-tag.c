@@ -161,11 +161,11 @@ int TagFlowAdd(Packet *p, DetectTagDataEntry *tde)
         if (new_tde != NULL) {
             new_tde->next = FlowGetStorageById(p->flow, flow_tag_id);
             FlowSetStorageById(p->flow, flow_tag_id, new_tde);
-
+            SCLogDebug("adding tag with first_ts %u", new_tde->first_ts);
             (void) SC_ATOMIC_ADD(num_tags, 1);
         }
     } else if (tag_cnt == DETECT_TAG_MAX_TAGS) {
-
+        SCLogDebug("Max tags for sessions reached (%"PRIu16")", tag_cnt);
     }
 
     return updated;
@@ -197,7 +197,7 @@ int TagHashAddTag(DetectTagDataEntry *tde, Packet *p)
     }
     /* no host for us */
     if (host == NULL) {
-
+        SCLogDebug("host tag not added: no host");
         return -1;
     }
 
@@ -208,11 +208,11 @@ int TagHashAddTag(DetectTagDataEntry *tde, Packet *p)
         if (new_tde != NULL) {
             HostSetStorageById(host, host_tag_id, new_tde);
             (void) SC_ATOMIC_ADD(num_tags, 1);
-
+            SCLogDebug("host tag added");
         }
     } else {
         /* Append the tag to the list of this host */
-
+        SCLogDebug("updating existing host");
 
         /* First iterate installed entries searching a duplicated sid/gid */
         DetectTagDataEntry *iter = NULL;
@@ -245,7 +245,7 @@ int TagHashAddTag(DetectTagDataEntry *tde, Packet *p)
                 HostSetStorageById(host, host_tag_id, new_tde);
             }
         } else if (num_tags == DETECT_TAG_MAX_TAGS) {
-
+            SCLogDebug("Max tags for sessions reached (%"PRIu16")", num_tags);
         }
     }
 
@@ -284,7 +284,7 @@ static void TagHandlePacketFlow(Flow *f, Packet *p)
             switch (iter->metric) {
                 case DETECT_TAG_METRIC_PACKET:
                     if (iter->packets > iter->count) {
-
+                        SCLogDebug("flow tag expired: packets %u > %u",
                             iter->packets, iter->count);
                         /* tag expired */
                         if (prev != NULL) {
@@ -312,7 +312,7 @@ static void TagHandlePacketFlow(Flow *f, Packet *p)
                 case DETECT_TAG_METRIC_BYTES:
                     if (iter->bytes > iter->count) {
                         /* tag expired */
-
+                        SCLogDebug("flow tag expired: bytes %u > %u",
                             iter->bytes, iter->count);
                         if (prev != NULL) {
                             tde = iter;
@@ -340,7 +340,7 @@ static void TagHandlePacketFlow(Flow *f, Packet *p)
                     /* last_ts handles this metric, but also a generic time based
                      * expiration to prevent dead sessions/hosts */
                     if (iter->last_ts - iter->first_ts > iter->count) {
-
+                        SCLogDebug("flow tag expired: %u - %u = %u > %u",
                             iter->last_ts, iter->first_ts,
                             (iter->last_ts - iter->first_ts), iter->count);
                         /* tag expired */
@@ -405,7 +405,7 @@ static void TagHandlePacketHost(Host *host, Packet *p)
             switch (iter->metric) {
                 case DETECT_TAG_METRIC_PACKET:
                     if (iter->packets > iter->count) {
-
+                        SCLogDebug("host tag expired: packets %u > %u", iter->packets, iter->count);
                         /* tag expired */
                         if (prev != NULL) {
                             tde = iter;
@@ -431,7 +431,7 @@ static void TagHandlePacketHost(Host *host, Packet *p)
                     break;
                 case DETECT_TAG_METRIC_BYTES:
                     if (iter->bytes > iter->count) {
-
+                        SCLogDebug("host tag expired: bytes %u > %u", iter->bytes, iter->count);
                         /* tag expired */
                         if (prev != NULL) {
                             tde = iter;
@@ -459,7 +459,7 @@ static void TagHandlePacketHost(Host *host, Packet *p)
                     /* last_ts handles this metric, but also a generic time based
                      * expiration to prevent dead sessions/hosts */
                     if (iter->last_ts - iter->first_ts > iter->count) {
-
+                        SCLogDebug("host tag expired: %u - %u = %u > %u",
                             iter->last_ts, iter->first_ts,
                             (iter->last_ts - iter->first_ts), iter->count);
                         /* tag expired */
@@ -646,9 +646,9 @@ static int DetectTagTestPacket01 (void)
     StorageFinalize();
     HostInitConfig(1);
 
-
+    SCLogDebug("running tests");
     result = UTHGenericTest(p, 7, sigs, sid, (uint32_t *) results, 5);
-
+    SCLogDebug("running tests done");
 
     Host *src = HostLookupHostFromHash(&p[1]->src);
     if (src) {
@@ -768,14 +768,14 @@ static int DetectTagTestPacket02 (void)
 
     int i = 0;
     for (; i < num_packets; i++) {
-
+        SCLogDebug("packet %d", i);
         TimeGet(&p[i]->ts);
         SigMatchSignatures(&th_v, de_ctx, det_ctx, p[i]);
         if (UTHCheckPacketMatchResults(p[i], sid, (uint32_t *)&results[i][0], numsigs) == 0)
             goto cleanup;
 
         TimeSetIncrementTime(2);
-
+        SCLogDebug("packet %d flag %s", i, p[i]->flags & PKT_HAS_TAG ? "true" : "false");
 
         /* see if the PKT_HAS_TAG is set on the packet if needed */
         int expect;
@@ -892,7 +892,7 @@ static int DetectTagTestPacket03 (void)
         if (UTHCheckPacketMatchResults(p[i], sid, (uint32_t *)&results[i][0], numsigs) == 0)
             goto cleanup;
 
-
+        SCLogDebug("packet %d flag %s", i, p[i]->flags & PKT_HAS_TAG ? "true" : "false");
 
         /* see if the PKT_HAS_TAG is set on the packet if needed */
         int expect;
@@ -1028,7 +1028,7 @@ static int DetectTagTestPacket04 (void)
         if (UTHCheckPacketMatchResults(p[i], sid, (uint32_t *)&results[i][0], numsigs) == 0)
             goto cleanup;
 
-
+        SCLogDebug("packet %d flag %s", i, p[i]->flags & PKT_HAS_TAG ? "true" : "false");
         /* see if the PKT_HAS_TAG is set on the packet if needed */
         int expect;
         if (i == 0 || i == 4 || i == 5 || i == 6)
@@ -1165,7 +1165,7 @@ static int DetectTagTestPacket05 (void)
         p[i]->flow = f;
         p[i]->flow->protoctx = &ssn;
 
-
+        SCLogDebug("packet %d", i);
         TimeGet(&p[i]->ts);
         SigMatchSignatures(&th_v, de_ctx, det_ctx, p[i]);
 
@@ -1174,7 +1174,7 @@ static int DetectTagTestPacket05 (void)
 
         TimeSetIncrementTime(2);
 
-
+        SCLogDebug("packet %d flag %s", i, p[i]->flags & PKT_HAS_TAG ? "true" : "false");
         /* see if the PKT_HAS_TAG is set on the packet if needed */
         int expect;
         if (i == 0 || i == 5 || i == 6)
@@ -1315,7 +1315,7 @@ static int DetectTagTestPacket06 (void)
         if (UTHCheckPacketMatchResults(p[i], sid, (uint32_t *)&results[i][0], numsigs) == 0)
             goto cleanup;
 
-
+        SCLogDebug("packet %d flag %s", i, p[i]->flags & PKT_HAS_TAG ? "true" : "false");
 
         /* see if the PKT_HAS_TAG is set on the packet if needed */
         int expect;
@@ -1457,7 +1457,7 @@ static int DetectTagTestPacket07 (void)
         if (UTHCheckPacketMatchResults(p[i], sid, (uint32_t *)&results[i][0], numsigs) == 0)
             goto cleanup;
 
-
+        SCLogDebug("packet %d flag %s", i, p[i]->flags & PKT_HAS_TAG ? "true" : "false");
 #if 1
         /* see if the PKT_HAS_TAG is set on the packet if needed */
         int expect;

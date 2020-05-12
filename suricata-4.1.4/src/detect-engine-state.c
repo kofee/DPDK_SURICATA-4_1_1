@@ -104,14 +104,14 @@ static int DeStateSearchState(DetectEngineState *state, uint8_t direction, SigIn
     SigIntId state_cnt = 0;
 
     for (; tx_store != NULL; tx_store = tx_store->next) {
-
+        SCLogDebug("tx_store %p", tx_store);
         for (store_cnt = 0;
              store_cnt < DE_STATE_CHUNK_SIZE && state_cnt < dir_state->cnt;
              store_cnt++, state_cnt++)
         {
             DeStateStoreItem *item = &tx_store->store[store_cnt];
             if (item->sid == num) {
-
+                SCLogDebug("sid %u already in state: %p %p %p %u %u, direction %s",
                             num, state, dir_state, tx_store, state_cnt,
                             store_cnt, direction & STREAM_TOSERVER ? "toserver" : "toclient");
                 return 1;
@@ -212,7 +212,7 @@ static void StoreStateTxHandleFiles(const SigGroupHead *sgh, Flow *f,
                                     DetectEngineState *destate, const uint8_t flow_flags,
                                     const uint64_t tx_id, const uint16_t file_no_match)
 {
-
+    SCLogDebug("tx %"PRIu64", file_no_match %u", tx_id, file_no_match);
     StoreFileNoMatchCnt(destate, file_no_match, flow_flags);
     if (StoreFilestoreSigsCantMatch(sgh, destate, flow_flags)) {
         FileDisableStoringForTransaction(f, flow_flags & (STREAM_TOCLIENT | STREAM_TOSERVER), tx_id);
@@ -235,12 +235,12 @@ void DetectRunStoreStateTx(
             DetectEngineStateFree(destate);
             return;
         }
-
+        SCLogDebug("destate created for %"PRIu64, tx_id);
     }
     DeStateSignatureAppend(destate, s, inspect_flags, flow_flags);
     StoreStateTxHandleFiles(sgh, f, destate, flow_flags, tx_id, file_no_match);
 
-
+    SCLogDebug("Stored for TX %"PRIu64, tx_id);
 }
 
 /** \brief update flow's inspection id's
@@ -305,11 +305,11 @@ void DetectEngineStateResetTxs(Flow *f)
 
 static int DeStateTest01(void)
 {
-
+    SCLogDebug("sizeof(DetectEngineState)\t\t%"PRIuMAX,
             (uintmax_t)sizeof(DetectEngineState));
-
+    SCLogDebug("sizeof(DeStateStore)\t\t\t%"PRIuMAX,
             (uintmax_t)sizeof(DeStateStore));
-
+    SCLogDebug("sizeof(DeStateStoreItem)\t\t%"PRIuMAX"",
             (uintmax_t)sizeof(DeStateStoreItem));
 
     return 1;

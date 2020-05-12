@@ -84,7 +84,7 @@ static void PrefilterTxUA(DetectEngineThreadCtx *det_ctx, const void *pectx,
     htp_header_t *h = (htp_header_t *)htp_table_get_c(tx->request_headers,
                                                       "User-Agent");
     if (h == NULL || h->value == NULL) {
-
+        SCLogDebug("HTTP UA header not present in this request");
         return;
     }
 
@@ -129,7 +129,7 @@ int DetectEngineInspectHttpUA(ThreadVars *tv,
     htp_header_t *h = (htp_header_t *)htp_table_get_c(tx->request_headers,
                                                       "User-Agent");
     if (h == NULL) {
-
+        SCLogDebug("HTTP user agent header not present in this request");
         goto end;
     }
 

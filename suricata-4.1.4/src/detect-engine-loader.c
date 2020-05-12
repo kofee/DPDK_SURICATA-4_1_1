@@ -78,7 +78,7 @@ char *DetectLoadCompleteSigPath(const DetectEngineCtx *de_ctx, const char *sig_f
     /* Path not specified */
     if (PathIsRelative(sig_file)) {
         if (ConfGet(varname, &defaultpath) == 1) {
-
+            SCLogDebug("Default path: %s", defaultpath);
             size_t path_len = sizeof(char) * (strlen(defaultpath) +
                           strlen(sig_file) + 2);
             path = SCMalloc(path_len);
@@ -177,7 +177,7 @@ static int DetectLoadSigFile(DetectEngineCtx *de_ctx, char *sig_file,
                     EngineAnalysisRules(de_ctx, sig, line);
                 }
             }
-
+            SCLogDebug("signature %"PRIu32" loaded", sig->id);
             good++;
         } else {
             SCLogError(SC_ERR_INVALID_SIGNATURE, "error parsing signature \"%s\" from "
@@ -418,7 +418,7 @@ int DetectLoaderQueueTask(int loader_id, LoaderFunc Func, void *func_ctx)
 
     TmThreadWakeupDetectLoaderThreads();
 
-
+    SCLogDebug("%d %p %p", loader_id, Func, func_ctx);
     return loader_id;
 }
 
@@ -426,7 +426,7 @@ int DetectLoaderQueueTask(int loader_id, LoaderFunc Func, void *func_ctx)
  *  \retval result 0 for ok, -1 for errors */
 int DetectLoadersSync(void)
 {
-
+    SCLogDebug("waiting");
     int errors = 0;
     int i;
     for (i = 0; i < num_loaders; i++) {
@@ -451,7 +451,7 @@ int DetectLoadersSync(void)
         SCLogError(SC_ERR_INITIALIZATION, "%d loaders reported errors", errors);
         return -1;
     }
-
+    SCLogDebug("done");
     return 0;
 }
 
@@ -547,7 +547,7 @@ static TmEcode DetectLoaderThreadInit(ThreadVars *t, const void *initdata, void 
         return TM_ECODE_FAILED;
 
     ftd->instance = SC_ATOMIC_ADD(detect_loader_cnt, 1) - 1; /* id's start at 0 */
-
+    SCLogDebug("detect loader instance %u", ftd->instance);
 
     /* pass thread data back to caller */
     *data = ftd;
@@ -567,7 +567,7 @@ static TmEcode DetectLoader(ThreadVars *th_v, void *thread_data)
     DetectLoaderThreadData *ftd = (DetectLoaderThreadData *)thread_data;
     BUG_ON(ftd == NULL);
 
-
+    SCLogDebug("loader thread started");
     while (1)
     {
         if (TmThreadsCheckFlag(th_v, THV_PAUSE)) {
@@ -601,7 +601,7 @@ static TmEcode DetectLoader(ThreadVars *th_v, void *thread_data)
         SCCtrlCondWait(th_v->ctrl_cond, th_v->ctrl_mutex);
         SCCtrlMutexUnlock(th_v->ctrl_mutex);
 
-
+        SCLogDebug("woke up...");
     }
 
     return TM_ECODE_OK;
@@ -641,7 +641,7 @@ void TmModuleDetectLoaderRegister (void)
     tmm_modules[TMM_DETECTLOADER].Management = DetectLoader;
     tmm_modules[TMM_DETECTLOADER].cap_flags = 0;
     tmm_modules[TMM_DETECTLOADER].flags = TM_FLAG_MANAGEMENT_TM;
-
+    SCLogDebug("%s registered", tmm_modules[TMM_DETECTLOADER].name);
 
     SC_ATOMIC_INIT(detect_loader_cnt);
 }

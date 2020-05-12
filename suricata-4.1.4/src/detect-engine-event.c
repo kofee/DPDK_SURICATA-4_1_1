@@ -101,7 +101,7 @@ static int DetectEngineEventMatch (ThreadVars *t, DetectEngineThreadCtx *det_ctx
     const DetectEngineEventData *de = (const DetectEngineEventData *)ctx;
 
     if (ENGINE_ISSET_EVENT(p, de->event)) {
-
+        SCLogDebug("de->event matched %u", de->event);
         SCReturnInt(1);
     }
 
@@ -187,7 +187,7 @@ static int DetectEngineEventSetupDo (DetectEngineCtx *de_ctx, Signature *s,
     if (de == NULL)
         return -1;
 
-
+    SCLogDebug("rawstr %s %u", rawstr, de->event);
 
     SigMatch *sm = SigMatchAlloc();
     if (sm == NULL) {
