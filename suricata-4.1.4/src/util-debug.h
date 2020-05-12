@@ -376,7 +376,6 @@ extern int sc_log_module_cleaned;
                                   if (sc_log_global_log_level >= SC_LOG_DEBUG &&\
                                       SCLogCheckFDFilterEntry(__FUNCTION__))    \
                                   {                                             \
-                                     SCLogDebug("Entering ... >>");             \
                                   }                                             \
                               } while(0)
 
@@ -391,7 +390,6 @@ extern int sc_log_module_cleaned;
  */
 #define SCReturn              do {                                           \
                                   if (sc_log_global_log_level >= SC_LOG_DEBUG) { \
-                                      SCLogDebug("Returning ... <<" );       \
                                       SCLogCheckFDFilterExit(__FUNCTION__);  \
                                   }                                          \
                                   return;                                    \
@@ -409,7 +407,6 @@ extern int sc_log_module_cleaned;
  */
 #define SCReturnInt(x)        do {                                           \
                                   if (sc_log_global_log_level >= SC_LOG_DEBUG) { \
-                                      SCLogDebug("Returning: %"PRIdMAX" ... <<", (intmax_t)x); \
                                       SCLogCheckFDFilterExit(__FUNCTION__);  \
                                   }                                          \
                                   return x;                                  \
@@ -427,7 +424,6 @@ extern int sc_log_module_cleaned;
  */
 #define SCReturnUInt(x)       do {                                           \
                                   if (sc_log_global_log_level >= SC_LOG_DEBUG) { \
-                                      SCLogDebug("Returning: %"PRIuMAX" ... <<", (uintmax_t)x); \
                                       SCLogCheckFDFilterExit(__FUNCTION__);  \
                                   }                                          \
                                   return x;                                  \
@@ -445,7 +441,6 @@ extern int sc_log_module_cleaned;
  */
 #define SCReturnDbl(x)        do {                                           \
                                   if (sc_log_global_log_level >= SC_LOG_DEBUG) { \
-                                      SCLogDebug("Returning: %f ... <<", x); \
                                       SCLogCheckFDFilterExit(__FUNCTION__);  \
                                   }                                          \
                                   return x;                                  \
@@ -463,7 +458,6 @@ extern int sc_log_module_cleaned;
  */
 #define SCReturnChar(x)       do {                                           \
                                   if (sc_log_global_log_level >= SC_LOG_DEBUG) { \
-                                      SCLogDebug("Returning: %c ... <<", x); \
                                       SCLogCheckFDFilterExit(__FUNCTION__);  \
                                   }                                          \
                                   return x;                                  \
@@ -482,9 +476,7 @@ extern int sc_log_module_cleaned;
 #define SCReturnCharPtr(x)    do {                                           \
                                   if (sc_log_global_log_level >= SC_LOG_DEBUG) { \
                                       if ((x) != NULL) {                    \
-                                          SCLogDebug("Returning: %s ... <<", x); \
                                       } else {                          \
-                                          SCLogDebug("Returning: NULL ... <<"); \
                                       } SCLogCheckFDFilterExit(__FUNCTION__); \
                                   }                                     \
                                  return x;                                   \
@@ -505,8 +497,6 @@ extern int sc_log_module_cleaned;
  */
 #define SCReturnCT(x, type)   do {                                           \
                                   if (sc_log_global_log_level >= SC_LOG_DEBUG) { \
-                                      SCLogDebug("Returning var of "         \
-                                              "type %s ... <<", type);       \
                                       SCLogCheckFDFilterExit(__FUNCTION__);  \
                                   }                                          \
                                   return x;                                  \
@@ -527,8 +517,6 @@ extern int sc_log_module_cleaned;
  */
 #define SCReturnPtr(x, type)  do {                                           \
                                   if (sc_log_global_log_level >= SC_LOG_DEBUG) { \
-                                      SCLogDebug("Returning pointer %p of "  \
-                                              "type %s ... <<", x, type);    \
                                       SCLogCheckFDFilterExit(__FUNCTION__);  \
                                   }                                          \
                                   return x;                                  \
