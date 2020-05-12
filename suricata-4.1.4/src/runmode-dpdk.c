@@ -250,13 +250,17 @@ int SetupDdpdkPorts(void)
 			if (rte_eth_dev_set_mtu (i, dpdk_ports[i].mtu) != 0) {
 				SCLogError(SC_ERR_DPDK_CONFIG, "Failed to set mtu (%u) for port [%d]", dpdk_ports[i].mtu, i);
 				return -EINVAL;
-			}
+			} else {
+                SCLogDebug("ktanguy mtu successfully set");
+            }
 		}
 
 		ret = rte_eth_promiscuous_enable(i);
         if (ret != 0)
         {
-            SCLogNotice("ktanguy failed to set promiscuous mode");
+            SCLogDebug("ktanguy failed to set promiscuous mode");
+        } else {
+            SCLogDebug("ktanguy promiscuous mode activated");
         }
 
 		// ktanguy set link up if it is down
@@ -264,9 +268,9 @@ int SetupDdpdkPorts(void)
 		if (link.link_status == ETH_LINK_DOWN)
 		{
 			ret = rte_eth_dev_set_link_up(i);
-			SCLogNotice("ktanguy link up %d", ret);
+			SCLogDebug("ktanguy link up %d", ret);
 		} else {
-			SCLogNotice("ktanguy link already up");
+			SCLogDebug("ktanguy link already up");
 		}
 	}
 
