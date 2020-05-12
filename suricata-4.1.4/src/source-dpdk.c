@@ -367,7 +367,7 @@ TmEcode ReceiveDpdkLoop(ThreadVars *tv, void *data, void *slot)
 TmEcode ReceiveDpdkInit(ThreadVars *tv, void *initdata, void **data)
 {
 	SCEnter();
-	SCLogNotice(" Kick start thread \n");
+	SCLogNotice(" Kick start thread");
 
 #if HAVE_DPDK
 	if (initdata == NULL) {
@@ -398,7 +398,7 @@ TmEcode ReceiveDpdkInit(ThreadVars *tv, void *initdata, void **data)
 	*data = (void *)ptv;
 #endif
 
-	SCLogNotice("completed thread initialization for dpdk receive\n");
+	SCLogNotice("completed thread initialization for dpdk receive");
 	SCReturnInt(TM_ECODE_OK);
 }
 

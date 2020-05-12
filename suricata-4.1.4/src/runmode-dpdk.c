@@ -579,7 +579,7 @@ void *ParseDpdkConfig(const char *dpdkCfg)
 				if (strcasecmp("private_data_size", entries[j].name) == 0)
 					dpdk_mempool_config.private_data_size = atoi(entries[j].value);
 				if (strcasecmp("socket_id", entries[j].name) == 0)
-					dpdk_mempool_config.private_data_size = atoi(entries[j].value);
+					dpdk_mempool_config.socket_id = atoi(entries[j].value);
 			}
 		}
 	}
@@ -857,7 +857,7 @@ void ListDpdkConfig(void)
 	SCLogNotice(" - name (%s)", dpdk_mempool_config.name);
 	SCLogNotice(" - number of elements (%u)", dpdk_mempool_config.n);
 	SCLogNotice(" - size of elements (%u)", dpdk_mempool_config.elt_size);
-	SCLogNotice(" - scoketid (%u)", dpdk_mempool_config.socket_id);
+	SCLogNotice(" - socketid (%u)", dpdk_mempool_config.socket_id);
 	SCLogNotice(" - private data size (%u)", dpdk_mempool_config.private_data_size);
 	SCLogNotice(" - mbuf pool ptr (%p)", dpdk_mempool_config.mbuf_ptr);
 	SCLogNotice(" ");
