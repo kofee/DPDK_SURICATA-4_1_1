@@ -642,7 +642,7 @@ static void *DpdkConfigParser(const char *device)
 
 	//DpdkIfaceConfig_t *config = rte_zmalloc(NULL, sizeof(DpdkIfaceConfig_t), 0);
     // ktanguy: we want to use socket 1
-	DpdkIfaceConfig_t *config = rte_zmalloc(NULL, sizeof(DpdkIfaceConfig_t), 0, 1);
+	DpdkIfaceConfig_t *config = rte_zmalloc_socket(NULL, sizeof(DpdkIfaceConfig_t), 0, 1);
 	if (config == NULL) {
 		SCLogError(SC_ERR_DPDK_MEM, " failed to alloc memory");
 		SCReturnPtr(NULL, "void *");
