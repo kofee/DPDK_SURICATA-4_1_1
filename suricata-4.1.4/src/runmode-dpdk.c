@@ -187,6 +187,7 @@ int SetupDdpdkPorts(void)
 		uint64_t rx_offloads = local_port_conf.rxmode.offloads;
 
 		if (dpdk_ports[i].jumbo) {
+			SCLogInfo("JUMBO FRAMES ON THE WIRE");
 			rx_offloads |= DEV_RX_OFFLOAD_JUMBO_FRAME;
 		}
 		local_port_conf.rxmode.offloads = rx_offloads;
@@ -245,9 +246,9 @@ int SetupDdpdkPorts(void)
 		}
 
 		if (mtu != dpdk_ports[i].mtu) {
-			SCLogNotice("mtu is now %d, should be %d");
-			if (rte_eth_dev_set_mtu (i, mtu) != 0) {
-				SCLogError(SC_ERR_DPDK_CONFIG, "Failed to set mtu (%u) for port [%d]", mtu, i);
+			SCLogNotice("mtu is now %d, should be %d", mtu, dpdk_ports[i].mtu);
+			if (rte_eth_dev_set_mtu (i, dpdk_ports[i].mtu) != 0) {
+				SCLogError(SC_ERR_DPDK_CONFIG, "Failed to set mtu (%u) for port [%d]", dpdk_ports[i].mtu, i);
 				return -EINVAL;
 			}
 		}
