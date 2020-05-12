@@ -269,7 +269,7 @@ void DetectContentPrint(DetectContentData *cd)
         SCFree(tmpstr);
     } else {
 
-        for (i = 0; i < cd->content_len; i++)
+        for (i = 0; i < cd->content_len; i++) ;
 
     }
 
@@ -298,7 +298,7 @@ void DetectContentPrint(DetectContentData *cd)
             SCFree(tmprstr);
         } else {
 
-            for (i = 0; i < cd->replace_len; i++)
+            for (i = 0; i < cd->replace_len; i++) ;
 
         }
     }
