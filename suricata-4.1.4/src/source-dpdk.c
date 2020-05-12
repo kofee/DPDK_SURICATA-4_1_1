@@ -254,14 +254,14 @@ TmEcode ReceiveDpdkLoop(ThreadVars *tv, void *data, void *slot)
 	int max_queued = 0;
 	char *ctype;
 
-	SCLogDebug(" running %s on %d core %d\n", __func__, pthread_self(), sched_getcpu());
+	SCLogDebug(" running %s on %d core %d", __func__, pthread_self(), sched_getcpu());
 
 	if (unlikely(ptv == NULL)) {
 		SCReturnInt(TM_ECODE_FAILED);
 	}
 
 	//SCLogNotice("RX-TX Intf Id in %d out %d\n", ptv->portQueuePair[0] & 0xffff, (ptv->portQueuePair[0] >> 32)&0xffff);
-	SCLogDebug("RX-TX Intf Id in %d out %d\n", ptv->portid, ptv->fwd_portid);
+	SCLogDebug("RX-TX Intf Id in %d out %d", ptv->portid, ptv->fwd_portid);
 
 #if 0
     ptv->checksum_mode = CHECKSUM_VALIDATION_DISABLE;
