@@ -1355,7 +1355,7 @@ int SigAddressPrepareStage1(DetectEngineCtx *de_ctx)
 
                 int proto;
                 for (proto = 0; proto < 256; proto++) {
-                    if (tmp_s->proto.proto[(proto/8)] & (1<<(proto%8)))
+                    if (tmp_s->proto.proto[(proto/8)] & (1<<(proto%8))) ;
 
                 }
             }
